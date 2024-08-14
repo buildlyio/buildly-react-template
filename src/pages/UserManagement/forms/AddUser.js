@@ -11,6 +11,7 @@ import {
   Menu,
   MenuItem,
   TextField,
+  Typography,
 } from '@mui/material';
 import {
   ArrowRight as ArrowRightIcon,
@@ -253,6 +254,7 @@ const AddUser = ({ open, setOpen }) => {
               <>
                 <Grid item xs={12}>
                   <TextField
+                    className="notranslate"
                     variant="outlined"
                     margin="normal"
                     fullWidth
@@ -262,13 +264,15 @@ const AddUser = ({ open, setOpen }) => {
                     }}
                     id="organization_name"
                     name="organization_name"
-                    label="Organization Name"
+                    label={(
+                      <Typography className="translate">Organization Name</Typography>
+                    )}
                     autoComplete="organization_name"
                     {...organization_name.bind}
                     onClick={(e) => setMainMenuOpen(!mainMenuOpen)}
                   >
                     {displayOrgs && !_.isEmpty(displayOrgs) && displayOrgs.map((org) => (
-                      <MenuItem key={org.id} value={org.name} style={{ display: org.organization_type === 1 && 'none' }}>
+                      <MenuItem className="notranslate" key={org.id} value={org.name} style={{ display: org.organization_type === 1 && 'none' }}>
                         {org.name}
                         {org.reseller_customer_orgs && (
                           <IconButton

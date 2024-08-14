@@ -43,6 +43,8 @@ const DataTableWrapper = ({
   noOptionsIcon,
   centerLabel,
   extraOptions,
+  className,
+  shouldUseAllColumns,
 }) => {
   const user = getUser();
   const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
@@ -97,7 +99,7 @@ const DataTableWrapper = ({
   ];
 
   const options = {
-    download: !noOptionsIcon,
+    download: shouldUseAllColumns ? false : !noOptionsIcon,
     print: !noOptionsIcon,
     search: !noOptionsIcon,
     viewColumns: !noOptionsIcon,
@@ -124,14 +126,14 @@ const DataTableWrapper = ({
         filename: 'nothing.csv',
         separator: ',',
         filterOptions: {
-          useDisplayedColumnsOnly: true,
+          useDisplayedColumnsOnly: !shouldUseAllColumns,
         },
       }
       : {
         filename: `${filename}.csv`,
         separator: ',',
         filterOptions: {
-          useDisplayedColumnsOnly: true,
+          useDisplayedColumnsOnly: !shouldUseAllColumns,
         },
       },
     textLabels: {
@@ -184,6 +186,7 @@ const DataTableWrapper = ({
               data={rows}
               columns={finalColumns}
               options={options}
+              className={className}
             />
           </Grid>
         </Grid>

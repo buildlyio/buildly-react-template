@@ -17,11 +17,14 @@ const theme = extendTheme({
           light2: '#D3D4D5',
           light3: '#E5E4E2',
           light4: '#0000000A',
+          light5: '#E7E9EC',
+          light6: '#FFD8D8D8',
           dark: '#383636',
           dark2: '#00000080',
           dark3: '#78787833',
           dark4: '#78787866',
           black: '#000000',
+          black2: '#FF000000',
         },
         primary: {
           main: '#436B93',
@@ -39,12 +42,15 @@ const theme = extendTheme({
         },
         info: {
           main: '#0099CC',
+          light: '#84C2E2',
         },
         warning: {
+          dark: '#FFFFC000',
           main: '#FFCC33',
         },
         error: {
           main: '#FF0033',
+          light: '#FFC7CE',
         },
         cluster: {
           main: '#ECDB54',

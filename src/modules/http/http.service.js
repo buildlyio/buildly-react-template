@@ -76,8 +76,20 @@ function makeRequestWithoutHeaders(method, url) {
   return http.request(url, options);
 }
 
+function makePostRequestWithoutHeaders(method, url, body) {
+  const options = {
+    method,
+    data: body,
+    headers: null,
+    returnPromise: true,
+    responseType: null,
+  };
+  return http.request(url, options);
+}
+
 export const httpService = {
   makeRequest,
   makeOptionsRequest,
   makeRequestWithoutHeaders,
+  makePostRequestWithoutHeaders,
 };

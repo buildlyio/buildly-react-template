@@ -1096,12 +1096,15 @@ const CreateShipment = ({ history, location }) => {
                 <Grid container spacing={2}>
                   <Grid item xs={8}>
                     <TextField
+                      className="notranslate"
                       variant="outlined"
                       id="origin-custodian"
                       select
                       fullWidth
                       placeholder="Select..."
-                      label="Origin Custodian"
+                      label={(
+                        <Typography className="translate">Origin Custodian</Typography>
+                      )}
                       onBlur={(e) => handleBlur(e, 'required', originCustodian, 'origin-custodian')}
                       value={originCustodian}
                       onChange={(e) => onInputChange(e.target.value, 'custodian', 'start')}
@@ -1111,7 +1114,7 @@ const CreateShipment = ({ history, location }) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {!_.isEmpty(originList) && _.map(originList, (cust) => (
-                        <MenuItem key={cust.custodian_uuid} value={cust.url}>
+                        <MenuItem className="notranslate" key={cust.custodian_uuid} value={cust.url}>
                           {cust.name}
                         </MenuItem>
                       ))}
@@ -1167,12 +1170,15 @@ const CreateShipment = ({ history, location }) => {
                 <Grid container spacing={2} mt={isMobile() ? 1.5 : -2}>
                   <Grid item xs={8}>
                     <TextField
+                      className="notranslate"
                       variant="outlined"
                       id="destination-custodian"
                       select
                       fullWidth
                       placeholder="Select..."
-                      label="Destination Custodian"
+                      label={(
+                        <Typography className="translate">Destination Custodian</Typography>
+                      )}
                       onBlur={(e) => handleBlur(e, 'required', destinationCustodian, 'destination-custodian')}
                       value={destinationCustodian}
                       onChange={(e) => onInputChange(e.target.value, 'custodian', 'end')}
@@ -1182,7 +1188,7 @@ const CreateShipment = ({ history, location }) => {
                     >
                       <MenuItem value="">Select</MenuItem>
                       {!_.isEmpty(destinationList) && _.map(destinationList, (cust) => (
-                        <MenuItem key={cust.custodian_uuid} value={cust.url}>
+                        <MenuItem className="notranslate" key={cust.custodian_uuid} value={cust.url}>
                           {cust.name}
                         </MenuItem>
                       ))}
@@ -1317,12 +1323,15 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 2 : 0}>
                 <TextField
+                  className="notranslate"
                   variant="outlined"
                   id="status"
                   select
                   fullWidth
                   placeholder="Select..."
-                  label="Shipment Status"
+                  label={(
+                    <Typography className="translate">Shipment Status</Typography>
+                  )}
                   onBlur={(e) => handleBlur(e, 'required', status, 'status')}
                   InputLabelProps={{ shrink: true }}
                   SelectProps={{ displayEmpty: true }}
@@ -1331,29 +1340,23 @@ const CreateShipment = ({ history, location }) => {
                 >
                   <MenuItem value="">Select</MenuItem>
                   {_.isEmpty(editData) && _.map(CREATE_SHIPMENT_STATUS, (st, idx) => (
-                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                    <MenuItem className="notranslate" key={`${idx}-${st.label}`} value={st.value}>
                       {st.label}
                     </MenuItem>
                   ))}
                   {!_.isEmpty(editData) && !cannotEdit && !isAdmin && _.map(USER_SHIPMENT_STATUS, (st, idx) => (
-                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                    <MenuItem className="notranslate" key={`${idx}-${st.label}`} value={st.value}>
                       {st.label}
                     </MenuItem>
                   ))}
-                  {!_.isEmpty(editData) && ((cannotEdit && !isAdmin) || (!cannotEdit && isAdmin)) && _.map([...CREATE_SHIPMENT_STATUS, ...ADMIN_SHIPMENT_STATUS], (st, idx) => (
-                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
-                      {st.label}
-                    </MenuItem>
-                  ))}
-                  {!_.isEmpty(editData) && cannotEdit && isAdmin && _.isEqual(editData.status, 'Completed') && !editData.complete_on_platforms
-                  && _.map(INCOMPLETED_SHIPMENT_STATUS, (st, idx) => (
-                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
-                      {st.label}
-                    </MenuItem>
-                  ))}
-                  {!_.isEmpty(editData) && cannotEdit && isAdmin && _.isEqual(editData.status, 'Completed') && editData.complete_on_platforms
-                  && _.map(ADMIN_SHIPMENT_STATUS, (st, idx) => (
-                    <MenuItem key={`${idx}-${st.label}`} value={st.value}>
+                  {!_.isEmpty(editData) && ((cannotEdit && !isAdmin) || (!cannotEdit && isAdmin))
+                    && _.map([...CREATE_SHIPMENT_STATUS, ...ADMIN_SHIPMENT_STATUS], (st, idx) => (
+                      <MenuItem className="notranslate" key={`${idx}-${st.label}`} value={st.value}>
+                        {st.label}
+                      </MenuItem>
+                    ))}
+                  {!_.isEmpty(editData) && cannotEdit && isAdmin && _.map([...ADMIN_SHIPMENT_STATUS], (st, idx) => (
+                    <MenuItem className="notranslate" key={`${idx}-${st.label}`} value={st.value}>
                       {st.label}
                     </MenuItem>
                   ))}
@@ -1388,7 +1391,7 @@ const CreateShipment = ({ history, location }) => {
                     ))
                   )}
                   renderOption={(props, option, { selected }) => (
-                    <li {...props}>
+                    <li {...props} className="notranslate">
                       <Checkbox
                         icon={uncheckedIcon}
                         checkedIcon={checkedIcon}
@@ -1401,8 +1404,11 @@ const CreateShipment = ({ history, location }) => {
                   renderInput={(params) => (
                     <TextField
                       {...params}
+                      className="notranslate"
                       variant="outlined"
-                      label="Items to be shipped"
+                      label={(
+                        <Typography className="translate">Items to be shipped</Typography>
+                      )}
                       placeholder="Select..."
                     />
                   )}
@@ -1694,12 +1700,15 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
               <Grid item xs={8.5} sm={9.5} ml={isMobile() ? 2 : 0}>
                 <TextField
+                  className="notranslate"
                   variant="outlined"
                   fullWidth
                   disabled={cannotEdit}
                   id="shipment-name"
                   name="shipment-name"
-                  label="Shipment Name"
+                  label={(
+                    <Typography className="translate">Shipment Name</Typography>
+                  )}
                   autoComplete="shipment-name"
                   onBlur={(e) => handleBlur(e, 'required', shipmentName, 'shipment-name')}
                   {...shipmentName.bind}
@@ -1819,12 +1828,15 @@ const CreateShipment = ({ history, location }) => {
                     <Grid container spacing={4} mt={0}>
                       <Grid item xs={6} sm={5} lg={5.5}>
                         <TextField
+                          className="notranslate"
                           id={`add-cust-${addCust.custodian_uuid}`}
                           select
                           fullWidth
                           disabled={cannotEdit}
                           placeholder="Select..."
-                          label={`Custodian ${index + 1}`}
+                          label={(
+                            <Typography className="translate">{`Custodian ${index + 1}`}</Typography>
+                          )}
                           value={addCust}
                           onChange={(e) => {
                             const newList = _.map(
@@ -1844,7 +1856,7 @@ const CreateShipment = ({ history, location }) => {
                               ..._.without(additionalCustodians, addCust),
                               _.find(carrierList, { url: destinationCustodian }),
                             ), (cust) => (
-                              <MenuItem key={cust.custodian_uuid} value={cust}>
+                              <MenuItem className="notranslate" key={cust.custodian_uuid} value={cust}>
                                 {cust.name}
                               </MenuItem>
                             ))}
@@ -1891,13 +1903,16 @@ const CreateShipment = ({ history, location }) => {
               <Grid item xs={11.5} mt={isMobile() ? 2 : 0}>
                 {showAddCustodian && (
                   <TextField
+                    className="notranslate"
                     variant="outlined"
                     id="additional-custodian"
                     select
                     fullWidth
                     disabled={cannotEdit}
                     placeholder="Select..."
-                    label="Add carriers/warehouses"
+                    label={(
+                      <Typography className="translate">Add carriers/warehouses</Typography>
+                    )}
                     onChange={(e) => {
                       setAdditionalCustocations([...additionalCustodians, e.target.value]);
                       setShowAddCustodian(false);
@@ -1913,7 +1928,7 @@ const CreateShipment = ({ history, location }) => {
                         ...additionalCustodians,
                         _.find(carrierList, { url: destinationCustodian }),
                       ), (cust) => (
-                        <MenuItem key={cust.custodian_uuid} value={cust}>
+                        <MenuItem className="notranslate" key={cust.custodian_uuid} value={cust}>
                           {cust.name}
                         </MenuItem>
                       ))}
@@ -1940,11 +1955,14 @@ const CreateShipment = ({ history, location }) => {
             <Grid container spacing={isDesktop ? 4 : 0}>
               <Grid item xs={5} sm={5.5}>
                 <TextField
+                  className="notranslate"
                   id="gateway-type"
                   select
                   fullWidth
                   placeholder="Select..."
-                  label="Tracker platform"
+                  label={(
+                    <Typography className="translate">Tracker platform</Typography>
+                  )}
                   onBlur={(e) => handleBlur(e, 'required', gatewayType, 'gateway-type')}
                   disabled={
                     (!_.isEmpty(editData)
@@ -1958,7 +1976,7 @@ const CreateShipment = ({ history, location }) => {
                 >
                   <MenuItem value="">Select</MenuItem>
                   {!_.isEmpty(gatewayTypesData) && _.map(gatewayTypesData, (gtype) => (
-                    <MenuItem key={gtype.id} value={gtype.name}>
+                    <MenuItem className="notranslate" key={gtype.id} value={gtype.name}>
                       {_.upperFirst(gtype.name)}
                     </MenuItem>
                   ))}
@@ -2123,7 +2141,7 @@ const CreateShipment = ({ history, location }) => {
                 id="shipment-name-final"
                 fullWidth
                 disabled
-                className="createShipmentFinalNameDisplay"
+                className="createShipmentFinalNameDisplay noTranslate"
                 value={shipmentName.value}
               />
             </Grid>

@@ -9,7 +9,7 @@ import { getGatewayTypeQuery } from '@react-query/queries/sensorGateways/getGate
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
 import { useDeleteGatewayTypeMutation } from '@react-query/mutations/sensorGateways/deleteGatewayTypeMutation';
 import { routes } from '@routes/routesConstants';
-import { getColumns } from '@utils/constants';
+import { getTrackerTypeColumns } from '@utils/constants';
 import { useStore } from '@zustand/timezone/timezoneStore';
 import AddGatewayType from '../forms/AddGatewayType';
 
@@ -72,7 +72,7 @@ const GatewayType = ({ redirectTo, history }) => {
       noSpace
       loading={isLoadingUnits || isLoadingGatewayTypes || isDeletingGatewayType}
       rows={gatewayTypesData || []}
-      columns={getColumns(
+      columns={getTrackerTypeColumns(
         data,
         _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
           ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure

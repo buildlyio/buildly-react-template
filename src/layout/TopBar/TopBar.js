@@ -156,7 +156,8 @@ const TopBar = ({
       const resellerOrgs = orgs.filter((org) => org.is_reseller);
       const resellerCustomerOrgIds = resellerOrgs.flatMap((org) => org.reseller_customer_orgs || []);
       const customerOrgs = orgs.filter((org) => resellerCustomerOrgIds.includes(org.id));
-      setDisplayOrgs([...producerOrgs, ..._.map(customerOrgs, (co) => ({ ...co, is_customer: true }))]);
+      const filteredProducerOrgs = producerOrgs.filter((producerOrg) => !customerOrgs.some((customerOrg) => _.lowerCase(customerOrg.name) === _.lowerCase(producerOrg.name)));
+      setDisplayOrgs(filteredProducerOrgs);
     }
   };
 
@@ -337,13 +338,8 @@ const TopBar = ({
               }}
               onClick={(e) => setMainMenuOpen(!mainMenuOpen)}
             >
-              {!_.isEmpty(displayOrgs) && _.map(displayOrgs, (org) => (
-                <MenuItem
-                  className="notranslate"
-                  key={org.id}
-                  value={org.name}
-                  style={{ display: (_.isEqual(org.organization_type, 1) || org.is_customer) && 'none' }}
-                >
+              {!_.isEmpty(displayOrgs) && displayOrgs.map((org) => (
+                <MenuItem className="notranslate" key={org.id} value={org.name}>
                   {org.name}
                   {org.is_reseller && !_.isEmpty(org.reseller_customer_orgs) && (
                     <IconButton
@@ -418,6 +414,7 @@ const TopBar = ({
             isSuperAdmin
               ? orgData.filter((org) => submenuOrg.reseller_customer_orgs.includes(org.organization_uuid)).map((org) => (
                 <MenuItem
+                  className="notranslate"
                   key={org.organization_uuid}
                   onClick={() => handleOrganizationChange(org.name)}
                 >
@@ -426,6 +423,7 @@ const TopBar = ({
               ))
               : !_.isEmpty(JSON.parse(localStorage.getItem('adminOrgs'))) && JSON.parse(localStorage.getItem('adminOrgs')).filter((org) => submenuOrg.reseller_customer_orgs.includes(org.organization_uuid)).map((org) => (
                 <MenuItem
+                  className="notranslate"
                   key={org.organization_uuid}
                   onClick={() => handleOrganizationChange(org.name)}
                 >

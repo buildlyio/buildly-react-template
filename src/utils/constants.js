@@ -85,6 +85,41 @@ export const getColumns = (timezone, dateFormat, timeFormat) => ([
   },
 ]);
 
+export const getTrackerTypeColumns = (timezone, dateFormat, timeFormat) => ([
+  {
+    name: 'name',
+    label: 'Name',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
+    },
+  },
+  {
+    name: 'create_date',
+    label: 'Created At',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => showValue(value, timezone, dateFormat, timeFormat),
+    },
+  },
+  {
+    name: 'edit_date',
+    label: 'Last Edited At',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => showValue(value, timezone, dateFormat, timeFormat),
+    },
+  },
+]);
+
 export const getProductColumns = (timezone, uomw, dateFormat, timeFormat) => ([
   {
     name: 'name',
@@ -173,6 +208,9 @@ export const getMappingOrg = (allOrgs) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
       customBodyRender: (value) => {
         let returnValue = '-';
         if (value) {
@@ -235,6 +273,9 @@ export const custodianColumns = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -434,6 +475,9 @@ export const itemColumns = (currUnit) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1248,13 +1292,13 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, selectedShipment) => {
   const getCellStyle = (tableMeta) => ({
     fontWeight: (
       _.some(
-        _.range(3, 8), (i) => _.isEqual(tableMeta.rowData[i], null)
+        _.range(5, 10), (i) => _.isEqual(tableMeta.rowData[i], null)
           || _.isEqual(tableMeta.rowData[i], undefined),
       )
         ? '700' : '400'),
     fontStyle: (
       _.some(
-        _.range(3, 8), (i) => _.isEqual(tableMeta.rowData[i], null)
+        _.range(5, 10), (i) => _.isEqual(tableMeta.rowData[i], null)
           || _.isEqual(tableMeta.rowData[i], undefined),
       )
         ? 'italic' : 'normal'),
@@ -1310,6 +1354,48 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, selectedShipment) => {
           style: { maxWidth: '300px', wordWrap: 'break-word' },
           className: 'reportingSensorLeftHeader',
         }),
+        customBodyRender: (value) => (
+          <div>
+            {!_.isEqual(value, null) && !_.isEqual(value, undefined) && !_.isEqual(value, 'Error retrieving address')
+              ? value : 'N/A'}
+          </div>
+        ),
+      },
+    },
+    {
+      name: 'lat',
+      label: 'Latitude',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        setCellProps: () => ({
+          style: { maxWidth: '300px', wordWrap: 'break-word' },
+          className: 'reportingSensorLeftHeader',
+        }),
+        customBodyRender: (value, tableMeta) => (
+          <div>
+            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? value : 'N/A')}
+          </div>
+        ),
+      },
+    },
+    {
+      name: 'lng',
+      label: 'Longitude',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        filter: true,
+        setCellProps: () => ({
+          style: { maxWidth: '300px', wordWrap: 'break-word' },
+          className: 'reportingSensorLeftHeader',
+        }),
+        customBodyRender: (value, tableMeta) => (
+          <div>
+            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? value : 'N/A')}
+          </div>
+        ),
       },
     },
     {
@@ -1499,24 +1585,35 @@ export const getAlertsReportColumns = (sensorReport, timezone, dateFormat, timeF
     },
   },
   {
-    name: 'create_date',
+    name: 'location',
     label: 'Location',
     options: {
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => {
-        let location = 'N/A';
-        if (value && value !== '-') {
-          const dt = moment(value).tz(timezone).format(`${dateFormat} ${timeFormat}`);
-          const report = _.find(sensorReport, { timestamp: dt });
-          if (report) {
-            location = report.location;
-          }
-        }
-
-        return location;
-      },
+      customBodyRender: (value) => <div>{value}</div>,
+      setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
+    },
+  },
+  {
+    name: 'latitude',
+    label: 'Latitude',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => <div>{value}</div>,
+      setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
+    },
+  },
+  {
+    name: 'longitude',
+    label: 'Longitude',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => <div>{value}</div>,
       setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
     },
   },
@@ -1539,6 +1636,9 @@ export const gatewayColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1685,6 +1785,9 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1709,6 +1812,9 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1733,6 +1839,9 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1764,6 +1873,9 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
       customBodyRender: (value) => (
         <Typography sx={{ whiteSpace: 'break-spaces', maxWidth: '400px' }}>
           {value}
@@ -1975,6 +2087,9 @@ export const templateColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1984,6 +2099,9 @@ export const templateColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -2034,6 +2152,9 @@ export const userColumns = () => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -2052,19 +2173,34 @@ export const userColumns = () => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
 ]);
 
 export const getGroupsFormattedRow = (groups, orgs) => {
-  const formattedData = _.map(groups, (g) => ({
-    ...g,
-    display_permission_name: _.isEqual(g.id, 1)
+  const formattedData = _.map(groups, (g) => {
+    const organizationName = _.find(orgs, { organization_uuid: g.organization })
+      ? _.find(orgs, { organization_uuid: g.organization }).name
+      : '';
+
+    const displayPermissionName = _.isEqual(g.id, 1)
       ? g.name
-      : `${g.name} - ${_.find(orgs, { organization_uuid: g.organization })
-        ? _.find(orgs, { organization_uuid: g.organization }).name
-        : ''}`,
-  }));
+      : (
+        <span>
+          {g.name}
+          {' - '}
+          <span className="notranslate">{organizationName}</span>
+        </span>
+      );
+
+    return {
+      ...g,
+      display_permission_name: displayPermissionName,
+    };
+  });
 
   return _.orderBy(formattedData, 'display_permission_name', 'asc');
 };

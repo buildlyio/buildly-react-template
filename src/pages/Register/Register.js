@@ -369,8 +369,8 @@ const Register = ({ history }) => {
                     variant="outlined"
                     margin="normal"
                     fullWidth
-                    label="Organization Name"
-                    className="registerTextField"
+                    label={<Typography className="translate">Organization Name</Typography>}
+                    className="registerTextField notranslate"
                     disabled
                     {...organization_name.bind}
                   />
