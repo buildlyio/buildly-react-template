@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import _, { isArray } from 'lodash';
 import moment from 'moment-timezone';
+import ExcelJS from 'exceljs';
 import {
   Box,
   Grid,
@@ -30,6 +31,7 @@ import {
   getIcon,
   processReportsAndMarkers,
   SENSOR_REPORT_COLUMNS,
+  tempUnit,
 } from '@utils/constants';
 import ReportingActiveShipmentDetails from './components/ReportingActiveShipmentDetails';
 import ReportingDetailTable from './components/ReportingDetailTable';
@@ -49,13 +51,14 @@ import { getSensorAlertQuery } from '@react-query/queries/sensorGateways/getSens
 import { getSensorProcessedDataQuery } from '@react-query/queries/sensorGateways/getSensorProcessedDataQuery';
 import { useReportPDFDownloadMutation } from '@react-query/mutations/notifications/reportPDFDownloadMutation';
 import useAlert from '@hooks/useAlert';
-import { useStore } from '@zustand/timezone/timezoneStore';
-import './ReportingStyles.css';
+import { useStore as useTimezoneStore } from '@zustand/timezone/timezoneStore';
+import { useStore as useReportPdfStore } from '@zustand/reportPdf/reportPdfStore';
 import { isDesktop2 } from '@utils/mediaQuery';
-import GenerateReport from './components/GenerateReport';
 import { getTimezone } from '@utils/utilMethods';
-import ExcelJS from 'exceljs';
+import GenerateReport from './components/GenerateReport';
 import ReportGraph from './components/ReportGraph';
+import ReportMap from './components/ReportMap';
+import './ReportingStyles.css';
 
 const Reporting = () => {
   const location = useLocation();
@@ -72,7 +75,6 @@ const Reporting = () => {
   const [markers, setMarkers] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState({});
   const [isLoading, setLoading] = useState(false);
-  const [isGenerateReportLoading, setGenerateReportLoading] = useState(false);
   const [showGenerateReport, setShowGenerateReport] = useState(false);
   const reportingDetailTableRef = useRef();
   const mapRef = useRef();
@@ -83,7 +85,8 @@ const Reporting = () => {
   const batteryGraphRef = useRef();
 
   const { displayAlert } = useAlert();
-  const { data: timeZone } = useStore();
+  const { data: timeZone } = useTimezoneStore();
+  const { data: reportURLData, setData: setReportURLData } = useReportPdfStore();
 
   let isShipmentDataAvailable = false;
 
@@ -167,7 +170,7 @@ const Reporting = () => {
     },
   );
 
-  const { mutate: reportPDFDownloadMutation, isLoading: isReportPDFDownloading } = useReportPDFDownloadMutation(displayAlert);
+  const { mutate: reportPDFDownloadMutation, isLoading: isReportPDFDownloading } = useReportPDFDownloadMutation(reportURLData, setReportURLData, displayAlert);
 
   useEffect(() => {
     if (location.search) {
@@ -286,7 +289,7 @@ const Reporting = () => {
   };
 
   const downloadCSV = () => {
-    const columns = SENSOR_REPORT_COLUMNS(unitData, selectedShipment);
+    const columns = SENSOR_REPORT_COLUMNS(unitData, selectedShipment).filter((col) => col.options.display !== false);
     const data = _.orderBy(
       reports,
       (item) => moment(item.timestamp),
@@ -296,6 +299,9 @@ const Reporting = () => {
     const csvHeader = columns.map((col) => {
       if (col.label === 'Date Time') {
         return escapeCSV(`${col.label} (${getTimezone(new Date(), timeZone)})`);
+      }
+      if (col.name === 'battery') {
+        return escapeCSV('BATTERY (%)');
       }
       return escapeCSV(col.label);
     }).join(',');
@@ -318,7 +324,7 @@ const Reporting = () => {
     const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'SensorReportData.csv';
+    link.download = `${selectedShipment.name}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -335,7 +341,7 @@ const Reporting = () => {
       right: { style: 'thin', color: { argb: theme.palette.background.black2.replace('#', '') } },
     };
 
-    const columns = SENSOR_REPORT_COLUMNS(unitData, selectedShipment);
+    const columns = SENSOR_REPORT_COLUMNS(unitData, selectedShipment).filter((col) => col.options.display !== false);
     const rows = _.orderBy(
       reports,
       (item) => moment(item.timestamp),
@@ -355,6 +361,9 @@ const Reporting = () => {
       'Color Key',
       'Tracker ID',
       'Shipment Name',
+      'Time Intervals',
+      'Max. Thresholds',
+      'Min. Thresholds',
       'Temp. Excursions',
       'Hum. Excursions',
       'Shock Excursions',
@@ -365,6 +374,9 @@ const Reporting = () => {
       'Red, Blue indicate Excursions',
       selectedShipment.tracker,
       selectedShipment.name,
+      `Transmission: ${selectedShipment.transmission_time} min.`,
+      `Temperature: ${_.orderBy(selectedShipment.max_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`,
+      `Temperature: ${_.orderBy(selectedShipment.min_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`,
       '',
       '',
       '',
@@ -375,6 +387,9 @@ const Reporting = () => {
       'Green indicates Recovery',
       '',
       '',
+      `Measurement: ${selectedShipment.measurement_time} min.`,
+      `Humidity: ${_.orderBy(selectedShipment.max_excursion_humidity, ['set_at'], ['desc'])[0].value}%`,
+      `Humidity: ${_.orderBy(selectedShipment.min_excursion_humidity, ['set_at'], ['desc'])[0].value}%`,
       '',
       '',
       '',
@@ -383,6 +398,18 @@ const Reporting = () => {
 
     const descriptionRow3 = worksheet.addRow([
       'Grey indicates Transit',
+      '',
+      '',
+      '',
+      `Shock: ${_.orderBy(selectedShipment.shock_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} G`,
+    ]);
+
+    const descriptionRow4 = worksheet.addRow([
+      '',
+      '',
+      '',
+      '',
+      `Light: ${_.orderBy(selectedShipment.light_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} LUX`,
     ]);
 
     worksheet.addRow([]);
@@ -390,6 +417,9 @@ const Reporting = () => {
     const headerRow = worksheet.addRow(columns.map((col) => {
       if (col.label === 'Date Time') {
         return `Date Time (${getTimezone(new Date(), timeZone)})`;
+      }
+      if (col.name === 'battery') {
+        return 'BATTERY (%)';
       }
       return col.label;
     }));
@@ -417,12 +447,14 @@ const Reporting = () => {
       ],
     };
 
-    descriptionRow3.eachCell((cell) => {
-      cell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: theme.palette.background.light6.replace('#', '') },
-      };
+    descriptionRow3.eachCell((cell, colNumber) => {
+      if (colNumber === 1) {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: theme.palette.background.light6.replace('#', '') },
+        };
+      }
     });
 
     headerRow.eachCell((cell, colNumber) => {
@@ -435,7 +467,7 @@ const Reporting = () => {
         color: { argb: theme.palette.background.black2.replace('#', '') },
         bold: true,
       };
-      if ([6, 7, 8, 9, 10, 11, 12, 13].includes(colNumber)) {
+      if ([6, 7, 8, 9, 10].includes(colNumber)) {
         cell.alignment = { vertical: 'middle', horizontal: 'center' };
       }
     });
@@ -443,6 +475,7 @@ const Reporting = () => {
     const dateTimeColIndex = columns.findIndex((col) => col.label === 'Date Time') + 1;
     const departureTime = moment(selectedShipment.actual_time_of_departure).unix();
     const arrivalTime = moment(selectedShipment.actual_time_of_arrival).unix();
+    const greyRows = [];
 
     rows.forEach((row, rowIndex) => {
       const dataRow = columns.map((col) => {
@@ -460,7 +493,8 @@ const Reporting = () => {
 
       const rowRef = worksheet.addRow(dataRow);
       rowRef.eachCell((cell, colNumber) => {
-        if (columns[colNumber - 1].name === 'allAlerts' && Array.isArray(row.allAlerts)) {
+        const columnName = columns[colNumber - 1].name;
+        if (columnName === 'allAlerts' && Array.isArray(row.allAlerts)) {
           const alerts = row.allAlerts;
           const richText = [];
           alerts.forEach((alert) => {
@@ -472,6 +506,9 @@ const Reporting = () => {
         }
         if (typeof cell.value === 'number') {
           cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        }
+        if (columnName === 'lat' || columnName === 'lng') {
+          cell.alignment = { horizontal: 'left' };
         }
       });
 
@@ -516,7 +553,7 @@ const Reporting = () => {
           if (colName) {
             const colIndex = columns.findIndex((col) => col.name === colName);
             if (colIndex !== -1) {
-              const cell = worksheet.getCell(rowIndex + 7, colIndex + 1);
+              const cell = worksheet.getCell(rowIndex + 8, colIndex + 1);
               if (cell.value) {
                 cell.fill = {
                   type: 'pattern',
@@ -530,8 +567,8 @@ const Reporting = () => {
       }
 
       const dateValue = moment(row[columns[dateTimeColIndex - 1].name]).unix();
-      if (dateValue > departureTime && dateValue < arrivalTime) {
-        rowRef.eachCell((cell) => {
+      if (dateValue >= departureTime && dateValue <= arrivalTime) {
+        rowRef.eachCell((cell, colNumber) => {
           if (!cell.fill) {
             cell.fill = {
               type: 'pattern',
@@ -540,57 +577,87 @@ const Reporting = () => {
             };
           }
         });
+        greyRows.push(rowRef.number);
       }
     });
 
-    descriptionRow1.getCell(4).value = {
-      richText: [
-        { text: maxTempExcursionsCount, font: { color: { argb: theme.palette.error.main.replace('#', '') } } },
-      ],
-    };
-    descriptionRow1.getCell(5).value = {
-      richText: [
-        { text: maxHumExcursionsCount, font: { color: { argb: theme.palette.error.main.replace('#', '') } } },
-      ],
-    };
-    descriptionRow1.getCell(6).value = {
-      richText: [
-        { text: maxShockExcursionsCount, font: { color: { argb: theme.palette.error.main.replace('#', '') } } },
-      ],
-    };
-    descriptionRow1.getCell(7).value = {
-      richText: [
-        { text: maxLightExcursionsCount, font: { color: { argb: theme.palette.error.main.replace('#', '') } } },
-      ],
-    };
-    descriptionRow2.getCell(4).value = {
-      richText: [
-        { text: minTempExcursionsCount, font: { color: { argb: theme.palette.info.main.replace('#', '') } } },
-      ],
-    };
-    descriptionRow2.getCell(5).value = {
-      richText: [
-        { text: minHumExcursionsCount, font: { color: { argb: theme.palette.info.main.replace('#', '') } } },
-      ],
-    };
-    descriptionRow2.getCell(6).value = {
-      richText: [
-        { text: minShockExcursionsCount, font: { color: { argb: theme.palette.info.main.replace('#', '') } } },
-      ],
-    };
-    descriptionRow2.getCell(7).value = {
-      richText: [
-        { text: minLightExcursionsCount, font: { color: { argb: theme.palette.info.main.replace('#', '') } } },
-      ],
-    };
+    if (_.size(greyRows) > 0) {
+      const firstGreyRow = worksheet.getRow(greyRows[0]);
+      const lastGreyRow = worksheet.getRow(greyRows[greyRows.length - 1]);
+      firstGreyRow.getCell(1).value.richText.push({
+        text: ', Arrived',
+        font: { color: { argb: theme.palette.background.black2.replace('#', '') } },
+      });
+      lastGreyRow.getCell(1).value.richText.push({
+        text: ', En route',
+        font: { color: { argb: theme.palette.background.black2.replace('#', '') } },
+      });
+    }
 
-    [4, 5, 6, 7].forEach((colIndex) => {
+    if (maxTempExcursionsCount !== 0) {
+      descriptionRow1.getCell(7).value = {
+        richText: [
+          { text: maxTempExcursionsCount, font: { color: { argb: theme.palette.error.main.replace('#', '') } } },
+        ],
+      };
+    }
+    if (maxHumExcursionsCount !== 0) {
+      descriptionRow1.getCell(8).value = {
+        richText: [
+          { text: maxHumExcursionsCount, font: { color: { argb: theme.palette.error.main.replace('#', '') } } },
+        ],
+      };
+    }
+    if (maxShockExcursionsCount !== 0) {
+      descriptionRow1.getCell(9).value = {
+        richText: [
+          { text: maxShockExcursionsCount, font: { color: { argb: theme.palette.error.main.replace('#', '') } } },
+        ],
+      };
+    }
+    if (maxLightExcursionsCount !== 0) {
+      descriptionRow1.getCell(10).value = {
+        richText: [
+          { text: maxLightExcursionsCount, font: { color: { argb: theme.palette.error.main.replace('#', '') } } },
+        ],
+      };
+    }
+    if (minTempExcursionsCount !== 0) {
+      descriptionRow2.getCell(7).value = {
+        richText: [
+          { text: minTempExcursionsCount, font: { color: { argb: theme.palette.info.main.replace('#', '') } } },
+        ],
+      };
+    }
+    if (minHumExcursionsCount !== 0) {
+      descriptionRow2.getCell(8).value = {
+        richText: [
+          { text: minHumExcursionsCount, font: { color: { argb: theme.palette.info.main.replace('#', '') } } },
+        ],
+      };
+    }
+    if (minShockExcursionsCount !== 0) {
+      descriptionRow2.getCell(9).value = {
+        richText: [
+          { text: minShockExcursionsCount, font: { color: { argb: theme.palette.info.main.replace('#', '') } } },
+        ],
+      };
+    }
+    if (minLightExcursionsCount !== 0) {
+      descriptionRow2.getCell(10).value = {
+        richText: [
+          { text: minLightExcursionsCount, font: { color: { argb: theme.palette.info.main.replace('#', '') } } },
+        ],
+      };
+    }
+
+    [7, 8, 9, 10].forEach((colIndex) => {
       descriptionRow.getCell(colIndex).alignment = { vertical: 'middle', horizontal: 'center' };
       descriptionRow1.getCell(colIndex).alignment = { vertical: 'middle', horizontal: 'center' };
       descriptionRow2.getCell(colIndex).alignment = { vertical: 'middle', horizontal: 'center' };
     });
 
-    const totalRows = rows.length + 6;
+    const totalRows = rows.length + 7;
     const totalCols = columns.length;
     for (let rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
       for (let colIndex = 1; colIndex <= totalCols; colIndex++) {
@@ -618,7 +685,7 @@ const Reporting = () => {
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'SensorReportData.xlsx';
+    link.download = `${selectedShipment.name}.xlsx`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -672,9 +739,9 @@ const Reporting = () => {
             color="primary"
             className="reportingDashboardButton"
             onClick={() => setShowGenerateReport(true)}
-            disabled={isGenerateReportLoading || isReportPDFDownloading}
+            disabled={isReportPDFDownloading || _.isEmpty(selectedShipment)}
           >
-            Generate Report
+            Generate Insights Report
             <Tooltip placement="bottom" title="Beta version. Charges may apply for final version.">
               <InfoIcon fontSize="small" className="reportingDashboardButtonIcon" />
             </Tooltip>
@@ -789,7 +856,7 @@ const Reporting = () => {
               />
             )}
         </Grid>
-        <Grid item xs={12} ref={mapRef}>
+        <Grid item xs={12}>
           <div className="reportingSwitchViewSection">
             <Typography
               className="reportingSectionTitleHeading"
@@ -903,6 +970,14 @@ const Reporting = () => {
         unitOfMeasure={unitData}
         shouldScroll={!!locShipmentID}
       />
+      <ReportMap
+        ref={mapRef}
+        selectedShipment={selectedShipment}
+        markers={markers}
+        setSelectedMarker={setSelectedMarker}
+        unitOfMeasure={unitData}
+        hidden={!showGenerateReport}
+      />
       <ReportGraph
         ref={tempGraphRef}
         selectedShipment={selectedShipment}
@@ -958,12 +1033,13 @@ const Reporting = () => {
         shockGraphRef={shockGraphRef}
         lightGraphRef={lightGraphRef}
         batteryGraphRef={batteryGraphRef}
-        isGenerateReportLoading={isGenerateReportLoading}
-        setGenerateReportLoading={setGenerateReportLoading}
         downloadCSV={downloadCSV}
         downloadExcel={downloadExcel}
         reportPDFDownloadMutation={reportPDFDownloadMutation}
         selectedShipment={selectedShipment}
+        isReportPDFDownloading={isReportPDFDownloading}
+        data={reportURLData}
+        setData={setReportURLData}
       />
     </Box>
   );

@@ -64,6 +64,7 @@ const TopBar = ({
   const [showWhatsNewSlider, setShowWhatsNewSlider] = useState(false);
   const [hideAlertBadge, setHideAlertBadge] = useState(true);
   const [showAlertNotifications, setShowAlertNotifications] = useState(false);
+  const [custOrgs, setCustOrgs] = useState(null);
   const [displayOrgs, setDisplayOrgs] = useState(null);
   const [language, setLanguage] = useState(null);
   const [mainMenuOpen, setMainMenuOpen] = useState(false);
@@ -157,6 +158,7 @@ const TopBar = ({
       const resellerCustomerOrgIds = resellerOrgs.flatMap((org) => org.reseller_customer_orgs || []);
       const customerOrgs = orgs.filter((org) => resellerCustomerOrgIds.includes(org.id));
       const filteredProducerOrgs = producerOrgs.filter((producerOrg) => !customerOrgs.some((customerOrg) => _.lowerCase(customerOrg.name) === _.lowerCase(producerOrg.name)));
+      setCustOrgs(customerOrgs);
       setDisplayOrgs(filteredProducerOrgs);
     }
   };
@@ -338,8 +340,13 @@ const TopBar = ({
               }}
               onClick={(e) => setMainMenuOpen(!mainMenuOpen)}
             >
-              {!_.isEmpty(displayOrgs) && displayOrgs.map((org) => (
-                <MenuItem className="notranslate" key={org.id} value={org.name}>
+              {!_.isEmpty(displayOrgs) && [...displayOrgs, ...custOrgs].map((org) => (
+                <MenuItem
+                  className="notranslate"
+                  key={org.id}
+                  value={org.name}
+                  style={{ display: custOrgs.includes(org) && 'none' }}
+                >
                   {org.name}
                   {org.is_reseller && !_.isEmpty(org.reseller_customer_orgs) && (
                     <IconButton

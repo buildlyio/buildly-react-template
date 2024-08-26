@@ -46,6 +46,7 @@ const Shipment = ({ history }) => {
   const muiTheme = useTheme();
   const user = getUser();
   const organization = user.organization.organization_uuid;
+  const userLanguage = user.user_language;
 
   const { displayAlert } = useAlert();
   const { data } = useStore();
@@ -800,6 +801,7 @@ const Shipment = ({ history }) => {
                 _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
                   ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
                   : '',
+                userLanguage,
               ),
               {
                 name: 'battery_levels',
@@ -808,28 +810,30 @@ const Shipment = ({ history }) => {
                   sort: true,
                   sortThirdClickReset: true,
                   filter: true,
+                  setCellProps: () => ({
+                    style: {
+                      width: '300px',
+                      maxWidth: '300px',
+                    },
+                  }),
                   customBodyRenderLite: (dataIndex) => {
                     const ship = rows[dataIndex];
                     const tTime = _.find(TIVE_GATEWAY_TIMES, { value: ship.transmission_time });
                     const mTime = _.find(TIVE_GATEWAY_TIMES, { value: ship.measurement_time });
 
                     return (
-                      <Grid container spacing={1}>
-                        <Grid item xs={4} className="shipmentGridTimeCenter">
+                      <Grid container>
+                        <Grid item className="shipmentGridTimeCenter">
                           <Typography variant="body1">
                             {ship.battery_levels}
                           </Typography>
                         </Grid>
-                        <Grid item xs={8}>
+                        <Grid item flex={1}>
                           <Typography variant="body1">
-                            T:
-                            {' '}
-                            {tTime ? tTime.short_label : 'N/A'}
+                            {`T: ${tTime ? tTime.short_label : 'N/A'}`}
                           </Typography>
                           <Typography variant="body1">
-                            M:
-                            {' '}
-                            {mTime ? mTime.short_label : 'N/A'}
+                            {`M: ${mTime ? mTime.short_label : 'N/A'}`}
                           </Typography>
                         </Grid>
                       </Grid>
