@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useCallback, useEffect, useState } from 'react';
 import Geocode from 'react-geocode';
@@ -97,6 +98,7 @@ const CreateShipment = ({ history, location }) => {
   const user = getUser();
   const organization = user && user.organization;
   const organizationUuid = organization && organization.organization_uuid;
+  const userLanguage = user.user_language;
   const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
 
   const { displayAlert } = useAlert();
@@ -151,35 +153,65 @@ const CreateShipment = ({ history, location }) => {
   const [items, setItems] = useState((!_.isEmpty(editData) && editData.items) || []);
   const [itemRows, setItemRows] = useState([]);
 
+  const minExcursionTempData = !_.isEmpty(editData)
+    ? _.orderBy(editData.min_excursion_temp, 'set_at', 'desc')[0].value
+    : undefined;
+  const maxExcursionTempData = !_.isEmpty(editData)
+    ? _.orderBy(editData.max_excursion_temp, 'set_at', 'desc')[0].value
+    : undefined;
+  const minExcursionHumData = !_.isEmpty(editData)
+    ? _.orderBy(editData.min_excursion_humidity, 'set_at', 'desc')[0].value
+    : undefined;
+  const maxExcursionHumData = !_.isEmpty(editData)
+    ? _.orderBy(editData.max_excursion_humidity, 'set_at', 'desc')[0].value
+    : undefined;
+  const shockThresholdData = !_.isEmpty(editData)
+    ? _.orderBy(editData.shock_threshold, 'set_at', 'desc')[0].value
+    : undefined;
+  const lightThresholdData = !_.isEmpty(editData)
+    ? _.orderBy(editData.light_threshold, 'set_at', 'desc')[0].value
+    : undefined;
   const min_excursion_temp = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.min_excursion_temp, 'set_at', 'desc')[0].value)
-    || (organization && organization.default_min_temperature)
-    || 0,
+    minExcursionTempData !== undefined && minExcursionTempData !== null
+      ? minExcursionTempData
+      : organization && organization.default_min_temperature !== undefined && organization.default_min_temperature !== null
+        ? organization.default_min_temperature
+        : 0,
   );
   const max_excursion_temp = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.max_excursion_temp, 'set_at', 'desc')[0].value)
-    || (organization && organization.default_max_temperature)
-    || 100,
+    maxExcursionTempData !== undefined && maxExcursionTempData !== null
+      ? maxExcursionTempData
+      : organization && organization.default_max_temperature !== undefined && organization.default_max_temperature !== null
+        ? organization.default_max_temperature
+        : 100,
   );
   const min_excursion_humidity = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.min_excursion_humidity, 'set_at', 'desc')[0].value)
-    || (organization && organization.default_min_humidity)
-    || 0,
+    minExcursionHumData !== undefined && minExcursionHumData !== null
+      ? minExcursionHumData
+      : organization && organization.default_min_humidity !== undefined && organization.default_min_humidity !== null
+        ? organization.default_min_humidity
+        : 0,
   );
   const max_excursion_humidity = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.max_excursion_humidity, 'set_at', 'desc')[0].value)
-    || (organization && organization.default_max_humidity)
-    || 100,
+    maxExcursionHumData !== undefined && maxExcursionHumData !== null
+      ? maxExcursionHumData
+      : organization && organization.default_max_humidity !== undefined && organization.default_max_humidity !== null
+        ? organization.default_max_humidity
+        : 100,
   );
   const shock_threshold = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.shock_threshold, 'set_at', 'desc')[0].value)
-    || (organization && organization.default_shock)
-    || 4,
+    shockThresholdData !== undefined && shockThresholdData !== null
+      ? shockThresholdData
+      : organization && organization.default_shock !== undefined && organization.default_shock !== null
+        ? organization.default_shock
+        : 4,
   );
   const light_threshold = useInput(
-    (!_.isEmpty(editData) && _.orderBy(editData.light_threshold, 'set_at', 'desc')[0].value)
-    || (organization && organization.default_light)
-    || 5,
+    lightThresholdData !== undefined && lightThresholdData !== null
+      ? lightThresholdData
+      : organization && organization.default_light !== undefined && organization.default_light !== null
+        ? organization.default_light
+        : 5,
   );
 
   const supressTempAlerts = useInput(
@@ -1323,7 +1355,7 @@ const CreateShipment = ({ history, location }) => {
               </Grid>
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 2 : 0}>
                 <TextField
-                  className="notranslate"
+                  className={_.lowerCase(userLanguage) !== 'english' ? 'translate' : 'notranslate'}
                   variant="outlined"
                   id="status"
                   select
@@ -1340,23 +1372,23 @@ const CreateShipment = ({ history, location }) => {
                 >
                   <MenuItem value="">Select</MenuItem>
                   {_.isEmpty(editData) && _.map(CREATE_SHIPMENT_STATUS, (st, idx) => (
-                    <MenuItem className="notranslate" key={`${idx}-${st.label}`} value={st.value}>
+                    <MenuItem className={_.lowerCase(userLanguage) !== 'english' ? 'translate' : 'notranslate'} key={`${idx}-${st.label}`} value={st.value}>
                       {st.label}
                     </MenuItem>
                   ))}
                   {!_.isEmpty(editData) && !cannotEdit && !isAdmin && _.map(USER_SHIPMENT_STATUS, (st, idx) => (
-                    <MenuItem className="notranslate" key={`${idx}-${st.label}`} value={st.value}>
+                    <MenuItem className={_.lowerCase(userLanguage) !== 'english' ? 'translate' : 'notranslate'} key={`${idx}-${st.label}`} value={st.value}>
                       {st.label}
                     </MenuItem>
                   ))}
                   {!_.isEmpty(editData) && ((cannotEdit && !isAdmin) || (!cannotEdit && isAdmin))
                     && _.map([...CREATE_SHIPMENT_STATUS, ...ADMIN_SHIPMENT_STATUS], (st, idx) => (
-                      <MenuItem className="notranslate" key={`${idx}-${st.label}`} value={st.value}>
+                      <MenuItem className={_.lowerCase(userLanguage) !== 'english' ? 'translate' : 'notranslate'} key={`${idx}-${st.label}`} value={st.value}>
                         {st.label}
                       </MenuItem>
                     ))}
                   {!_.isEmpty(editData) && cannotEdit && isAdmin && _.map([...ADMIN_SHIPMENT_STATUS], (st, idx) => (
-                    <MenuItem className="notranslate" key={`${idx}-${st.label}`} value={st.value}>
+                    <MenuItem className={_.lowerCase(userLanguage) !== 'english' ? 'translate' : 'notranslate'} key={`${idx}-${st.label}`} value={st.value}>
                       {st.label}
                     </MenuItem>
                   ))}

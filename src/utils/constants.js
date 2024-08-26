@@ -570,6 +570,7 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
   {
     name: 'name',
     label: 'Shipment Name',
+    className: 'notranslate',
   },
   {
     name: 'status',
@@ -602,6 +603,7 @@ export const SHIPMENT_OVERVIEW_COLUMNS = [
   {
     name: 'custodian_name',
     label: 'Custodian Name',
+    className: 'notranslate',
   },
   {
     name: 'custody_info',
@@ -667,6 +669,97 @@ export const getIcon = (item) => {
         <Tooltip title={title || _.capitalize(id)} placement="right">
           <AccessTimeIcon style={{ fill: color }} />
         </Tooltip>
+      );
+
+    default:
+      return null;
+  }
+};
+
+export const getIconWithCount = (item) => {
+  const {
+    id, color, title, count,
+  } = item;
+  switch (id) {
+    case 'temperature':
+    case 'probe':
+      return (
+        <>
+          <Tooltip title={title || _.capitalize(id)} placement="right">
+            <TempIcon style={{ fill: color }} />
+          </Tooltip>
+          {`(${count})`}
+        </>
+      );
+
+    case 'light':
+      return (
+        <>
+          <Tooltip title={title || _.capitalize(id)} placement="right">
+            <LightIcon style={{ fill: color }} />
+          </Tooltip>
+          {`(${count})`}
+        </>
+      );
+
+    case 'shock':
+      return (
+        <>
+          <Tooltip title={title || _.capitalize(id)} placement="right">
+            <ShockIcon style={{ fill: color }} />
+          </Tooltip>
+          {`(${count})`}
+        </>
+      );
+
+    case 'tilt':
+      return (
+        <>
+          <Tooltip title={title || _.capitalize(id)} placement="right">
+            <TiltIcon fill={color} />
+          </Tooltip>
+          {`(${count})`}
+        </>
+      );
+
+    case 'humidity':
+      return (
+        <>
+          <Tooltip title={title || _.capitalize(id)} placement="right">
+            <HumidIcon style={{ fill: color }} />
+          </Tooltip>
+          {`(${count})`}
+        </>
+      );
+
+    case 'battery':
+      return (
+        <>
+          <Tooltip title={title || _.capitalize(id)} placement="right">
+            <BatteryIcon style={{ fill: color }} />
+          </Tooltip>
+          {`(${count})`}
+        </>
+      );
+
+    case 'pressure':
+      return (
+        <>
+          <Tooltip title={title || _.capitalize(id)} placement="right">
+            <PressureIcon fill={color} />
+          </Tooltip>
+          {`(${count})`}
+        </>
+      );
+
+    case 'time':
+      return (
+        <>
+          <Tooltip title={title || _.capitalize(id)} placement="right">
+            <AccessTimeIcon style={{ fill: color }} />
+          </Tooltip>
+          {`(${count})`}
+        </>
       );
 
     default:
@@ -1777,7 +1870,7 @@ export const GATEWAY_STATUS = [
   { value: 'in-transit', name: 'In-transit' },
 ];
 
-export const shipmentColumns = (timezone, dateFormat) => ([
+export const shipmentColumns = (timezone, dateFormat, language) => ([
   {
     name: 'status',
     label: 'Status',
@@ -1786,7 +1879,7 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       sortThirdClickReset: true,
       filter: true,
       setCellProps: () => ({
-        className: 'notranslate',
+        className: _.lowerCase(language) === 'english' ? 'notranslate' : 'translate',
       }),
     },
   },
@@ -1854,7 +1947,14 @@ export const shipmentColumns = (timezone, dateFormat) => ([
       customBodyRender: (value) => (
         !_.isEmpty(value)
           ? (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                width: 50,
+                flexWrap: 'wrap',
+              }}
+            >
               {_.map(value, (item, idx) => (
                 <div key={`icon-${idx}-${item.id}`}>
                   {getIcon(item)}
