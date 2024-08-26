@@ -903,7 +903,7 @@ const Shipment = ({ history }) => {
                                 <Typography fontWeight={700}>
                                   Status:
                                 </Typography>
-                                <Typography>
+                                <Typography className="notranslate">
                                   {ship.type}
                                 </Typography>
                               </Grid>
