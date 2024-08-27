@@ -31,9 +31,11 @@ export const ReportMap = forwardRef((props, ref) => {
         <MapComponent
           isMarkerShown={!_.isEmpty(markers)}
           showPath
+          screenshotMapCenter
+          noInfoIndex
           markers={markers}
           googleMapURL={window.env.MAP_API_URL}
-          zoom={6}
+          zoom={7}
           setSelectedMarker={setSelectedMarker}
           loadingElement={<div style={{ height: '100%' }} />}
           containerElement={<div style={{ height: '625px' }} />}

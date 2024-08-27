@@ -163,7 +163,7 @@ const GenerateReport = ({
       <FormModal
         open={open}
         handleClose={closeFormModal}
-        title="Generate Insights Report"
+        title="Insights Report"
         openConfirmModal={openConfirmModal}
         setConfirmModal={setConfirmModal}
         handleConfirmModal={discardFormData}
@@ -199,35 +199,37 @@ const GenerateReport = ({
                     )}
                     label="Excel File"
                   />
-                  <FormControlLabel
-                    control={(
-                      <Checkbox
-                        checked={selectedFormats.pdf}
-                        onChange={handleFormatChange}
-                        name="pdf"
-                        disabled={(_.isEmpty(selectedReport) || (!_.isEmpty(selectedReport) && !selectedReport.pdfUrl))}
-                      />
-                    )}
-                    label={!_.isEmpty(selectedReport) ? 'PDF File' : 'PDF report (generate may take several minutes)'}
-                  />
+                  {!(_.isEmpty(selectedReport) || (!_.isEmpty(selectedReport) && !selectedReport.pdfUrl)) && (
+                    <FormControlLabel
+                      control={(
+                        <Checkbox
+                          checked={selectedFormats.pdf}
+                          onChange={handleFormatChange}
+                          name="pdf"
+                        />
+                      )}
+                      label={!_.isEmpty(selectedReport) ? 'PDF File' : 'PDF Report (Processing may take several minutes)'}
+                    />
+                  )}
                 </FormGroup>
               </FormControl>
             </Grid>
           </Grid>
           <Grid container spacing={2} justifyContent="center">
-            <Grid item xs={12} sm={3}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className="generateReportButton"
-                disabled={isReportPDFDownloading || (!_.isEmpty(selectedReport) && selectedReport.pdfUrl)}
-                onClick={generatePdfReport}
-              >
-                Generate PDF Report
-              </Button>
-            </Grid>
+            {!(isReportPDFDownloading || (!_.isEmpty(selectedReport) && selectedReport.pdfUrl)) && (
+              <Grid item xs={12} sm={3}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className="generateReportButton"
+                  onClick={generatePdfReport}
+                >
+                  Generate PDF Report
+                </Button>
+              </Grid>
+            )}
             <Grid item xs={12} sm={3}>
               <Button
                 type="submit"
