@@ -27,7 +27,7 @@ import {
 
 export const MapComponent = (props) => {
   const {
-    markers, setSelectedMarker, geofence, unitOfMeasure, allMarkers, zoom,
+    markers, setSelectedMarker, geofence, unitOfMeasure, allMarkers, zoom, screenshotMapCenter, noInfoIndex,
   } = props;
   const [center, setCenter] = useState({
     lat: 47.606209,
@@ -38,7 +38,12 @@ export const MapComponent = (props) => {
   const [polygon, setPolygon] = useState({});
 
   useEffect(() => {
-    setMapCenter('');
+    if (screenshotMapCenter) {
+      const meanCenter = { lat: _.mean(_.map(markers, 'lat')), lng: _.mean(_.map(markers, 'lng')) };
+      setMapCenter(meanCenter);
+    } else {
+      setMapCenter('');
+    }
   }, [unitOfMeasure]);
 
   useEffect(() => {
@@ -133,19 +138,35 @@ export const MapComponent = (props) => {
 
   const overlapCounts = groupMarkersByLocation(_.flatten(allMarkers));
 
-  return (
-    <RenderedMap
-      {...props}
-      theme={useTheme()}
-      onMarkerDrag={onMarkerDrag}
-      center={center}
-      mapZoom={mapZoom}
-      polygon={polygon}
-      showInfoIndex={showInfoIndex}
-      onMarkerSelect={onMarkerSelect}
-      unitOfMeasure={unitOfMeasure}
-      overlapCounts={overlapCounts}
-    />
+  return (noInfoIndex
+    ? (
+      <RenderedMap
+        {...props}
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        theme={useTheme()}
+        onMarkerDrag={onMarkerDrag}
+        center={center}
+        mapZoom={mapZoom}
+        polygon={polygon}
+        onMarkerSelect={onMarkerSelect}
+        unitOfMeasure={unitOfMeasure}
+        overlapCounts={overlapCounts}
+      />
+    ) : (
+      <RenderedMap
+        {...props}
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        theme={useTheme()}
+        onMarkerDrag={onMarkerDrag}
+        center={center}
+        mapZoom={mapZoom}
+        polygon={polygon}
+        showInfoIndex={showInfoIndex}
+        onMarkerSelect={onMarkerSelect}
+        unitOfMeasure={unitOfMeasure}
+        overlapCounts={overlapCounts}
+      />
+    )
   );
 };
 

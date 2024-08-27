@@ -22,7 +22,7 @@ const ReportGraph = forwardRef((props, ref) => {
     <div ref={ref}>
       <Grid
         container
-        className={_.isEqual(hidden, true) && 'reportingContainer2'}
+        className={!!hidden && 'reportingContainer2'}
         sx={{ marginTop: 4 }}
       >
         <div className="reportingSwitchViewSection">
