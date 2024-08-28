@@ -295,10 +295,14 @@ const Reporting = () => {
       (item) => moment(item.timestamp),
       ['desc'],
     );
+    const rows = _.cloneDeep(data);
     const escapeCSV = (text) => `"${text}"`;
     const csvHeader = columns.map((col) => {
       if (col.label === 'Date Time') {
         return escapeCSV(`${col.label} (${getTimezone(new Date(), timeZone)})`);
+      }
+      if (col.name === 'temperature') {
+        return escapeCSV(`TEMP ${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`);
       }
       if (col.name === 'battery') {
         return escapeCSV('BATTERY (%)');
@@ -309,18 +313,18 @@ const Reporting = () => {
     const dateTimeColumnIndex = columns.findIndex((col) => col.label === 'Date Time');
     const departureTime = moment(selectedShipment.actual_time_of_departure).unix();
     const arrivalTime = moment(selectedShipment.actual_time_of_arrival).unix();
-    const rowsWithinTimeRange = data.filter((row) => {
+    const rowsWithinTimeRange = rows.filter((row) => {
       const dateTimeValue = moment(row[columns[dateTimeColumnIndex].name]).unix();
       return dateTimeValue >= departureTime && dateTimeValue <= arrivalTime;
     });
     if (_.size(rowsWithinTimeRange) > 0) {
-      const firstRowIndex = data.findIndex((row) => row === rowsWithinTimeRange[0]);
-      const lastRowIndex = data.findIndex((row) => row === rowsWithinTimeRange[_.size(rowsWithinTimeRange) - 1]);
-      data[firstRowIndex].allAlerts.push({ title: 'Arrived', color: '#000' });
-      data[lastRowIndex].allAlerts.push({ title: 'En route', color: '#000' });
+      const firstRowIndex = rows.findIndex((row) => row === rowsWithinTimeRange[0]);
+      const lastRowIndex = rows.findIndex((row) => row === rowsWithinTimeRange[_.size(rowsWithinTimeRange) - 1]);
+      rows[firstRowIndex].allAlerts.push({ title: 'Arrived', color: '#000' });
+      rows[lastRowIndex].allAlerts.push({ title: 'En route', color: '#000' });
     }
 
-    const csvBody = data.map((row) => columns.map((col, colIndex) => {
+    const csvBody = rows.map((row) => columns.map((col, colIndex) => {
       let cell = row[col.name];
       if (!row.location || row.location === 'Error retrieving address') {
         row.location = 'N/A';
@@ -357,11 +361,27 @@ const Reporting = () => {
     };
 
     const columns = SENSOR_REPORT_COLUMNS(unitData, selectedShipment).filter((col) => col.options.display !== false);
-    const rows = _.orderBy(
+    const data = _.orderBy(
       reports,
       (item) => moment(item.timestamp),
       ['desc'],
     );
+    const rows = _.cloneDeep(data);
+    const selectedItems = !_.isEmpty(itemData) && itemData.filter((obj) => selectedShipment.items.includes(obj.url));
+
+    const custodiansArray = selectedShipment.custody_info.map((info) => {
+      const custodianContact = selectedShipment.contact_info.find((contact) => info.custodian_data.contact_data.includes(contact.url)) || {};
+      return {
+        custodian_name: info.custodian_name,
+        custodian_type: info.custodian_data.custodian_type.includes(1) ? 'Shipper' : info.custodian_data.custodian_type.includes(2) ? 'Logistics Provider' : info.custodian_data.custodian_type.includes(3) ? 'Warehouse' : 'Receiver',
+        custodian_address: `${custodianContact.address1}, ${custodianContact.city}, ${custodianContact.state}, ${custodianContact.country}, ${custodianContact.postal_code}`,
+      };
+    });
+    const sortedCustodiansArray = _.sortBy(custodiansArray, (custodian) => {
+      if (custodian.custodian_type === 'Shipper') return 0;
+      if (custodian.custodian_type === 'Receiver') return 2;
+      return 1;
+    });
 
     let maxTempExcursionsCount = 0;
     let maxHumExcursionsCount = 0;
@@ -376,42 +396,15 @@ const Reporting = () => {
       'Color Key',
       'Tracker ID',
       'Shipment Name',
+      'Item Name(s)',
+      'Custodian Type',
+      'Custodian Name',
+      'Custodian Address',
       'Tracker Intervals',
       'Max. / Min. Thresholds',
       'Excursions',
+      'Shipment Status',
     ]);
-
-    const descriptionRow1 = worksheet.addRow([
-      'Red, Blue indicate Excursions',
-      selectedShipment.tracker,
-      selectedShipment.name,
-      `Transmission: ${selectedShipment.transmission_time} min.`,
-    ]);
-
-    const descriptionRow2 = worksheet.addRow([
-      'Green indicates Recovery',
-      '',
-      '',
-      `Measurement: ${selectedShipment.measurement_time} min.`,
-    ]);
-
-    const descriptionRow3 = worksheet.addRow([
-      'Grey indicates Transit',
-    ]);
-
-    const descriptionRow4 = worksheet.addRow([]);
-
-    worksheet.addRow([]);
-
-    const headerRow = worksheet.addRow(columns.map((col) => {
-      if (col.label === 'Date Time') {
-        return `Date Time (${getTimezone(new Date(), timeZone)})`;
-      }
-      if (col.name === 'battery') {
-        return 'BATTERY (%)';
-      }
-      return col.label;
-    }));
 
     descriptionRow.eachCell((cell) => {
       cell.font = {
@@ -419,6 +412,20 @@ const Reporting = () => {
         bold: true,
       };
     });
+
+    const descriptionRow1 = worksheet.addRow([
+      '',
+      selectedShipment.tracker,
+      selectedShipment.name,
+      `${!_.isEmpty(selectedItems) ? selectedItems.map((obj) => obj.name).join(', ') : ''}`,
+      sortedCustodiansArray[0].custodian_type,
+      sortedCustodiansArray[0].custodian_name,
+      sortedCustodiansArray[0].custodian_address,
+      `Transmission: ${selectedShipment.transmission_time} min.`,
+      '',
+      '',
+      selectedShipment.status,
+    ]);
 
     descriptionRow1.getCell(1).value = {
       richText: [
@@ -429,12 +436,89 @@ const Reporting = () => {
       ],
     };
 
+    descriptionRow1.getCell(9).value = {
+      richText: [
+        { text: 'Temperature:' },
+        {
+          text: ` ${_.orderBy(selectedShipment.max_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))} `,
+          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+        },
+        {
+          text: ` ${_.orderBy(selectedShipment.min_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))} `,
+          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+        },
+      ],
+    };
+
+    descriptionRow1.getCell(10).value = {
+      richText: [
+        { text: 'Temperature:' },
+        {
+          text: maxTempExcursionsCount > 0 ? ` ${maxTempExcursionsCount} ` : '',
+          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+        },
+        {
+          text: minTempExcursionsCount > 0 ? ` ${minTempExcursionsCount} ` : '',
+          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+        },
+      ],
+    };
+
+    const descriptionRow2 = worksheet.addRow([
+      '',
+      '',
+      '',
+      '',
+      sortedCustodiansArray[1].custodian_type,
+      sortedCustodiansArray[1].custodian_name,
+      sortedCustodiansArray[1].custodian_address,
+      `Measurement: ${selectedShipment.measurement_time} min.`,
+    ]);
+
     descriptionRow2.getCell(1).value = {
       richText: [
         { text: 'Green', font: { color: { argb: theme.palette.success.main.replace('#', '') } } },
         { text: ' indicates Recovery', font: { color: { argb: theme.palette.background.black2.replace('#', '') } } },
       ],
     };
+
+    descriptionRow2.getCell(9).value = {
+      richText: [
+        { text: 'Humidity:' },
+        {
+          text: ` ${_.orderBy(selectedShipment.max_excursion_humidity, ['set_at'], ['desc'])[0].value}% `,
+          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+        },
+        {
+          text: ` ${_.orderBy(selectedShipment.min_excursion_humidity, ['set_at'], ['desc'])[0].value}% `,
+          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+        },
+      ],
+    };
+
+    descriptionRow2.getCell(10).value = {
+      richText: [
+        { text: 'Humidity:' },
+        {
+          text: maxHumExcursionsCount > 0 ? ` ${maxHumExcursionsCount} ` : '',
+          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+        },
+        {
+          text: minHumExcursionsCount > 0 ? ` ${minHumExcursionsCount} ` : '',
+          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+        },
+      ],
+    };
+
+    const descriptionRow3 = worksheet.addRow([
+      'Grey indicates Transit',
+      '',
+      '',
+      '',
+      _.size(sortedCustodiansArray) > 2 ? sortedCustodiansArray[2].custodian_type : '',
+      _.size(sortedCustodiansArray) > 2 ? sortedCustodiansArray[2].custodian_name : '',
+      _.size(sortedCustodiansArray) > 2 ? sortedCustodiansArray[2].custodian_address : '',
+    ]);
 
     descriptionRow3.eachCell((cell, colNumber) => {
       if (colNumber === 1) {
@@ -445,6 +529,81 @@ const Reporting = () => {
         };
       }
     });
+
+    descriptionRow3.getCell(9).value = {
+      richText: [
+        { text: 'Shock:' },
+        {
+          text: ` ${_.orderBy(selectedShipment.shock_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} G`,
+          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+        },
+      ],
+    };
+
+    descriptionRow3.getCell(10).value = {
+      richText: [
+        { text: 'Shock:' },
+        {
+          text: maxShockExcursionsCount > 0 ? ` ${maxShockExcursionsCount} ` : '',
+          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+        },
+        {
+          text: minShockExcursionsCount > 0 ? ` ${minShockExcursionsCount} ` : '',
+          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+        },
+      ],
+    };
+
+    const descriptionRow4 = worksheet.addRow([]);
+
+    descriptionRow4.getCell(5).value = _.size(sortedCustodiansArray) > 3 ? sortedCustodiansArray[3].custodian_type : '';
+    descriptionRow4.getCell(6).value = _.size(sortedCustodiansArray) > 3 ? sortedCustodiansArray[3].custodian_name : '';
+    descriptionRow4.getCell(7).value = _.size(sortedCustodiansArray) > 3 ? sortedCustodiansArray[3].custodian_address : '';
+
+    descriptionRow4.getCell(9).value = {
+      richText: [
+        { text: 'Light:' },
+        {
+          text: ` ${_.orderBy(selectedShipment.light_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} LUX`,
+          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+        },
+      ],
+    };
+
+    descriptionRow4.getCell(10).value = {
+      richText: [
+        { text: 'Light:' },
+        {
+          text: maxLightExcursionsCount > 0 ? ` ${maxLightExcursionsCount} ` : '',
+          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+        },
+        {
+          text: minLightExcursionsCount > 0 ? ` ${minLightExcursionsCount} ` : '',
+          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+        },
+      ],
+    };
+
+    sortedCustodiansArray.forEach((custodian, index) => {
+      if (index > 3) {
+        const descriptionRows = worksheet.addRow([]);
+        descriptionRows.getCell(5).value = custodian.custodian_type;
+        descriptionRows.getCell(6).value = custodian.custodian_name;
+        descriptionRows.getCell(7).value = custodian.custodian_address;
+      }
+    });
+
+    worksheet.addRow([]);
+
+    const headerRow = worksheet.addRow(columns.map((col) => {
+      if (col.label === 'Date Time') {
+        return `Date Time(${getTimezone(new Date(), timeZone)})`;
+      }
+      if (col.name === 'battery') {
+        return 'BATTERY (%)';
+      }
+      return col.label;
+    }));
 
     headerRow.eachCell((cell, colNumber) => {
       cell.fill = {
@@ -542,7 +701,7 @@ const Reporting = () => {
           if (colName) {
             const colIndex = columns.findIndex((col) => col.name === colName);
             if (colIndex !== -1) {
-              const cell = worksheet.getCell(rowIndex + 8, colIndex + 1);
+              const cell = worksheet.getCell(_.size(sortedCustodiansArray) <= 4 ? rowIndex + 8 : rowIndex + 8 + _.size(sortedCustodiansArray) - 4, colIndex + 1);
               if (cell.value) {
                 cell.fill = {
                   type: 'pattern',
@@ -570,118 +729,47 @@ const Reporting = () => {
       }
     });
 
-    descriptionRow1.getCell(5).value = {
-      richText: [
-        { text: 'Temperature:' },
-        {
-          text: ` ${_.orderBy(selectedShipment.max_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`,
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: ` ${_.orderBy(selectedShipment.min_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`,
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
+    if (_.size(greyRows) > 0) {
+      const firstGreyRow = worksheet.getRow(greyRows[0]);
+      const lastGreyRow = worksheet.getRow(greyRows[greyRows.length - 1]);
 
-    descriptionRow2.getCell(5).value = {
-      richText: [
-        { text: 'Humidity:' },
-        {
-          text: ` ${_.orderBy(selectedShipment.max_excursion_humidity, ['set_at'], ['desc'])[0].value}%`,
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: ` ${_.orderBy(selectedShipment.min_excursion_humidity, ['set_at'], ['desc'])[0].value}%`,
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
+      let firstGreyRowRichText = firstGreyRow.getCell(1).value.richText;
+      let lastGreyRowRichText = lastGreyRow.getCell(1).value.richText;
 
-    descriptionRow3.getCell(5).value = {
-      richText: [
-        { text: 'Shock:' },
-        {
-          text: ` ${_.orderBy(selectedShipment.shock_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} G`,
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-      ],
-    };
+      if (_.size(firstGreyRowRichText) > 0) {
+        firstGreyRowRichText = [
+          ...firstGreyRowRichText,
+          {
+            text: ', Arrived',
+            font: { color: { argb: theme.palette.background.black2.replace('#', '') } },
+          },
+        ];
+      } else {
+        firstGreyRowRichText = [
+          { text: 'Arrived', font: { color: { argb: theme.palette.background.black2.replace('#', '') } } },
+        ];
+      }
 
-    descriptionRow4.getCell(5).value = {
-      richText: [
-        { text: 'Light:' },
-        {
-          text: ` ${_.orderBy(selectedShipment.light_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} LUX`,
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-      ],
-    };
+      if (_.size(lastGreyRowRichText) > 0) {
+        lastGreyRowRichText = [
+          ...lastGreyRowRichText,
+          {
+            text: ', En route',
+            font: { color: { argb: theme.palette.background.black2.replace('#', '') } },
+          },
+        ];
+      } else {
+        lastGreyRowRichText = [
+          { text: 'En route', font: { color: { argb: theme.palette.background.black2.replace('#', '') } } },
+        ];
+      }
 
-    descriptionRow1.getCell(6).value = {
-      richText: [
-        { text: 'Temperature:' },
-        {
-          text: maxTempExcursionsCount > 0 ? ` ${maxTempExcursionsCount}` : '',
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: minTempExcursionsCount > 0 ? ` ${minTempExcursionsCount}` : '',
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
+      firstGreyRow.getCell(1).value = { richText: firstGreyRowRichText };
+      lastGreyRow.getCell(1).value = { richText: lastGreyRowRichText };
+    }
 
-    descriptionRow2.getCell(6).value = {
-      richText: [
-        { text: 'Humidity:' },
-        {
-          text: maxHumExcursionsCount > 0 ? ` ${maxHumExcursionsCount}` : '',
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: minHumExcursionsCount > 0 ? ` ${minHumExcursionsCount}` : '',
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
-
-    descriptionRow3.getCell(6).value = {
-      richText: [
-        { text: 'Shock:' },
-        {
-          text: maxShockExcursionsCount > 0 ? ` ${maxShockExcursionsCount}` : '',
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: minShockExcursionsCount > 0 ? ` ${minShockExcursionsCount}` : '',
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
-
-    descriptionRow4.getCell(6).value = {
-      richText: [
-        { text: 'Light:' },
-        {
-          text: maxLightExcursionsCount > 0 ? ` ${maxLightExcursionsCount}` : '',
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: minLightExcursionsCount > 0 ? ` ${minLightExcursionsCount}` : '',
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
-
-    [7, 8, 9, 10].forEach((colIndex) => {
-      descriptionRow.getCell(colIndex).alignment = { vertical: 'middle', horizontal: 'center' };
-      descriptionRow1.getCell(colIndex).alignment = { vertical: 'middle', horizontal: 'center' };
-      descriptionRow2.getCell(colIndex).alignment = { vertical: 'middle', horizontal: 'center' };
-    });
-
-    const totalRows = rows.length + 7;
-    const totalCols = columns.length;
+    const totalRows = _.size(sortedCustodiansArray) <= 4 ? rows.length + 7 : rows.length + 7 + _.size(sortedCustodiansArray) - 4;
+    const totalCols = columns.length + 1;
     for (let rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
       for (let colIndex = 1; colIndex <= totalCols; colIndex++) {
         const cell = worksheet.getCell(rowIndex, colIndex);
@@ -930,7 +1018,7 @@ const Reporting = () => {
           >
             {_.map(REPORT_TYPES(unitData), (item, index) => (
               <ListItem
-                key={`iconItem${index}${item.id}`}
+                key={`iconItem${index}${item.id} `}
                 button
                 selected={selectedGraph === item.id}
                 onClick={() => setSelectedGraph(item.id)}

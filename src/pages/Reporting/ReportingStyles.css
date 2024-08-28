@@ -28,7 +28,7 @@
   margin-top: 20px;
   margin-bottom: 24px;
   position: absolute;
-  top: -999px;
+  top: -9999px;
 }
 
 @media screen and (max-width: 600px) {
@@ -195,25 +195,21 @@
   background-color: var(--color-palette-primary-dark) !important;
 }
 
-.reportingDetailTableHeader > * {
+.reportingDetailTableHeader>* {
   border: 1px solid var(--color-palette-background-black);
 }
 
-.reportingDetailTableContainer
-  .reportingDetailTableBody:nth-child(even)
-  #itemText {
+.reportingDetailTableContainer .reportingDetailTableBody:nth-child(even) #itemText {
   background-color: var(--color-palette-background-light2);
   padding: 5px;
 }
 
-.reportingDetailTableContainer
-  .reportingDetailTableBody:nth-child(odd)
-  #itemText {
+.reportingDetailTableContainer .reportingDetailTableBody:nth-child(odd) #itemText {
   background-color: var(--color-palette-background-light5);
   padding: 5px;
 }
 
-.reportingDetailTableContainer .reportingDetailTableBody > * {
+.reportingDetailTableContainer .reportingDetailTableBody>* {
   border: 1px solid var(--color-palette-background-black);
 }
 
