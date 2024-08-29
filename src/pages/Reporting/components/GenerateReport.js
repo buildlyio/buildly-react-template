@@ -87,7 +87,8 @@ const GenerateReport = ({
         let pngOptions = {
           quality: 1,
           backgroundColor: theme.palette.background.default,
-          useCORS: true,
+          skipFonts: true,
+          cacheBust: true,
         };
         if (extendHeight) {
           pngOptions = { ...pngOptions, height: ref.current.offsetHeight + 50 };

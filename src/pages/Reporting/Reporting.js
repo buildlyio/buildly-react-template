@@ -57,7 +57,6 @@ import AlertsReport from './components/AlertsReport';
 import SensorReport from './components/SensorReport';
 import GenerateReport from './components/GenerateReport';
 import ReportGraph from './components/ReportGraph';
-import ReportMap from './components/ReportMap';
 import './ReportingStyles.css';
 
 const Reporting = () => {
@@ -968,7 +967,7 @@ const Reporting = () => {
               />
             )}
         </Grid>
-        <Grid item xs={12}>
+        <Grid ref={mapRef} item xs={12}>
           <div className="reportingSwitchViewSection">
             <Typography
               className="reportingSectionTitleHeading"
@@ -1083,14 +1082,6 @@ const Reporting = () => {
         timezone={timeZone}
         unitOfMeasure={unitData}
         shouldScroll={!!locShipmentID}
-      />
-      <ReportMap
-        ref={mapRef}
-        selectedShipment={selectedShipment}
-        markers={markers}
-        setSelectedMarker={setSelectedMarker}
-        unitOfMeasure={unitData}
-        hidden={!showGenerateReport}
       />
       <ReportGraph
         ref={tempGraphRef}

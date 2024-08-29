@@ -270,7 +270,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
                   <Typography fontWeight={700} marginRight={1}>
                     Transit Excursions:
                   </Typography>
-                  <span style={{ fontWeight: 400, display: 'flex' }}>
+                  <span style={{ fontWeight: 400, display: 'flex', flexWrap: 'wrap' }}>
                     {!_.isEmpty(updatedTransitAlerts)
                       ? _.map(updatedTransitAlerts, (item, idx) => (
                         <span key={`icon-${idx}-${item.id}`} style={{ display: 'flex' }}>
@@ -285,7 +285,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
                   <Typography fontWeight={700} marginRight={1}>
                     Post-Transit/Storage Excursions:
                   </Typography>
-                  <span style={{ fontWeight: 400, display: 'flex' }}>
+                  <span style={{ fontWeight: 400, display: 'flex', flexWrap: 'wrap' }}>
                     {!_.isEmpty(updatedStorageAlerts)
                       ? _.map(updatedStorageAlerts, (item, idx) => (
                         <span key={`icon-${idx}-${item.id}`} style={{ display: 'flex' }}>
