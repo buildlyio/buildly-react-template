@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 import _, { isArray } from 'lodash';
 import moment from 'moment-timezone';
 import ExcelJS from 'exceljs';
+import { useQuery } from 'react-query';
 import {
   Box,
   Grid,
@@ -25,19 +26,7 @@ import GraphComponent from '@components/GraphComponent/GraphComponent';
 import Loader from '@components/Loader/Loader';
 import MapComponent from '@components/MapComponent/MapComponent';
 import { getUser } from '@context/User.context';
-import {
-  getShipmentOverview,
-  REPORT_TYPES,
-  getIcon,
-  processReportsAndMarkers,
-  SENSOR_REPORT_COLUMNS,
-  tempUnit,
-} from '@utils/constants';
-import ReportingActiveShipmentDetails from './components/ReportingActiveShipmentDetails';
-import ReportingDetailTable from './components/ReportingDetailTable';
-import AlertsReport from './components/AlertsReport';
-import SensorReport from './components/SensorReport';
-import { useQuery } from 'react-query';
+import useAlert from '@hooks/useAlert';
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
 import { getItemQuery } from '@react-query/queries/items/getItemQuery';
 import { getItemTypeQuery } from '@react-query/queries/items/getItemTypeQuery';
@@ -50,11 +39,22 @@ import { getSensorReportQuery } from '@react-query/queries/sensorGateways/getSen
 import { getSensorAlertQuery } from '@react-query/queries/sensorGateways/getSensorAlertQuery';
 import { getSensorProcessedDataQuery } from '@react-query/queries/sensorGateways/getSensorProcessedDataQuery';
 import { useReportPDFDownloadMutation } from '@react-query/mutations/notifications/reportPDFDownloadMutation';
-import useAlert from '@hooks/useAlert';
-import { useStore as useTimezoneStore } from '@zustand/timezone/timezoneStore';
-import { useStore as useReportPdfStore } from '@zustand/reportPdf/reportPdfStore';
+import {
+  getShipmentOverview,
+  REPORT_TYPES,
+  getIcon,
+  processReportsAndMarkers,
+  SENSOR_REPORT_COLUMNS,
+  tempUnit,
+} from '@utils/constants';
 import { isDesktop2 } from '@utils/mediaQuery';
 import { getTimezone } from '@utils/utilMethods';
+import { useStore as useTimezoneStore } from '@zustand/timezone/timezoneStore';
+import { useStore as useReportPdfStore } from '@zustand/reportPdf/reportPdfStore';
+import ReportingActiveShipmentDetails from './components/ReportingActiveShipmentDetails';
+import ReportingDetailTable from './components/ReportingDetailTable';
+import AlertsReport from './components/AlertsReport';
+import SensorReport from './components/SensorReport';
 import GenerateReport from './components/GenerateReport';
 import ReportGraph from './components/ReportGraph';
 import ReportMap from './components/ReportMap';
@@ -83,6 +83,7 @@ const Reporting = () => {
   const shockGraphRef = useRef();
   const lightGraphRef = useRef();
   const batteryGraphRef = useRef();
+  const alertsTableRef = useRef();
 
   const { displayAlert } = useAlert();
   const { data: timeZone } = useTimezoneStore();
@@ -1072,6 +1073,7 @@ const Reporting = () => {
         downloadExcel={downloadExcel}
       />
       <AlertsReport
+        ref={alertsTableRef}
         sensorReport={reports}
         alerts={_.filter(
           sensorAlertData,
@@ -1145,6 +1147,7 @@ const Reporting = () => {
         shockGraphRef={shockGraphRef}
         lightGraphRef={lightGraphRef}
         batteryGraphRef={batteryGraphRef}
+        alertsTableRef={alertsTableRef}
         downloadCSV={downloadCSV}
         downloadExcel={downloadExcel}
         reportPDFDownloadMutation={reportPDFDownloadMutation}

@@ -47,8 +47,8 @@ const ReportingDetailTable = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!_.isEmpty(selectedShipment)) {
-      const selectedTracker = _.filter(allGatewayData, (item) => item.name === selectedShipment.tracker);
-      const trackerActiveDate = selectedTracker[0].activation_date && formatDate(selectedTracker[0].activation_date, timeZone);
+      const selectedTracker = _.find(allGatewayData, (item) => item.name === selectedShipment.tracker);
+      const trackerActiveDate = (selectedTracker && selectedTracker.activation_date && formatDate(selectedTracker.activation_date, timeZone)) || selectedShipment.create_date;
       const origin = _.filter(selectedShipment.custody_info, (item) => item.first_custody === true)[0].custodian_name;
       const originCustodianUrl = _.filter(selectedShipment.custody_info, (item) => item.first_custody === true)[0].custodian_data.contact_data[0];
       const originLoc = _.filter(selectedShipment.contact_info, (item) => item.url === originCustodianUrl)[0];
@@ -179,16 +179,6 @@ const ReportingDetailTable = forwardRef((props, ref) => {
       const reportMaxLightEntry = sensorReportData
         .filter((entry) => entry.report_entry && entry.report_entry.report_light)
         .reduce((max, entry) => (entry.report_entry.report_light > max.report_entry.report_light ? entry : max), sensorReportData[0]);
-      setMaxTransitTempEntry(transitReportMaxTempEntry);
-      setMinTransitTempEntry(transitReportMinTempEntry);
-      setMaxStorageTempEntry(storageReportMaxTempEntry);
-      setMinStorageTempEntry(storageReportMinTempEntry);
-      setMaxTransitHumEntry(transitReportMaxHumEntry);
-      setMinTransitHumEntry(transitReportMinHumEntry);
-      setMaxStorageHumEntry(storageReportMaxHumEntry);
-      setMinStorageHumEntry(storageReportMinHumEntry);
-      setMaxShockEntry(reportMaxShockEntry);
-      setMaxLightEntry(reportMaxLightEntry);
     }
   }, [sensorReportData, selectedShipment]);
 
@@ -222,7 +212,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
     const transitTimestamp1 = moment(selectedShipment.actual_time_of_departure);
     const transitTimestamp2 = moment(selectedShipment.actual_time_of_arrival);
     const transitPercentage = (((transitTimestamp2 - transitTimestamp1) / 1000) / value) * 100;
-    const storageTimestamp2 = moment(selectedShipment.edit_date);
+    const storageTimestamp2 = moment(selectedShipment.actual_time_of_completion || selectedShipment.edit_date);
     const storagePercentage = (((storageTimestamp2 - transitTimestamp2) / 1000) / value) * 100;
 
     return (
@@ -333,10 +323,10 @@ const ReportingDetailTable = forwardRef((props, ref) => {
                   {displayItemText('Arrival/Last Location Timestamp', `${formatDate(selectedShipment.actual_time_of_arrival || selectedShipment.estimated_time_of_arrival, timeZone)} ${selectedShipment.actual_time_of_arrival ? '(Actual)' : '(Estimated)'}`)}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText">
-                  {displayItemText('Shipment End Timestamp', formatDate(selectedShipment.edit_date, timeZone))}
+                  {displayItemText('Shipment End Timestamp', formatDate(selectedShipment.actual_time_of_completion || selectedShipment.edit_date, timeZone))}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText">
-                  {displayItemText('Shipment Total Timestamp', dateDifference(selectedShipment.create_date, selectedShipment.edit_date))}
+                  {displayItemText('Shipment Total Timestamp', dateDifference(selectedShipment.create_date, selectedShipment.actual_time_of_completion || selectedShipment.edit_date))}
                 </Grid>
               </Grid>
               <Grid container className="reportingDetailTableBody">
@@ -347,7 +337,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
                   {displayItemText('Transit Time', dateDifference(selectedShipment.actual_time_of_departure, selectedShipment.actual_time_of_arrival))}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText">
-                  {displayItemText('Post-Transit/Storage Time', dateDifference(selectedShipment.actual_time_of_arrival, selectedShipment.edit_date))}
+                  {displayItemText('Post-Transit/Storage Time', dateDifference(selectedShipment.actual_time_of_arrival, selectedShipment.actual_time_of_completion || selectedShipment.edit_date))}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText">
                   {displayItemText('Minimum Temperature Threshold', `${_.orderBy(selectedShipment.min_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`)}
@@ -355,30 +345,30 @@ const ReportingDetailTable = forwardRef((props, ref) => {
               </Grid>
               <Grid container className="reportingDetailTableBody">
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(maxTransitTempEntry) ? displayItemText('Transit Max. Temp.', displayTempValues(maxTransitTempEntry), 'reportingRedText') : 'Transit Max. Temp.'}
+                  {!_.isEmpty(maxTransitTempEntry) ? displayItemText('Transit Max. Temp.', displayTempValues(maxTransitTempEntry), 'reportingRedText') : 'Transit Max. Temp.: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(minTransitTempEntry) ? displayItemText('Transit Min. Temp.', `${_.isEqual(_.toLower(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))).unit_of_measure), 'fahrenheit') ? minTransitTempEntry.report_entry.report_temp_fah : minTransitTempEntry.report_entry.report_temp_cel}${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`, 'reportingGreenText') : 'Transit Min. Temp.'}
+                  {!_.isEmpty(minTransitTempEntry) ? displayItemText('Transit Min. Temp.', `${_.isEqual(_.toLower(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))).unit_of_measure), 'fahrenheit') ? minTransitTempEntry.report_entry.report_temp_fah : minTransitTempEntry.report_entry.report_temp_cel}${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`, 'reportingGreenText') : 'Transit Min. Temp.: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(maxStorageTempEntry) ? displayItemText('Post-Transit/Storage Max. Temp.', displayTempValues(maxStorageTempEntry), 'reportingRedText') : 'Post-Transit/Storage Max. Temp.'}
+                  {!_.isEmpty(maxStorageTempEntry) ? displayItemText('Post-Transit/Storage Max. Temp.', displayTempValues(maxStorageTempEntry), 'reportingRedText') : 'Post-Transit/Storage Max. Temp.: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(minStorageTempEntry) ? displayItemText('Post-Transit/Storage Min. Temp.', `${_.isEqual(_.toLower(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))).unit_of_measure), 'fahrenheit') ? minStorageTempEntry.report_entry.report_temp_fah : minStorageTempEntry.report_entry.report_temp_cel}${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`, 'reportingGreenText') : 'Post-Transit/Storage Min. Temp.'}
+                  {!_.isEmpty(minStorageTempEntry) ? displayItemText('Post-Transit/Storage Min. Temp.', `${_.isEqual(_.toLower(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))).unit_of_measure), 'fahrenheit') ? minStorageTempEntry.report_entry.report_temp_fah : minStorageTempEntry.report_entry.report_temp_cel}${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`, 'reportingGreenText') : 'Post-Transit/Storage Min. Temp.: NA'}
                 </Grid>
               </Grid>
               <Grid container className="reportingDetailTableBody">
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Transit Time within Temp. Range', sensorProcessedData.transit_within_temperature, 'reportingGreenText') : 'Transit Time within Temp. Range'}
+                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Transit Time within Temp. Range', sensorProcessedData.transit_within_temperature, 'reportingGreenText') : 'Transit Time within Temp. Range: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Transit Time outside Temp. Range', sensorProcessedData.transit_outside_temperature, 'reportingRedText') : 'Transit Time outside Temp. Range'}
+                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Transit Time outside Temp. Range', sensorProcessedData.transit_outside_temperature, 'reportingRedText') : 'Transit Time outside Temp. Range: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Post-Transit/Storage Time within Temp. Range', sensorProcessedData.post_within_temperature, 'reportingGreenText') : 'Post-Transit/Storage Time within Temp. Range'}
+                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Post-Transit/Storage Time within Temp. Range', sensorProcessedData.post_within_temperature, 'reportingGreenText') : 'Post-Transit/Storage Time within Temp. Range: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Post-Transit/Storage Time outside Temp. Range', sensorProcessedData.post_outside_temperature, 'reportingRedText') : 'Post-Transit/Storage Time outside Temp. Range'}
+                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Post-Transit/Storage Time outside Temp. Range', sensorProcessedData.post_outside_temperature, 'reportingRedText') : 'Post-Transit/Storage Time outside Temp. Range: NA'}
                 </Grid>
               </Grid>
               <Grid container className="reportingDetailTableBody">
@@ -392,30 +382,30 @@ const ReportingDetailTable = forwardRef((props, ref) => {
               </Grid>
               <Grid container className="reportingDetailTableBody">
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(maxTransitHumEntry) ? displayItemText('Transit Max.Hum.', `${maxTransitHumEntry.report_entry.report_humidity}%`, 'reportingRedText') : 'Transit Max.Hum.'}
+                  {!_.isEmpty(maxTransitHumEntry) ? displayItemText('Transit Max.Hum.', `${maxTransitHumEntry.report_entry.report_humidity}%`, 'reportingRedText') : 'Transit Max.Hum.: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(minTransitHumEntry) ? displayItemText('Transit Min. Hum.', `${minTransitHumEntry.report_entry.report_humidity}%`, 'reportingGreenText') : 'Transit Min. Hum.'}
+                  {!_.isEmpty(minTransitHumEntry) ? displayItemText('Transit Min. Hum.', `${minTransitHumEntry.report_entry.report_humidity}%`, 'reportingGreenText') : 'Transit Min. Hum.: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(maxStorageHumEntry) ? displayItemText('Post-Transit/Storage Max. Hum.', `${maxStorageHumEntry.report_entry.report_humidity}%`, 'reportingRedText') : 'Post-Transit/Storage Max. Hum.'}
+                  {!_.isEmpty(maxStorageHumEntry) ? displayItemText('Post-Transit/Storage Max. Hum.', `${maxStorageHumEntry.report_entry.report_humidity}%`, 'reportingRedText') : 'Post-Transit/Storage Max. Hum.: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(minStorageHumEntry) ? displayItemText('Post-Transit/Storage Min. Hum.', `${minStorageHumEntry.report_entry.report_humidity}%`, 'reportingGreenText') : 'Post-Transit/Storage Min. Hum.'}
+                  {!_.isEmpty(minStorageHumEntry) ? displayItemText('Post-Transit/Storage Min. Hum.', `${minStorageHumEntry.report_entry.report_humidity}%`, 'reportingGreenText') : 'Post-Transit/Storage Min. Hum.: NA'}
                 </Grid>
               </Grid>
               <Grid container className="reportingDetailTableBody">
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Transit Time within Hum. Range', sensorProcessedData.transit_within_humidity, 'reportingGreenText') : 'Transit Time within Hum. Range'}
+                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Transit Time within Hum. Range', sensorProcessedData.transit_within_humidity, 'reportingGreenText') : 'Transit Time within Hum. Range: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Transit Time outside Hum. Range', sensorProcessedData.transit_outside_humidity, 'reportingRedText') : 'Transit Time outside Hum. Range'}
+                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Transit Time outside Hum. Range', sensorProcessedData.transit_outside_humidity, 'reportingRedText') : 'Transit Time outside Hum. Range: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Post-Transit/Storage Time within Hum. Range', sensorProcessedData.post_within_humidity, 'reportingGreenText') : 'Post-Transit/Storage Time within Hum. Range'}
+                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Post-Transit/Storage Time within Hum. Range', sensorProcessedData.post_within_humidity, 'reportingGreenText') : 'Post-Transit/Storage Time within Hum. Range: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Post-Transit/Storage Time outside Hum. Range', sensorProcessedData.post_outside_humidity, 'reportingRedText') : 'Post-Transit/Storage Time outside Hum. Range'}
+                  {!_.isEmpty(sensorProcessedData) ? convertSecondsToFormattedTime('Post-Transit/Storage Time outside Hum. Range', sensorProcessedData.post_outside_humidity, 'reportingRedText') : 'Post-Transit/Storage Time outside Hum. Range: NA'}
                 </Grid>
               </Grid>
               <Grid container className="reportingDetailTableBody">
@@ -423,13 +413,13 @@ const ReportingDetailTable = forwardRef((props, ref) => {
                   {displayItemText('Transit/Storage Shock Threshold', `${_.orderBy(selectedShipment.shock_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} G`)}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(maxShockEntry) ? displayItemText('Transit/Storage Max. Shock', `${maxShockEntry.report_entry.report_shock.toFixed(2)} G`, 'reportingRedText') : 'Transit/Storage Max. Shock'}
+                  {!_.isEmpty(maxShockEntry) ? displayItemText('Transit/Storage Max. Shock', `${maxShockEntry.report_entry.report_shock.toFixed(2)} G`, 'reportingRedText') : 'Transit/Storage Max. Shock: NA'}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText">
                   {displayItemText('Transit/Storage Light Threshold', `${_.orderBy(selectedShipment.light_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} LUX`)}
                 </Grid>
                 <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-                  {!_.isEmpty(maxLightEntry) ? displayItemText('Transit/Storage Max. Light', `${maxLightEntry.report_entry.report_light.toFixed(2)} LUX`, 'reportingRedText') : 'Transit/Storage Max. Light'}
+                  {!_.isEmpty(maxLightEntry) ? displayItemText('Transit/Storage Max. Light', `${maxLightEntry.report_entry.report_light.toFixed(2)} LUX`, 'reportingRedText') : 'Transit/Storage Max. Light: NA'}
                 </Grid>
               </Grid>
               {

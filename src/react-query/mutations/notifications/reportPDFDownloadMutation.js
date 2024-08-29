@@ -4,8 +4,8 @@ import { httpService } from '@modules/http/http.service';
 
 export const useReportPDFDownloadMutation = (storeData, setStoreData, displayAlert) => useMutation(
   async (reportPDFData) => {
-    displayAlert('info', 'PDF Report (Processing. May take several minutes)');
-    const response = await httpService.makePostRequestWithoutHeaders(
+    displayAlert('info', 'PDF Report (Processing may take several minutes)');
+    const response = await httpService.makeRequestWithoutHeaders(
       'post',
       window.env.EMAIL_REPORT_URL,
       reportPDFData,

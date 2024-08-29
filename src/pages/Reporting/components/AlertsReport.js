@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, forwardRef } from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -11,9 +11,11 @@ import { getAlertsReportColumns } from '@utils/constants';
 import '../ReportingStyles.css';
 import { getTimezone } from '@utils/utilMethods';
 
-const AlertsReport = ({
-  sensorReport, alerts, shipmentName, timezone, unitOfMeasure, shouldScroll,
-}) => {
+const AlertsReport = forwardRef((props, ref) => {
+  const {
+    sensorReport, alerts, shipmentName, timezone, unitOfMeasure, shouldScroll,
+  } = props;
+
   const theme = useTheme();
   const [rows, setRows] = useState([]);
   const scrollRef = useRef(null);
@@ -111,7 +113,7 @@ const AlertsReport = ({
 
   return (
     <Grid className="reportingAlertRoot" container spacing={2} ref={scrollRef}>
-      <Grid item xs={12}>
+      <Grid item xs={12} ref={ref}>
         <div className="reportingAlertTooltip">
           <Typography
             className="reportingAlertTitle"
@@ -147,6 +149,6 @@ const AlertsReport = ({
       </Grid>
     </Grid>
   );
-};
+});
 
 export default AlertsReport;

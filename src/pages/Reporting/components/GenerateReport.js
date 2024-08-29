@@ -35,6 +35,7 @@ const GenerateReport = ({
   shockGraphRef,
   lightGraphRef,
   batteryGraphRef,
+  alertsTableRef,
   downloadCSV,
   downloadExcel,
   reportPDFDownloadMutation,
@@ -80,14 +81,19 @@ const GenerateReport = ({
     });
   };
 
-  async function captureScreenshot(ref, width, height) {
+  async function captureScreenshot(ref, extendHeight = false) {
     try {
       if (ref.current) {
-        const dataUrl = await toPng(ref.current, {
+        let pngOptions = {
           quality: 1,
           backgroundColor: theme.palette.background.default,
-          useCORS: true,
-        });
+          height: ref.current.offsetHeight + 50,
+        };
+        if (extendHeight) {
+          pngOptions = { ...pngOptions, height: ref.current.offsetHeight + 50 };
+        }
+
+        const dataUrl = await toPng(ref.current, pngOptions);
         return dataUrl;
       }
     } catch (error) {
@@ -101,13 +107,14 @@ const GenerateReport = ({
     setLoading(true);
     const base64DataArray = [];
     try {
-      const dataUrl1 = await captureScreenshot(tableRef);
+      const dataUrl1 = await captureScreenshot(tableRef, true);
       const dataUrl2 = await captureScreenshot(mapRef);
       const dataUrl3 = await captureScreenshot(tempGraphRef);
       const dataUrl4 = await captureScreenshot(humGraphRef);
       const dataUrl5 = await captureScreenshot(shockGraphRef);
       const dataUrl6 = await captureScreenshot(lightGraphRef);
       const dataUrl7 = await captureScreenshot(batteryGraphRef);
+      const dataUrl8 = await captureScreenshot(alertsTableRef);
       if (dataUrl1) base64DataArray.push(dataUrl1);
       if (dataUrl2) base64DataArray.push(dataUrl2);
       if (dataUrl3) base64DataArray.push(dataUrl3);
@@ -115,8 +122,9 @@ const GenerateReport = ({
       if (dataUrl5) base64DataArray.push(dataUrl5);
       if (dataUrl6) base64DataArray.push(dataUrl6);
       if (dataUrl7) base64DataArray.push(dataUrl7);
+      if (dataUrl8) base64DataArray.push(dataUrl8);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     const apiData = {
       shipment_name: selectedShipment.name,

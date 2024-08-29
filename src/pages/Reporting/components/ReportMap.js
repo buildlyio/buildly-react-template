@@ -1,7 +1,7 @@
-import MapComponent from '@components/MapComponent/MapComponent';
-import { Grid, Typography } from '@mui/material';
-import _ from 'lodash';
 import React, { useState, useEffect, forwardRef } from 'react';
+import _ from 'lodash';
+import { Grid, Typography } from '@mui/material';
+import MapComponent from '@components/MapComponent/MapComponent';
 
 export const ReportMap = forwardRef((props, ref) => {
   const {
@@ -13,8 +13,8 @@ export const ReportMap = forwardRef((props, ref) => {
   } = props;
 
   return (
-    <div ref={ref}>
-      <Grid item xs={12} className={!!hidden && 'reportingContainer2'}>
+    <Grid container ref={ref} className={!!hidden && 'reportingContainer2'}>
+      <Grid item xs={12}>
         <div className="reportingSwitchViewSection">
           <Typography
             className="reportingSectionTitleHeading"
@@ -32,7 +32,6 @@ export const ReportMap = forwardRef((props, ref) => {
           isMarkerShown={!_.isEmpty(markers)}
           showPath
           screenshotMapCenter
-          noInfoIndex
           markers={markers}
           googleMapURL={window.env.MAP_API_URL}
           zoom={7}
@@ -43,7 +42,7 @@ export const ReportMap = forwardRef((props, ref) => {
           unitOfMeasure={unitOfMeasure}
         />
       </Grid>
-    </div>
+    </Grid>
   );
 });
 

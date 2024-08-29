@@ -865,7 +865,7 @@ export const getShipmentOverview = (
       const gateways = _.filter(gatewayData, (gateway) => (
         _.includes(editedShipment.gateway_imei, _.toString(gateway.imei_number))
       ));
-      editedShipment.tracker = (!_.isEmpty(gateways) && _.toString(_.join(_.map(gateways, 'name'), ', '))) || 'N/A';
+      editedShipment.tracker = (!_.isEmpty(gateways) && _.toString(_.join(_.uniq(_.map(gateways, 'name')), ', '))) || 'N/A';
     }
 
     shipmentList = [...shipmentList, editedShipment];
@@ -1357,9 +1357,9 @@ export const tempUnit = (uomt) => {
   let unit = '';
   if (uomt) {
     if (_.isEqual(_.toLower(uomt.unit_of_measure), 'fahrenheit')) {
-      unit = '\u00b0F';
+      unit = '°F';
     } else if (_.isEqual(_.toLower(uomt.unit_of_measure), 'celsius')) {
-      unit = '\u00b0C';
+      unit = '°C';
     }
   }
 
