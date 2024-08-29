@@ -13,7 +13,7 @@ export const ReportMap = forwardRef((props, ref) => {
   } = props;
 
   return (
-    <Grid container ref={ref} className={!!hidden && 'reportingContainer2'}>
+    <Grid container ref={ref} className={hidden ? 'reportingContainer2' : ''}>
       <Grid item xs={12}>
         <div className="reportingSwitchViewSection">
           <Typography
