@@ -92,7 +92,9 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, 'dist/'),
       publicPath: '/',
-      filename: 'bundle.js',
+      filename: '[name].[hash:8].js',
+      sourceMapFilename: '[name].[hash:8].map',
+      chunkFilename: '[id].[hash:8].js',
     },
     devServer: {
       contentBase: path.join(__dirname, 'public/'),
