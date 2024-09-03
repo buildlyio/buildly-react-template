@@ -27,7 +27,7 @@ import {
 
 export const MapComponent = (props) => {
   const {
-    markers, setSelectedMarker, geofence, unitOfMeasure, allMarkers, zoom, screenshotMapCenter, noInfoIndex,
+    markers, setSelectedMarker, geofence, unitOfMeasure, allMarkers, zoom, screenshotMapCenter, noInitialInfo,
   } = props;
   const [center, setCenter] = useState({
     lat: 47.606209,
@@ -53,7 +53,9 @@ export const MapComponent = (props) => {
         lng: markers[0].lng,
       });
       setMapZoom(zoom);
-      setShowInfoIndex(markers[0]);
+      if (!noInitialInfo) {
+        setShowInfoIndex(markers[0]);
+      }
       if (setSelectedMarker) {
         setSelectedMarker(markers[0]);
       }
@@ -138,35 +140,19 @@ export const MapComponent = (props) => {
 
   const overlapCounts = groupMarkersByLocation(_.flatten(allMarkers));
 
-  return (noInfoIndex
-    ? (
-      <RenderedMap
-        {...props}
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        theme={useTheme()}
-        onMarkerDrag={onMarkerDrag}
-        center={center}
-        mapZoom={mapZoom}
-        polygon={polygon}
-        onMarkerSelect={onMarkerSelect}
-        unitOfMeasure={unitOfMeasure}
-        overlapCounts={overlapCounts}
-      />
-    ) : (
-      <RenderedMap
-        {...props}
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        theme={useTheme()}
-        onMarkerDrag={onMarkerDrag}
-        center={center}
-        mapZoom={mapZoom}
-        polygon={polygon}
-        showInfoIndex={showInfoIndex}
-        onMarkerSelect={onMarkerSelect}
-        unitOfMeasure={unitOfMeasure}
-        overlapCounts={overlapCounts}
-      />
-    )
+  return (
+    <RenderedMap
+      {...props}
+      theme={useTheme()}
+      onMarkerDrag={onMarkerDrag}
+      center={center}
+      mapZoom={mapZoom}
+      polygon={polygon}
+      showInfoIndex={showInfoIndex}
+      onMarkerSelect={onMarkerSelect}
+      unitOfMeasure={unitOfMeasure}
+      overlapCounts={overlapCounts}
+    />
   );
 };
 

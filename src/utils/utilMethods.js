@@ -78,7 +78,7 @@ export const extractCountry = (address) => {
   return null;
 };
 
-export const formatDate = (value, timeZone) => moment.tz(value, timeZone).format('MMMM D, YYYY HH:mm z');
+export const formatDate = (value, timeZone, displayFormat) => moment(value).tz(timeZone).format(displayFormat);
 
 export const getTimezone = (value, timeZone) => moment.tz(value, timeZone).format('z');
 

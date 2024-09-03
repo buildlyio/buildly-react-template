@@ -340,7 +340,7 @@ const Reporting = () => {
     }).join(',')).join('\n');
 
     const csvData = `${csvHeader}\n${csvBody}`;
-    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([`\ufeff${csvData}`], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.download = `${selectedShipment.name}.csv`;
@@ -969,10 +969,7 @@ const Reporting = () => {
         </Grid>
         <Grid ref={mapRef} item xs={12}>
           <div className="reportingSwitchViewSection">
-            <Typography
-              className="reportingSectionTitleHeading"
-              variant="h5"
-            >
+            <Typography className="reportingSectionTitleHeading" variant="h5">
               {!_.isEmpty(selectedShipment) && selectedShipment.name ? (
                 <>
                   <span>Map View - Shipment: </span>
@@ -985,9 +982,10 @@ const Reporting = () => {
             isMarkerShown={!_.isEmpty(markers)}
             showPath
             screenshotMapCenter
+            noInitialInfo
             markers={markers}
             googleMapURL={window.env.MAP_API_URL}
-            zoom={_.isEmpty(markers) ? 4 : 7}
+            zoom={_.isEmpty(markers) ? 4 : 5}
             setSelectedMarker={setSelectedMarker}
             loadingElement={<div style={{ height: '100%' }} />}
             containerElement={<div style={{ height: '625px' }} />}
@@ -998,10 +996,7 @@ const Reporting = () => {
       </Grid>
       <Grid container className="reportingContainer" sx={{ marginTop: _.isEmpty(selectedShipment) ? 4 : -1 }}>
         <div className="reportingSwitchViewSection">
-          <Typography
-            className="reportingSectionTitleHeading"
-            variant="h5"
-          >
+          <Typography className="reportingSectionTitleHeading" variant="h5">
             {!_.isEmpty(selectedShipment) && selectedShipment.name ? (
               <>
                 <span>Graph View - Shipment: </span>
@@ -1090,7 +1085,6 @@ const Reporting = () => {
         theme={theme}
         graphType="temperature"
         data={allGraphs}
-        hidden={!showGenerateReport}
       />
       <ReportGraph
         ref={humGraphRef}
@@ -1099,7 +1093,6 @@ const Reporting = () => {
         theme={theme}
         graphType="humidity"
         data={allGraphs}
-        hidden={!showGenerateReport}
       />
       <ReportGraph
         ref={shockGraphRef}
@@ -1108,7 +1101,6 @@ const Reporting = () => {
         theme={theme}
         graphType="shock"
         data={allGraphs}
-        hidden={!showGenerateReport}
       />
       <ReportGraph
         ref={lightGraphRef}
@@ -1117,7 +1109,6 @@ const Reporting = () => {
         theme={theme}
         graphType="light"
         data={allGraphs}
-        hidden={!showGenerateReport}
       />
       <ReportGraph
         ref={batteryGraphRef}
@@ -1126,7 +1117,6 @@ const Reporting = () => {
         theme={theme}
         graphType="battery"
         data={allGraphs}
-        hidden={!showGenerateReport}
       />
       <GenerateReport
         open={showGenerateReport}

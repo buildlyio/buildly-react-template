@@ -618,49 +618,49 @@ export const getIcon = (item) => {
     case 'probe':
       return (
         <Tooltip title={title || _.capitalize(id)} placement="right">
-          <TempIcon style={{ fill: color }} />
+          <TempIcon style={{ fill: color, width: '24px', height: '24px' }} />
         </Tooltip>
       );
 
     case 'light':
       return (
         <Tooltip title={title || _.capitalize(id)} placement="right">
-          <LightIcon style={{ fill: color }} />
+          <LightIcon style={{ fill: color, width: '24px', height: '24px' }} />
         </Tooltip>
       );
 
     case 'shock':
       return (
         <Tooltip title={title || _.capitalize(id)} placement="right">
-          <ShockIcon style={{ fill: color }} />
+          <ShockIcon style={{ fill: color, width: '24px', height: '24px' }} />
         </Tooltip>
       );
 
     case 'tilt':
       return (
         <Tooltip title={title || _.capitalize(id)} placement="right">
-          <TiltIcon fill={color} />
+          <TiltIcon fill={color} style={{ width: '24px', height: '24px' }} />
         </Tooltip>
       );
 
     case 'humidity':
       return (
         <Tooltip title={title || _.capitalize(id)} placement="right">
-          <HumidIcon style={{ fill: color }} />
+          <HumidIcon style={{ fill: color, width: '24px', height: '24px' }} />
         </Tooltip>
       );
 
     case 'battery':
       return (
         <Tooltip title={title || _.capitalize(id)} placement="right">
-          <BatteryIcon style={{ fill: color }} />
+          <BatteryIcon style={{ fill: color, width: '24px', height: '24px' }} />
         </Tooltip>
       );
 
     case 'pressure':
       return (
         <Tooltip title={title || _.capitalize(id)} placement="right">
-          <PressureIcon fill={color} />
+          <PressureIcon fill={color} style={{ width: '24px', height: '24px' }} />
         </Tooltip>
       );
 

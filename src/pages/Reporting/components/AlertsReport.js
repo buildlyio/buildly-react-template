@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useRef, forwardRef } from 'react';
+import React, {
+  useEffect, useState, useRef, forwardRef,
+} from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -115,10 +117,7 @@ const AlertsReport = forwardRef((props, ref) => {
     <Grid className="reportingAlertRoot" container spacing={2} ref={scrollRef}>
       <Grid item xs={12} ref={ref}>
         <div className="reportingAlertTooltip">
-          <Typography
-            className="reportingAlertTitle"
-            variant="h5"
-          >
+          <Typography className="reportingAlertTitle" variant="h5">
             {shipmentName ? (
               <>
                 <span>Alerts Report - Shipment: </span>

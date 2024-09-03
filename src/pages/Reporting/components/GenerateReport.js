@@ -3,7 +3,7 @@
 /* eslint-disable no-console */
 import React, { useState, useRef, useEffect } from 'react';
 import _ from 'lodash';
-import { toJpeg, toPng } from 'html-to-image';
+import html2canvas from 'html2canvas';
 import {
   Button,
   Checkbox,
@@ -81,34 +81,26 @@ const GenerateReport = ({
     });
   };
 
-  async function captureScreenshot(ref, extendHeight = false) {
-    try {
-      if (ref.current) {
-        let pngOptions = {
-          quality: 1,
-          backgroundColor: theme.palette.background.default,
-          skipFonts: true,
-          cacheBust: true,
-        };
-        if (extendHeight) {
-          pngOptions = { ...pngOptions, height: ref.current.offsetHeight + 50 };
-        }
-
-        const dataUrl = await toPng(ref.current, pngOptions);
-        return dataUrl;
+  const captureScreenshot = async (ref) => {
+    if (ref.current) {
+      try {
+        const canvas = await html2canvas(ref.current, {
+          useCORS: true,
+        });
+        return canvas.toDataURL('image/png');
+      } catch (error) {
+        console.error('Error capturing screenshot:', error);
       }
-    } catch (error) {
-      console.error('Error capturing screenshot:', error);
     }
     return null;
-  }
+  };
 
   const generatePdfReport = async (event) => {
     event.preventDefault();
     setLoading(true);
     const base64DataArray = [];
     try {
-      const dataUrl1 = await captureScreenshot(tableRef, true);
+      const dataUrl1 = await captureScreenshot(tableRef);
       const dataUrl2 = await captureScreenshot(mapRef);
       const dataUrl3 = await captureScreenshot(tempGraphRef);
       const dataUrl4 = await captureScreenshot(humGraphRef);

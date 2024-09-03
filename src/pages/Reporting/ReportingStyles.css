@@ -49,12 +49,9 @@
 }
 
 .reportingSectionTitleHeading {
-  flex: 1;
   padding: 8px 16px;
   text-transform: uppercase;
   font-size: 18px;
-  display: flex;
-  align-items: center;
 }
 
 .reportingInfoContainer {
@@ -87,10 +84,6 @@
   height: 100%;
 }
 
-.reportingGraphIconBar2 svg {
-  margin-left: 15%;
-}
-
 .reportingSelectInput {
   margin-left: 8px;
 }
@@ -110,12 +103,9 @@
 }
 
 .reportingSensorReportTitle {
-  flex: 1;
   padding: 8px 16px;
   text-transform: uppercase;
   font-size: 18px;
-  display: flex;
-  align-items: center;
 }
 
 .reportingSensorLeftHeader span {
@@ -148,12 +138,9 @@
 }
 
 .reportingAlertTitle {
-  flex: 1;
   padding: 8px 16px;
   text-transform: uppercase;
   font-size: 18px;
-  display: flex;
-  align-items: center;
 }
 
 /* Reporting Detail Table Styles */

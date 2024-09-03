@@ -30,6 +30,10 @@
   background-color: var(--color-palette-primary-light);
 }
 
+.dataTableBody {
+  background: var(--color-palette-background-default) !important;
+}
+
 .dataTableBody:hover {
   background-color: none;
 }
