@@ -141,7 +141,7 @@ const AddGatewayType = ({ history, location }) => {
                   required
                   id="name"
                   label={(
-                    <Typography className="translate">Tracker Type</Typography>
+                    <span className="translate">Tracker Type</span>
                   )}
                   name="name"
                   autoComplete="name"

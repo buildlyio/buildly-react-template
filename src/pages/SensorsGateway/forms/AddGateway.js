@@ -266,7 +266,7 @@ const AddGateway = ({
                       id="gateway_type"
                       select
                       label={(
-                        <Typography className="translate">Tracker Type</Typography>
+                        <span className="translate">Tracker Type</span>
                       )}
                       error={
                         formError.gateway_type

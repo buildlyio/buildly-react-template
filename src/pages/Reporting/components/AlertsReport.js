@@ -100,7 +100,10 @@ const AlertsReport = forwardRef((props, ref) => {
     const escapeCSV = (text) => `"${text}"`;
     const csvHeader = columns.map((col) => {
       if (col.label === 'Date/Time stamp') {
-        return escapeCSV(`${col.label} (${getTimezone(new Date(), timezone)})`);
+        const timeArray = _.split(timeFormat, ' ');
+        const timePeriod = _.size(timeArray) === 1 ? '24-hour' : '12-hour';
+        const formattedLabel = `${col.label} (${getTimezone(new Date(), timezone)}) (${dateFormat} ${timePeriod})`;
+        return escapeCSV(formattedLabel);
       }
       return escapeCSV(col.label);
     }).join(',');

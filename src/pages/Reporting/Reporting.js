@@ -172,6 +172,13 @@ const Reporting = () => {
 
   const { mutate: reportPDFDownloadMutation, isLoading: isReportPDFDownloading } = useReportPDFDownloadMutation(reportURLData, setReportURLData, displayAlert);
 
+  const dateFormat = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
+    : '';
+  const timeFormat = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
+    : '';
+
   useEffect(() => {
     if (location.search) {
       setLocShipmentID(_.split(_.split(location.search, '?shipment=')[1], '&status=')[0]);
@@ -246,12 +253,6 @@ const Reporting = () => {
     let returnValue;
     if (selectedShipment[value] !== null) {
       if (moment(selectedShipment[value], true).isValid()) {
-        const dateFormat = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
-          : '';
-        const timeFormat = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-          ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
-          : '';
         returnValue = moment(selectedShipment[value])
           .tz(timeZone).format(`${dateFormat} ${timeFormat}`);
       } else if (typeof (selectedShipment[value]) !== 'object') {
@@ -299,7 +300,10 @@ const Reporting = () => {
     const escapeCSV = (text) => `"${text}"`;
     const csvHeader = columns.map((col) => {
       if (col.label === 'Date Time') {
-        return escapeCSV(`${col.label} (${getTimezone(new Date(), timeZone)})`);
+        const timeArray = _.split(timeFormat, ' ');
+        const timePeriod = _.size(timeArray) === 1 ? '24-hour' : '12-hour';
+        const formattedLabel = `${col.label} (${getTimezone(new Date(), timeZone)}) (${dateFormat} ${timePeriod})`;
+        return escapeCSV(formattedLabel);
       }
       if (col.name === 'temperature') {
         return escapeCSV(`TEMP ${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`);
@@ -597,7 +601,10 @@ const Reporting = () => {
 
     const headerRow = worksheet.addRow(columns.map((col) => {
       if (col.label === 'Date Time') {
-        return `Date Time(${getTimezone(new Date(), timeZone)})`;
+        const timeArray = _.split(timeFormat, ' ');
+        const timePeriod = _.size(timeArray) === 1 ? '24-hour' : '12-hour';
+        const formattedLabel = `Date Time (${getTimezone(new Date(), timeZone)}) (${dateFormat} ${timePeriod})`;
+        return formattedLabel;
       }
       if (col.name === 'battery') {
         return 'BATTERY (%)';

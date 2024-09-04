@@ -239,7 +239,7 @@ const AddItems = ({
                   fullWidth
                   id="item_name"
                   label={(
-                    <Typography className="translate">Item Name</Typography>
+                    <span className="translate">Item Name</span>
                   )}
                   name="item_name"
                   autoComplete="item_name"

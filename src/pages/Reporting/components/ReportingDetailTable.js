@@ -451,7 +451,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
                   item
                   xs={0}
                   md={_.size(intermediateCustodians) % 4 === 1
-                    ? 8
+                    ? 9
                     : _.size(intermediateCustodians) % 4 === 2
                       ? 6
                       : _.size(intermediateCustodians) % 4 === 3
