@@ -108,8 +108,12 @@ const AlertsReport = forwardRef((props, ref) => {
       return escapeCSV(col.label);
     }).join(',');
     const csvBody = data.map(({ data: row }) => row.map((cell, index) => {
+      const column = columns[index];
       if (!_.isEmpty(cell) && !_.isEmpty(cell.title)) {
         return escapeCSV(cell.title);
+      }
+      if (column.label === 'Date/Time stamp' && !_.isEmpty(cell)) {
+        return escapeCSV(moment(cell).tz(timezone).format(`${dateFormat} ${timeFormat}`));
       }
       return escapeCSV(cell);
     }).join(',')).join('\n');

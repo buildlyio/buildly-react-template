@@ -330,7 +330,7 @@ const TopBar = ({
               fullWidth
               id="org"
               label={(
-                <Typography className="translate">Organization</Typography>
+                <span className="translate">Organization</span>
               )}
               select
               value={organization}

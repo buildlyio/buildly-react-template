@@ -330,6 +330,9 @@ const Reporting = () => {
 
     const csvBody = rows.map((row) => columns.map((col, colIndex) => {
       let cell = row[col.name];
+      if (col.label === 'Date Time' && !_.isEmpty(cell)) {
+        return escapeCSV(moment(cell).tz(timeZone).format(`${dateFormat} ${timeFormat}`));
+      }
       if (!row.location || row.location === 'Error retrieving address') {
         row.location = 'N/A';
       }
@@ -454,20 +457,6 @@ const Reporting = () => {
       ],
     };
 
-    descriptionRow1.getCell(10).value = {
-      richText: [
-        { text: 'Temperature:' },
-        {
-          text: maxTempExcursionsCount > 0 ? ` ${maxTempExcursionsCount} ` : '',
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: minTempExcursionsCount > 0 ? ` ${minTempExcursionsCount} ` : '',
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
-
     const descriptionRow2 = worksheet.addRow([
       '',
       '',
@@ -495,20 +484,6 @@ const Reporting = () => {
         },
         {
           text: ` ${_.orderBy(selectedShipment.min_excursion_humidity, ['set_at'], ['desc'])[0].value}% `,
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
-
-    descriptionRow2.getCell(10).value = {
-      richText: [
-        { text: 'Humidity:' },
-        {
-          text: maxHumExcursionsCount > 0 ? ` ${maxHumExcursionsCount} ` : '',
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: minHumExcursionsCount > 0 ? ` ${minHumExcursionsCount} ` : '',
           font: { color: { argb: theme.palette.info.main.replace('#', '') } },
         },
       ],
@@ -544,20 +519,6 @@ const Reporting = () => {
       ],
     };
 
-    descriptionRow3.getCell(10).value = {
-      richText: [
-        { text: 'Shock:' },
-        {
-          text: maxShockExcursionsCount > 0 ? ` ${maxShockExcursionsCount} ` : '',
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: minShockExcursionsCount > 0 ? ` ${minShockExcursionsCount} ` : '',
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
-
     const descriptionRow4 = worksheet.addRow([]);
 
     descriptionRow4.getCell(5).value = _.size(sortedCustodiansArray) > 3 ? sortedCustodiansArray[3].custodian_type : '';
@@ -570,20 +531,6 @@ const Reporting = () => {
         {
           text: ` ${_.orderBy(selectedShipment.light_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} LUX`,
           font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-      ],
-    };
-
-    descriptionRow4.getCell(10).value = {
-      richText: [
-        { text: 'Light:' },
-        {
-          text: maxLightExcursionsCount > 0 ? ` ${maxLightExcursionsCount} ` : '',
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: minLightExcursionsCount > 0 ? ` ${minLightExcursionsCount} ` : '',
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
         },
       ],
     };
@@ -720,6 +667,62 @@ const Reporting = () => {
           }
         });
       }
+
+      descriptionRow1.getCell(10).value = {
+        richText: [
+          { text: 'Temperature:' },
+          {
+            text: maxTempExcursionsCount > 0 ? ` ${maxTempExcursionsCount} ` : '',
+            font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+          },
+          {
+            text: minTempExcursionsCount > 0 ? ` ${minTempExcursionsCount} ` : '',
+            font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+          },
+        ],
+      };
+
+      descriptionRow2.getCell(10).value = {
+        richText: [
+          { text: 'Humidity:' },
+          {
+            text: maxHumExcursionsCount > 0 ? ` ${maxHumExcursionsCount} ` : '',
+            font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+          },
+          {
+            text: minHumExcursionsCount > 0 ? ` ${minHumExcursionsCount} ` : '',
+            font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+          },
+        ],
+      };
+
+      descriptionRow3.getCell(10).value = {
+        richText: [
+          { text: 'Shock:' },
+          {
+            text: maxShockExcursionsCount > 0 ? ` ${maxShockExcursionsCount} ` : '',
+            font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+          },
+          {
+            text: minShockExcursionsCount > 0 ? ` ${minShockExcursionsCount} ` : '',
+            font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+          },
+        ],
+      };
+
+      descriptionRow4.getCell(10).value = {
+        richText: [
+          { text: 'Light:' },
+          {
+            text: maxLightExcursionsCount > 0 ? ` ${maxLightExcursionsCount} ` : '',
+            font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+          },
+          {
+            text: minLightExcursionsCount > 0 ? ` ${minLightExcursionsCount} ` : '',
+            font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+          },
+        ],
+      };
 
       const dateValue = moment(row[columns[dateTimeColIndex - 1].name]).unix();
       if (dateValue >= departureTime && dateValue <= arrivalTime) {

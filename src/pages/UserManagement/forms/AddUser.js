@@ -265,7 +265,7 @@ const AddUser = ({ open, setOpen }) => {
                     id="organization_name"
                     name="organization_name"
                     label={(
-                      <Typography className="translate">Organization Name</Typography>
+                      <span className="translate">Organization Name</span>
                     )}
                     autoComplete="organization_name"
                     {...organization_name.bind}

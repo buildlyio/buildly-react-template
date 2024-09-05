@@ -153,7 +153,7 @@ const AddResellers = ({ open, setOpen }) => {
                   select
                   id="resellerOrganization"
                   label={(
-                    <Typography className="translate">Select Reseller Organization</Typography>
+                    <span className="translate">Select Reseller Organization</span>
                   )}
                   value={resellerOrganization.value.name || ''}
                   onChange={(e) => {
@@ -221,7 +221,7 @@ const AddResellers = ({ open, setOpen }) => {
                 select
                 id="selectedResellerOrganization"
                 label={(
-                  <Typography className="translate">Select Reseller Organization</Typography>
+                  <span className="translate">Select Reseller Organization</span>
                 )}
                 value={selectedResellerOrganization.value.name || ''}
                 onChange={(e) => {
@@ -261,7 +261,7 @@ const AddResellers = ({ open, setOpen }) => {
                         contentEditable={false}
                         id={`reseller-customer-${index}`}
                         label={(
-                          <Typography className="translate">{`Reseller Customer Organization ${index + 1}`}</Typography>
+                          <span className="translate">{`Reseller Customer Organization ${index + 1}`}</span>
                         )}
                         value={item.name}
                       />
@@ -293,7 +293,7 @@ const AddResellers = ({ open, setOpen }) => {
                       select
                       id="resellerCustomerOrganization"
                       label={(
-                        <Typography className="translate">Select Reseller Customer Organization</Typography>
+                        <span className="translate">Select Reseller Customer Organization</span>
                       )}
                       onChange={(e) => {
                         const selectedOrg = !_.isEmpty(orgData) && orgData.find((org) => _.isEqual(org.name, e.target.value));

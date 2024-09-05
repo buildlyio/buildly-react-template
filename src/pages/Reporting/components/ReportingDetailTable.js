@@ -76,7 +76,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
 
   useEffect(() => {
     if (!_.isEmpty(sensorAlertData) && !_.isEmpty(selectedShipment)) {
-      const transitAlerts = selectedShipment && _.filter(sensorAlertData, (alert) => {
+      const transitAlerts = _.filter(sensorAlertData, (alert) => {
         const createDate = moment(alert.create_date).unix();
         return (
           createDate >= (moment(selectedShipment.actual_time_of_departure).unix())
@@ -90,9 +90,11 @@ const ReportingDetailTable = forwardRef((props, ref) => {
           && createDate <= (moment(selectedShipment.actual_time_of_arrival).unix())
         );
       });
+      const transitWithoutRecoveredAlerts = !_.isEmpty(transitAlerts) && _.filter(transitAlerts, (alert) => _.isEqual(alert.recovered_alert_id, null));
+      const storageWithoutRecoveredAlerts = !_.isEmpty(storageAlerts) && _.filter(storageAlerts, (alert) => _.isEqual(alert.recovered_alert_id, null));
       let processedTransitAlerts = [];
       let processedStorageAlerts = [];
-      _.forEach(transitAlerts, (alert) => {
+      _.forEach(transitWithoutRecoveredAlerts, (alert) => {
         let color = '';
         let title = '';
         if (_.includes(alert.alert_type, 'max') || _.includes(alert.alert_type, 'shock') || _.includes(alert.alert_type, 'light')) {
@@ -112,7 +114,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
           processedTransitAlerts = [...processedTransitAlerts, alertObj];
         }
       });
-      _.forEach(storageAlerts, (alert) => {
+      _.forEach(storageWithoutRecoveredAlerts, (alert) => {
         let color = '';
         let title = '';
         if (_.includes(alert.alert_type, 'max') || _.includes(alert.alert_type, 'shock') || _.includes(alert.alert_type, 'light')) {
@@ -185,6 +187,16 @@ const ReportingDetailTable = forwardRef((props, ref) => {
       const reportMaxLightEntry = sensorReportData
         .filter((entry) => entry.report_entry && entry.report_entry.report_light)
         .reduce((max, entry) => (entry.report_entry.report_light > max.report_entry.report_light ? entry : max), sensorReportData[0]);
+      setMaxTransitTempEntry(transitReportMaxTempEntry);
+      setMinTransitTempEntry(transitReportMinTempEntry);
+      setMaxStorageTempEntry(storageReportMaxTempEntry);
+      setMinStorageTempEntry(storageReportMinTempEntry);
+      setMaxTransitHumEntry(transitReportMaxHumEntry);
+      setMinTransitHumEntry(transitReportMinHumEntry);
+      setMaxStorageHumEntry(storageReportMaxHumEntry);
+      setMinStorageHumEntry(storageReportMinHumEntry);
+      setMaxShockEntry(reportMaxShockEntry);
+      setMaxLightEntry(reportMaxLightEntry);
     }
   }, [sensorReportData, selectedShipment]);
 

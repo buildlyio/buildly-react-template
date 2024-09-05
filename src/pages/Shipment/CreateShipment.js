@@ -1135,7 +1135,7 @@ const CreateShipment = ({ history, location }) => {
                       fullWidth
                       placeholder="Select..."
                       label={(
-                        <Typography className="translate">Origin Custodian</Typography>
+                        <span className="translate">Origin Custodian</span>
                       )}
                       onBlur={(e) => handleBlur(e, 'required', originCustodian, 'origin-custodian')}
                       value={originCustodian}
@@ -1209,7 +1209,7 @@ const CreateShipment = ({ history, location }) => {
                       fullWidth
                       placeholder="Select..."
                       label={(
-                        <Typography className="translate">Destination Custodian</Typography>
+                        <span className="translate">Destination Custodian</span>
                       )}
                       onBlur={(e) => handleBlur(e, 'required', destinationCustodian, 'destination-custodian')}
                       value={destinationCustodian}
@@ -1362,7 +1362,7 @@ const CreateShipment = ({ history, location }) => {
                   fullWidth
                   placeholder="Select..."
                   label={(
-                    <Typography className="translate">Shipment Status</Typography>
+                    <span className="translate">Shipment Status</span>
                   )}
                   onBlur={(e) => handleBlur(e, 'required', status, 'status')}
                   InputLabelProps={{ shrink: true }}
@@ -1439,7 +1439,7 @@ const CreateShipment = ({ history, location }) => {
                       className="notranslate"
                       variant="outlined"
                       label={(
-                        <Typography className="translate">Items to be shipped</Typography>
+                        <span className="translate">Items to be shipped</span>
                       )}
                       placeholder="Select..."
                     />
@@ -1739,7 +1739,7 @@ const CreateShipment = ({ history, location }) => {
                   id="shipment-name"
                   name="shipment-name"
                   label={(
-                    <Typography className="translate">Shipment Name</Typography>
+                    <span className="translate">Shipment Name</span>
                   )}
                   autoComplete="shipment-name"
                   onBlur={(e) => handleBlur(e, 'required', shipmentName, 'shipment-name')}
@@ -1867,7 +1867,7 @@ const CreateShipment = ({ history, location }) => {
                           disabled={cannotEdit}
                           placeholder="Select..."
                           label={(
-                            <Typography className="translate">{`Custodian ${index + 1}`}</Typography>
+                            <span className="translate">{`Custodian ${index + 1}`}</span>
                           )}
                           value={addCust}
                           onChange={(e) => {
@@ -1943,7 +1943,7 @@ const CreateShipment = ({ history, location }) => {
                     disabled={cannotEdit}
                     placeholder="Select..."
                     label={(
-                      <Typography className="translate">Add carriers/warehouses</Typography>
+                      <span className="translate">Add carriers/warehouses</span>
                     )}
                     onChange={(e) => {
                       setAdditionalCustocations([...additionalCustodians, e.target.value]);
@@ -1993,7 +1993,7 @@ const CreateShipment = ({ history, location }) => {
                   fullWidth
                   placeholder="Select..."
                   label={(
-                    <Typography className="translate">Tracker platform</Typography>
+                    <span className="translate">Tracker platform</span>
                   )}
                   onBlur={(e) => handleBlur(e, 'required', gatewayType, 'gateway-type')}
                   disabled={
