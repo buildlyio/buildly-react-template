@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import React, {
   useEffect, useState, useRef, forwardRef,
 } from 'react';
@@ -109,11 +110,18 @@ const AlertsReport = forwardRef((props, ref) => {
     }).join(',');
     const csvBody = data.map(({ data: row }) => row.map((cell, index) => {
       const column = columns[index];
-      if (!_.isEmpty(cell) && !_.isEmpty(cell.title)) {
-        return escapeCSV(cell.title);
-      }
       if (column.label === 'Date/Time stamp' && !_.isEmpty(cell)) {
         return escapeCSV(moment(cell).tz(timezone).format(`${dateFormat} ${timeFormat}`));
+      }
+      if (!row.location || row.location === 'Error retrieving address') {
+        row.location = 'N/A';
+      }
+      if (row.location === 'N/A') {
+        row.lat = 'N/A';
+        row.lng = 'N/A';
+      }
+      if (!_.isEmpty(cell) && !_.isEmpty(cell.title)) {
+        return escapeCSV(cell.title);
       }
       return escapeCSV(cell);
     }).join(',')).join('\n');

@@ -27,7 +27,14 @@ import {
 
 export const MapComponent = (props) => {
   const {
-    markers, setSelectedMarker, geofence, unitOfMeasure, allMarkers, zoom, screenshotMapCenter, noInitialInfo,
+    markers,
+    setSelectedMarker,
+    geofence,
+    unitOfMeasure,
+    allMarkers,
+    zoom,
+    screenshotMapCenter,
+    noInitialInfo,
   } = props;
   const [center, setCenter] = useState({
     lat: 47.606209,
@@ -167,6 +174,7 @@ const RenderedMap = withScriptjs(
             enableRetinaIcons
             zoomOnClick={false}
             gridSize={60}
+            title={!_.isEmpty(shipMarkers) ? _.first(shipMarkers).shipment.name : ''}
             onClick={(e) => {
               props.clusterClick(!_.isEmpty(shipMarkers) && _.first(shipMarkers).shipment, true);
             }}
@@ -176,50 +184,37 @@ const RenderedMap = withScriptjs(
                 height: 53,
                 width: 53,
                 anchor: [0, 0],
-                textSize: 12,
-                textColor: '#FFF',
+                textSize: 0.001,
               },
               {
                 url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
                 height: 56,
                 width: 56,
                 anchor: [0, 0],
-                textSize: 12,
-                textColor: '#FFF',
+                textSize: 0.001,
               },
               {
                 url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
                 height: 66,
                 width: 66,
                 anchor: [0, 0],
-                textSize: 12,
-                textColor: '#FFF',
+                textSize: 0.001,
               },
               {
                 url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
                 height: 78,
                 width: 78,
                 anchor: [0, 0],
-                textSize: 12,
-                textColor: '#FFF',
+                textSize: 0.001,
               },
               {
                 url: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m2.png',
                 height: 90,
                 width: 90,
                 anchor: [0, 0],
-                textSize: 12,
-                textColor: '#FFF',
+                textSize: 0.001,
               },
             ]}
-            calculator={(markers) => {
-              const locationKey = `${markers[0].position.lat()},${markers[0].position.lng()}`;
-              return {
-                text: props.overlapCounts[locationKey] ? props.overlapCounts[locationKey].toString() : '0',
-                index: 1,
-                title: !_.isEmpty(shipMarkers) ? _.first(shipMarkers).shipment.name : '',
-              };
-            }}
           >
             {_.map(shipMarkers, (marker, inx) => (
               <Marker visible={false} key={`${marker.lat}-${marker.lng}-${inx}`} position={{ lat: marker.lat, lng: marker.lng }} />

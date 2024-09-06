@@ -1466,11 +1466,16 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, selectedShipment) => {
           style: { maxWidth: '300px', wordWrap: 'break-word' },
           className: 'reportingSensorLeftHeader',
         }),
-        customBodyRender: (value, tableMeta) => (
-          <div>
-            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? value : 'N/A')}
-          </div>
-        ),
+        customBodyRender: (value, tableMeta) => {
+          const locationValue = tableMeta.rowData[tableMeta.columnIndex - 1];
+          return (
+            <div>
+              {!_.isEqual(locationValue, 'N/A')
+                ? (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? value : 'N/A')
+                : 'N/A'}
+            </div>
+          );
+        },
       },
     },
     {
@@ -1484,11 +1489,16 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, selectedShipment) => {
           style: { maxWidth: '300px', wordWrap: 'break-word' },
           className: 'reportingSensorLeftHeader',
         }),
-        customBodyRender: (value, tableMeta) => (
-          <div>
-            {(!_.isEqual(value, null) && !_.isEqual(value, undefined) ? value : 'N/A')}
-          </div>
-        ),
+        customBodyRender: (value, tableMeta) => {
+          const locationValue = tableMeta.rowData[tableMeta.columnIndex - 2];
+          return (
+            <div>
+              {!_.isEqual(locationValue, 'N/A')
+                ? (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? value : 'N/A')
+                : 'N/A'}
+            </div>
+          );
+        },
       },
     },
     {
@@ -1695,7 +1705,16 @@ export const getAlertsReportColumns = (sensorReport, timezone, dateFormat, timeF
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => <div>{value}</div>,
+      customBodyRender: (value, tableMeta) => {
+        const locationValue = tableMeta.rowData[tableMeta.columnIndex - 1];
+        return (
+          <div>
+            {!_.isEqual(locationValue, 'N/A')
+              ? (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? value : 'N/A')
+              : 'N/A'}
+          </div>
+        );
+      },
       setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
     },
   },
@@ -1706,7 +1725,16 @@ export const getAlertsReportColumns = (sensorReport, timezone, dateFormat, timeF
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => <div>{value}</div>,
+      customBodyRender: (value, tableMeta) => {
+        const locationValue = tableMeta.rowData[tableMeta.columnIndex - 2];
+        return (
+          <div>
+            {!_.isEqual(locationValue, 'N/A')
+              ? (!_.isEqual(value, null) && !_.isEqual(value, undefined) ? value : 'N/A')
+              : 'N/A'}
+          </div>
+        );
+      },
       setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
     },
   },

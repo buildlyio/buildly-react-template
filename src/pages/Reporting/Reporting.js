@@ -336,6 +336,10 @@ const Reporting = () => {
       if (!row.location || row.location === 'Error retrieving address') {
         row.location = 'N/A';
       }
+      if (row.location === 'N/A') {
+        row.lat = 'N/A';
+        row.lng = 'N/A';
+      }
       if (_.isEqual(cell, null) || _.isEqual(cell, undefined)) {
         cell = '';
       }
@@ -586,6 +590,10 @@ const Reporting = () => {
           if (!cellValue || cellValue === 'Error retrieving address') {
             cellValue = 'N/A';
           }
+        }
+        if (row.location === 'N/A') {
+          row.lat = 'N/A';
+          row.lng = 'N/A';
         }
         if (col.name === 'allAlerts' && Array.isArray(cellValue)) {
           cellValue = cellValue.map((item) => item.title).join(', ');
@@ -995,7 +1003,7 @@ const Reporting = () => {
             noInitialInfo
             markers={markers}
             googleMapURL={window.env.MAP_API_URL}
-            zoom={_.isEmpty(markers) ? 4 : 5}
+            zoom={4}
             setSelectedMarker={setSelectedMarker}
             loadingElement={<div style={{ height: '100%' }} />}
             containerElement={<div style={{ height: '625px' }} />}

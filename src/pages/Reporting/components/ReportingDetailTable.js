@@ -249,7 +249,9 @@ const ReportingDetailTable = forwardRef((props, ref) => {
   const displayItemText = (title, value, spanClass, translateClass) => (
     <Typography fontWeight={700}>
       {`${title}: `}
-      {value && <span style={{ fontWeight: spanClass ? 500 : 400 }} className={`${!!spanClass && spanClass} ${!!translateClass && translateClass}`}>{value}</span>}
+      {_.isEqual(value, null) || _.isEqual(value, undefined)
+        ? <span>N/A</span>
+        : <span style={{ fontWeight: spanClass ? 500 : 400 }} className={`${!!spanClass && spanClass} ${!!translateClass && translateClass}`}>{value}</span>}
     </Typography>
   );
 
