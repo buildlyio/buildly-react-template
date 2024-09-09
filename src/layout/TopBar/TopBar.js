@@ -107,7 +107,8 @@ const TopBar = ({
 
   const { data: versionNotesData, isLoading: isLoadingVersionNotes } = useQuery(
     ['versionNotes'],
-    () => getVersionNotesQuery(window.env.DISPLAY_VERSION, displayAlert),
+    // eslint-disable-next-line no-undef
+    () => getVersionNotesQuery(VERSION, displayAlert),
     { refetchOnWindowFocus: false },
   );
 

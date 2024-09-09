@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React from 'react';
 import _ from 'lodash';
 import { Grid, IconButton, Typography } from '@mui/material';
@@ -18,7 +19,7 @@ const WhatsNewHeader = ({ closeIcon, closeOnClick }) => (
       <Typography className="whatsNewSubTitle">
         Version
         {' '}
-        {window.env.DISPLAY_VERSION}
+        {VERSION}
         {' '}
         Release
       </Typography>

@@ -7,6 +7,8 @@ const CopyPlugin = require('copy-webpack-plugin');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const packageJSON = require('./package.json');
 
+const buildDate = new Date().toUTCString();
+
 module.exports = (env, argv) => {
   const webpackConfig = {
     entry: ['babel-polyfill', './src/index.js'],
@@ -107,6 +109,7 @@ module.exports = (env, argv) => {
       new webpack.HotModuleReplacementPlugin(),
       new webpack.DefinePlugin({
         VERSION: JSON.stringify(packageJSON.version),
+        BUILDDATE: JSON.stringify(buildDate),
       }),
       new HtmlWebPackPlugin({
         template: './src/index.html',

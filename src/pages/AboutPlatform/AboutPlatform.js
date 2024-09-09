@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React from 'react';
 import {
   Grid,
@@ -11,10 +12,17 @@ import './AboutPlatformStyles.css';
 const AboutPlatform = () => (
   <Grid container spacing={2}>
     <Grid item xs={12}>
-      <Typography variant="caption" component="div" className="aboutPlatformVersion">
+      <Typography variant="caption" component="span" className="aboutPlatformVersion">
         Platform Version:
         {' '}
-        {window.env.DISPLAY_VERSION}
+        {VERSION}
+      </Typography>
+    </Grid>
+    <Grid item xs={12}>
+      <Typography variant="caption" component="span" className="aboutPlatformVersion">
+        Build Date:
+        {' '}
+        {BUILDDATE}
       </Typography>
     </Grid>
     <Grid container spacing={2} className="aboutPlatformAgreementContainer">
