@@ -23,12 +23,22 @@ const ReportingDetailTable = forwardRef((props, ref) => {
     sensorProcessedData,
   } = props;
   const userLanguage = getUser().user_language;
+  const tempDisplayUnit = tempUnit(_.find(unitOfMeasure, (unit) => _.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature')));
+  const tempMeasure = !_.isEmpty(unitOfMeasure) && _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'temperature')).unit_of_measure;
   const dateFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
     ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
     : '';
   const timeFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
     ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
     : '';
+
+  // shipment thresholds
+  const maxTempThreshold = selectedShipment && _.orderBy(selectedShipment.max_excursion_temp, ['set_at'], ['desc'])[0].value;
+  const minTempThreshold = selectedShipment && _.orderBy(selectedShipment.min_excursion_temp, ['set_at'], ['desc'])[0].value;
+  const maxHumThreshold = selectedShipment && _.orderBy(selectedShipment.max_excursion_humidity, ['set_at'], ['desc'])[0].value;
+  const minHumThreshold = selectedShipment && _.orderBy(selectedShipment.min_excursion_humidity, ['set_at'], ['desc'])[0].value;
+  const maxShockThreshold = selectedShipment && _.orderBy(selectedShipment.shock_threshold, ['set_at'], ['desc'])[0].value;
+  const maxLightThreshold = selectedShipment && _.orderBy(selectedShipment.light_threshold, ['set_at'], ['desc'])[0].value;
 
   const [trackerActivationDate, setTrackerActivationDate] = useState();
   const [updatedTransitAlerts, setUpdatedTransitAlerts] = useState([]);
@@ -144,49 +154,72 @@ const ReportingDetailTable = forwardRef((props, ref) => {
   useEffect(() => {
     if (!_.isEmpty(sensorReportData) && !_.isEmpty(selectedShipment)) {
       const transitReports = _.filter(sensorReportData, (report) => {
-        const createDate = moment(report.create_date).unix();
+        const activationDate = moment(report.activation_date).unix();
         return (
-          createDate >= (moment(selectedShipment.actual_time_of_departure).unix())
-          && createDate <= (moment(selectedShipment.actual_time_of_arrival).unix())
+          activationDate >= (moment(selectedShipment.actual_time_of_departure).unix())
+          && activationDate <= (moment(selectedShipment.actual_time_of_arrival).unix())
         );
       });
       const storageReports = _.filter(sensorReportData, (report) => {
-        const createDate = moment(report.create_date).unix();
-        return !(
-          createDate >= (moment(selectedShipment.actual_time_of_departure).unix())
-          && createDate <= (moment(selectedShipment.actual_time_of_arrival).unix())
+        const activationDate = moment(report.activation_date).unix();
+        return (
+          activationDate >= (moment(selectedShipment.actual_time_of_arrival).unix())
+          && activationDate <= (moment(selectedShipment.actual_time_of_completion).unix())
         );
       });
-      const transitReportMaxTempEntry = transitReports && transitReports
-        .filter((entry) => entry.report_entry && entry.report_entry.report_temp_fah != null)
-        .reduce((max, entry) => (entry.report_entry.report_temp_fah > max.report_entry.report_temp_fah ? entry : max), transitReports[0]);
-      const transitReportMinTempEntry = transitReports && transitReports
-        .filter((entry) => entry.report_entry && entry.report_entry.report_temp_fah != null)
-        .reduce((min, entry) => (entry.report_entry.report_temp_fah < min.report_entry.report_temp_fah ? entry : min), transitReports[0]);
-      const storageReportMaxTempEntry = storageReports && storageReports
-        .filter((entry) => entry.report_entry && entry.report_entry.report_temp_fah != null)
-        .reduce((max, entry) => (entry.report_entry.report_temp_fah > max.report_entry.report_temp_fah ? entry : max), storageReports[0]);
-      const storageReportMinTempEntry = storageReports && storageReports
-        .filter((entry) => entry.report_entry && entry.report_entry.report_temp_fah != null)
-        .reduce((min, entry) => (entry.report_entry.report_temp_fah < min.report_entry.report_temp_fah ? entry : min), storageReports[0]);
-      const transitReportMaxHumEntry = transitReports && transitReports
-        .filter((entry) => entry.report_entry && entry.report_entry.report_humidity != null)
-        .reduce((max, entry) => (entry.report_entry.report_humidity > max.report_entry.report_humidity ? entry : max), transitReports[0]);
-      const transitReportMinHumEntry = transitReports && transitReports
-        .filter((entry) => entry.report_entry && entry.report_entry.report_humidity != null)
-        .reduce((min, entry) => (entry.report_entry.report_humidity < min.report_entry.report_humidity ? entry : min), transitReports[0]);
-      const storageReportMaxHumEntry = storageReports && storageReports
-        .filter((entry) => entry.report_entry && entry.report_entry.report_humidity != null)
-        .reduce((max, entry) => (entry.report_entry.report_humidity > max.report_entry.report_humidity ? entry : max), storageReports[0]);
-      const storageReportMinHumEntry = storageReports && storageReports
-        .filter((entry) => entry.report_entry && entry.report_entry.report_humidity != null)
-        .reduce((min, entry) => (entry.report_entry.report_humidity < min.report_entry.report_humidity ? entry : min), storageReports[0]);
-      const reportMaxShockEntry = sensorReportData
-        .filter((entry) => entry.report_entry && entry.report_entry_report_shock !== null)
-        .reduce((max, entry) => (entry.report_entry.report_shock > max.report_entry.report_shock ? entry : max), sensorReportData[0]);
-      const reportMaxLightEntry = sensorReportData
-        .filter((entry) => entry.report_entry && entry.report_entry.report_light)
-        .reduce((max, entry) => (entry.report_entry.report_light > max.report_entry.report_light ? entry : max), sensorReportData[0]);
+
+      let transitReportMaxTempEntry = null;
+      let transitReportMinTempEntry = null;
+      let storageReportMaxTempEntry = null;
+      let storageReportMinTempEntry = null;
+      let transitReportMaxHumEntry = null;
+      let transitReportMinHumEntry = null;
+      let storageReportMaxHumEntry = null;
+      let storageReportMinHumEntry = null;
+      let reportMaxShockEntry = null;
+      let reportMaxLightEntry = null;
+
+      // Transit reports
+      if (!_.isEmpty(transitReports)) {
+        const transitHumEntries = _.map(transitReports, (tr) => tr.report_entry && tr.report_entry.report_humidity);
+        const transitTempEntries = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
+          ? _.map(transitReports, (tr) => tr.report_entry && tr.report_entry.report_temp_fah)
+          : _.map(transitReports, (tr) => tr.report_entry && tr.report_entry.report_temp_cel);
+
+        transitReportMaxTempEntry = _.max(transitTempEntries);
+        transitReportMinTempEntry = _.min(transitTempEntries);
+        transitReportMaxHumEntry = _.max(transitHumEntries);
+        transitReportMinHumEntry = _.min(transitHumEntries);
+      }
+
+      // Storage reports
+      if (!_.isEmpty(storageReports)) {
+        const storageHumEntries = _.map(storageReports, (tr) => tr.report_entry && tr.report_entry.report_humidity);
+        const storageTempEntries = _.isEqual(_.toLower(tempMeasure), 'fahrenheit')
+          ? _.map(storageReports, (tr) => tr.report_entry && tr.report_entry.report_temp_fah)
+          : _.map(storageReports, (tr) => tr.report_entry && tr.report_entry.report_temp_cel);
+
+        storageReportMaxTempEntry = _.max(storageTempEntries);
+        storageReportMinTempEntry = _.min(storageTempEntries);
+        storageReportMaxHumEntry = _.max(storageHumEntries);
+        storageReportMinHumEntry = _.min(storageHumEntries);
+      }
+
+      // Reports
+      if (!_.isEmpty(sensorReportData)) {
+        const reportShockEntries = _.map(sensorReportData, (tr) => tr.report_entry && tr.report_entry.report_shock);
+        const reportLightEntries = _.map(sensorReportData, (tr) => tr.report_entry && tr.report_entry.report_light);
+        reportMaxShockEntry = _.max(reportShockEntries);
+        reportMaxLightEntry = _.max(reportLightEntries);
+
+        if (reportMaxShockEntry) {
+          reportMaxShockEntry = reportMaxShockEntry.toFixed(2);
+        }
+        if (reportMaxLightEntry) {
+          reportMaxLightEntry = reportMaxLightEntry.toFixed(2);
+        }
+      }
+
       setMaxTransitTempEntry(transitReportMaxTempEntry);
       setMinTransitTempEntry(transitReportMinTempEntry);
       setMaxStorageTempEntry(storageReportMaxTempEntry);
@@ -208,16 +241,55 @@ const ReportingDetailTable = forwardRef((props, ref) => {
   }, [selectedShipment, itemData]);
 
   const displayTempValues = (temperature) => {
-    const isFahrenheit = _.isEqual(_.toLower(_.find(unitOfMeasure, (unit) => _.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature')).unit_of_measure), 'fahrenheit');
-    const maxTemp = isFahrenheit
-      ? temperature.report_entry.report_temp_fah
-      : temperature.report_entry.report_temp_cel;
-    const tempDifference = isFahrenheit
-      ? (temperature.report_entry.report_temp_fah - _.orderBy(selectedShipment.max_excursion_temp, ['set_at'], ['desc'])[0].value).toFixed(2)
-      : (temperature.report_entry.report_temp_cel - _.orderBy(selectedShipment.max_excursion_temp, ['set_at'], ['desc'])[0].value).toFixed(2);
-    const sign = tempDifference > 0 ? '+' : '';
-    const unitTemp = tempUnit(_.find(unitOfMeasure, (unit) => _.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature')));
-    return `${maxTemp} ${unitTemp} (${sign}${tempDifference} ${unitTemp})`;
+    let returnValue = `${temperature} ${tempDisplayUnit}`;
+    if (_.gt(temperature, maxTempThreshold) || _.lt(temperature, minTempThreshold)) {
+      const limitTemp = _.gt(temperature, maxTempThreshold) ? maxTempThreshold : minTempThreshold;
+      const tempDifference = (temperature - limitTemp).toFixed(2);
+      const sign = tempDifference > 0 ? '+' : '';
+      returnValue = `${returnValue} (${sign}${tempDifference} ${tempDisplayUnit})`;
+    }
+
+    return returnValue;
+  };
+
+  const displayTextColor = (value, limitType) => {
+    let returnClass = 'reportingGreenText';
+
+    // Temp check
+    if (_.isEqual(limitType, 'temp')) {
+      if (value && _.gt(value, maxLightThreshold)) {
+        returnClass = 'reportingRedText';
+      }
+      if (value && _.lt(value, minTempThreshold)) {
+        returnClass = 'reportingInfoText';
+      }
+    }
+
+    // Hum check
+    if (_.isEqual(limitType, 'hum')) {
+      if (value && _.gt(value, maxHumThreshold)) {
+        returnClass = 'reportingRedText';
+      }
+      if (value && _.lt(value, minHumThreshold)) {
+        returnClass = 'reportingInfoText';
+      }
+    }
+
+    // shock check
+    if (_.isEqual(limitType, 'shock')) {
+      if (value && _.gt(value, maxShockThreshold)) {
+        returnClass = 'reportingRedText';
+      }
+    }
+
+    // light check
+    if (_.isEqual(limitType, 'light')) {
+      if (value && _.gt(value, maxLightThreshold)) {
+        returnClass = 'reportingRedText';
+      }
+    }
+
+    return returnClass;
   };
 
   const convertSecondsToFormattedTime = (title, value, spanClass) => {
@@ -250,7 +322,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
     <Typography fontWeight={700}>
       {`${title}: `}
       {_.includes(value, null) || _.includes(value, undefined)
-        ? <span>N/A</span>
+        ? <span style={{ fontWeight: 400 }}>N/A</span>
         : <span style={{ fontWeight: spanClass ? 500 : 400 }} className={`${!!spanClass && spanClass} ${!!translateClass && translateClass}`}>{value}</span>}
     </Typography>
   );
@@ -349,7 +421,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
           </Grid>
           <Grid container className="reportingDetailTableBody">
             <Grid item xs={6} md={3} id="itemText">
-              {displayItemText('Maximum Temperature Threshold', `${_.orderBy(selectedShipment.max_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`)}
+              {displayItemText('Maximum Temperature Threshold', `${maxTempThreshold}${tempDisplayUnit}`)}
             </Grid>
             <Grid item xs={6} md={3} id="itemText">
               {displayItemText('Transit Time', dateDifference(selectedShipment.actual_time_of_departure, selectedShipment.actual_time_of_arrival))}
@@ -358,21 +430,21 @@ const ReportingDetailTable = forwardRef((props, ref) => {
               {displayItemText('Post-Transit/Storage Time', dateDifference(selectedShipment.actual_time_of_arrival, selectedShipment.actual_time_of_completion || selectedShipment.edit_date))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText">
-              {displayItemText('Minimum Temperature Threshold', `${_.orderBy(selectedShipment.min_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`)}
+              {displayItemText('Minimum Temperature Threshold', `${minTempThreshold}${tempDisplayUnit}`)}
             </Grid>
           </Grid>
           <Grid container className="reportingDetailTableBody">
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(maxTransitTempEntry) ? displayItemText('Transit Max. Temp.', displayTempValues(maxTransitTempEntry), 'reportingRedText') : 'Transit Max. Temp.: NA'}
+              {displayItemText('Transit Max. Temp.', displayTempValues(maxTransitTempEntry), displayTextColor(maxTransitTempEntry, 'temp'))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(minTransitTempEntry) ? displayItemText('Transit Min. Temp.', `${_.isEqual(_.toLower(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))).unit_of_measure), 'fahrenheit') ? minTransitTempEntry.report_entry.report_temp_fah : minTransitTempEntry.report_entry.report_temp_cel}${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`, 'reportingGreenText') : 'Transit Min. Temp.: NA'}
+              {displayItemText('Transit Min. Temp.', displayTempValues(minTransitTempEntry), displayTextColor(minTransitTempEntry, 'temp'))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(maxStorageTempEntry) ? displayItemText('Post-Transit/Storage Max. Temp.', displayTempValues(maxStorageTempEntry), 'reportingRedText') : 'Post-Transit/Storage Max. Temp.: NA'}
+              {displayItemText('Post-Transit/Storage Max. Temp.', displayTempValues(maxStorageTempEntry), displayTextColor(maxStorageTempEntry, 'temp'))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(minStorageTempEntry) ? displayItemText('Post-Transit/Storage Min. Temp.', `${_.isEqual(_.toLower(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))).unit_of_measure), 'fahrenheit') ? minStorageTempEntry.report_entry.report_temp_fah : minStorageTempEntry.report_entry.report_temp_cel}${tempUnit(_.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))}`, 'reportingGreenText') : 'Post-Transit/Storage Min. Temp.: NA'}
+              {displayItemText('Post-Transit/Storage Min. Temp.', displayTempValues(minStorageTempEntry), displayTextColor(minStorageTempEntry, 'temp'))}
             </Grid>
           </Grid>
           <Grid container className="reportingDetailTableBody">
@@ -391,25 +463,25 @@ const ReportingDetailTable = forwardRef((props, ref) => {
           </Grid>
           <Grid container className="reportingDetailTableBody">
             <Grid item xs={6} sm={4} md={3} id="itemText">
-              {displayItemText('Maximum Humidity Threshold', `${_.orderBy(selectedShipment.max_excursion_humidity, ['set_at'], ['desc'])[0].value}%`)}
+              {displayItemText('Maximum Humidity Threshold', `${maxHumThreshold}%`)}
             </Grid>
             {!isMobileDevice && <Grid item xs={0} sm={4} md={6} />}
             <Grid item xs={6} sm={4} md={3} id="itemText">
-              {displayItemText('Minumum Humidity Threshold', `${_.orderBy(selectedShipment.min_excursion_humidity, ['set_at'], ['desc'])[0].value}%`)}
+              {displayItemText('Minumum Humidity Threshold', `${minHumThreshold}%`)}
             </Grid>
           </Grid>
           <Grid container className="reportingDetailTableBody">
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(maxTransitHumEntry) ? displayItemText('Transit Max.Hum.', `${maxTransitHumEntry.report_entry.report_humidity}%`, 'reportingRedText') : 'Transit Max.Hum.: NA'}
+              {displayItemText('Transit Max.Hum.', `${maxTransitHumEntry}%`, displayTextColor(maxTransitHumEntry, 'hum'))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(minTransitHumEntry) ? displayItemText('Transit Min. Hum.', `${minTransitHumEntry.report_entry.report_humidity}%`, 'reportingGreenText') : 'Transit Min. Hum.: NA'}
+              {displayItemText('Transit Min. Hum.', `${minTransitHumEntry}%`, displayTextColor(minTransitHumEntry, 'hum'))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(maxStorageHumEntry) ? displayItemText('Post-Transit/Storage Max. Hum.', `${maxStorageHumEntry.report_entry.report_humidity}%`, 'reportingRedText') : 'Post-Transit/Storage Max. Hum.: NA'}
+              {displayItemText('Post-Transit/Storage Max. Hum.', `${maxStorageHumEntry}%`, displayTextColor(maxStorageHumEntry, 'hum'))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(minStorageHumEntry) ? displayItemText('Post-Transit/Storage Min. Hum.', `${minStorageHumEntry.report_entry.report_humidity}%`, 'reportingGreenText') : 'Post-Transit/Storage Min. Hum.: NA'}
+              {displayItemText('Post-Transit/Storage Min. Hum.', `${minStorageHumEntry}%`, displayTextColor(minStorageHumEntry, 'hum'))}
             </Grid>
           </Grid>
           <Grid container className="reportingDetailTableBody">
@@ -428,16 +500,16 @@ const ReportingDetailTable = forwardRef((props, ref) => {
           </Grid>
           <Grid container className="reportingDetailTableBody">
             <Grid item xs={6} md={3} id="itemText">
-              {displayItemText('Transit/Storage Shock Threshold', `${_.orderBy(selectedShipment.shock_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} G`)}
+              {displayItemText('Transit/Storage Shock Threshold', `${maxShockThreshold.toFixed(2)} G`)}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(maxShockEntry) ? displayItemText('Transit/Storage Max. Shock', `${maxShockEntry.report_entry.report_shock.toFixed(2)} G`, 'reportingRedText') : 'Transit/Storage Max. Shock: NA'}
+              {displayItemText('Transit/Storage Max. Shock', `${maxShockEntry} G`, displayTextColor(maxShockEntry, 'shock'))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText">
-              {displayItemText('Transit/Storage Light Threshold', `${_.orderBy(selectedShipment.light_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} LUX`)}
+              {displayItemText('Transit/Storage Light Threshold', `${maxLightThreshold.toFixed(2)} LUX`)}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
-              {!_.isEmpty(maxLightEntry) ? displayItemText('Transit/Storage Max. Light', `${maxLightEntry.report_entry.report_light.toFixed(2)} LUX`, 'reportingRedText') : 'Transit/Storage Max. Light: NA'}
+              {displayItemText('Transit/Storage Max. Light', `${maxLightEntry} LUX`, displayTextColor(maxLightEntry, 'light'))}
             </Grid>
           </Grid>
           {!_.isEmpty(intermediateCustodians) && (

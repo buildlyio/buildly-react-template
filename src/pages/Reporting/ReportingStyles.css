@@ -180,6 +180,10 @@
   color: var(--color-palette-error-main);
 }
 
+.reportingInfoText {
+  color: var(--color-palette-info-main);
+}
+
 .reportingGreenText {
   color: var(--color-palette-success-main);
 }
