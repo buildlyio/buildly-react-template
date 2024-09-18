@@ -27,6 +27,17 @@
   background-color: var(--color-palette-primary-main);
 }
 
+.shipmentGoBackButton {
+  margin-bottom: 24px;
+  margin-left: 16px;
+  background-color: var(--color-palette-primary-main);
+  color: var(--color-palette-background-default);
+}
+
+.shipmentGoBackButton:hover {
+  background-color: var(--color-palette-primary-main);
+}
+
 .shipmentTab {
   color: var(--color-palette-background-default);
 }

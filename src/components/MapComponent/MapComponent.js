@@ -1,16 +1,17 @@
+/* eslint-disable no-console */
 import React, { useState, useEffect } from 'react';
-import Geocode from 'react-geocode';
 import {
-  withScriptjs,
-  withGoogleMap,
   GoogleMap,
   Marker,
   InfoWindow,
   Polyline,
   Polygon,
   Circle,
-} from 'react-google-maps';
-import MarkerClusterer from 'react-google-maps/lib/components/addons/MarkerClusterer';
+  MarkerClusterer,
+  useJsApiLoader,
+  LoadScript,
+} from '@react-google-maps/api';
+import Geocode from 'react-geocode';
 import _ from 'lodash';
 import { Grid, useTheme } from '@mui/material';
 import {
@@ -20,29 +21,38 @@ import {
   Battery50 as Battery50Icon,
   CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
-import {
-  MARKER_DATA,
-  getIcon,
-} from '@utils/constants';
+import { MARKER_DATA, getIcon } from '@utils/constants';
+
+const libraries = ['places', 'geometry', 'drawing'];
 
 export const MapComponent = (props) => {
   const {
-    markers,
-    setSelectedMarker,
-    geofence,
-    unitOfMeasure,
-    allMarkers,
-    zoom,
+    isMarkerShown,
+    showPath,
     screenshotMapCenter,
     noInitialInfo,
+    markers,
+    zoom,
+    setSelectedMarker,
+    unitOfMeasure,
+    allMarkers,
+    geofence,
+    containerStyle,
+    setSelectedCluster,
+    selectedCluster,
   } = props;
-  const [center, setCenter] = useState({
-    lat: 47.606209,
-    lng: -122.332069,
-  });
+
+  const [center, setCenter] = useState({ lat: 47.606209, lng: -122.332069 });
   const [mapZoom, setMapZoom] = useState(zoom);
   const [showInfoIndex, setShowInfoIndex] = useState({});
   const [polygon, setPolygon] = useState({});
+
+  const theme = useTheme();
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: window.env.MAP_API_KEY,
+    libraries,
+  });
 
   useEffect(() => {
     if (screenshotMapCenter) {
@@ -68,7 +78,13 @@ export const MapComponent = (props) => {
       }
     }
     if (_.isEmpty(markers)) {
-      if (!_.isEmpty(allMarkers)) {
+      if (!_.isEmpty(selectedCluster)) {
+        setCenter({
+          lat: selectedCluster.lat,
+          lng: selectedCluster.lng,
+        });
+        setMapZoom(18);
+      } else if (!_.isEmpty(allMarkers)) {
         const allMarkerItems = [].concat(...allMarkers);
         const countries = allMarkerItems.map((item) => item && item.country);
         const uniqueCountries = [...new Set(countries)];
@@ -116,7 +132,6 @@ export const MapComponent = (props) => {
           setCenter({ lat, lng });
         },
         (error) => {
-          // eslint-disable-next-line no-console
           console.error(error);
         },
       );
@@ -147,36 +162,30 @@ export const MapComponent = (props) => {
 
   const overlapCounts = groupMarkersByLocation(_.flatten(allMarkers));
 
-  return (
-    <RenderedMap
-      {...props}
-      theme={useTheme()}
-      onMarkerDrag={onMarkerDrag}
-      center={center}
-      mapZoom={mapZoom}
-      polygon={polygon}
-      showInfoIndex={showInfoIndex}
-      onMarkerSelect={onMarkerSelect}
-      unitOfMeasure={unitOfMeasure}
-      overlapCounts={overlapCounts}
-    />
-  );
-};
+  if (!isLoaded) return <div>Loading Map...</div>;
 
-const RenderedMap = withScriptjs(
-  withGoogleMap((props) => (
-    <GoogleMap zoom={props.mapZoom} center={props.center}>
-      {!props.isMarkerShown && props.allMarkers && !_.isEmpty(props.allMarkers)
-        && _.map(props.allMarkers, (shipMarkers, idx) => (
+  return (
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={mapZoom}
+    >
+      {!isMarkerShown && allMarkers && !_.isEmpty(allMarkers)
+        && _.map(allMarkers, (shipMarkers, idx) => (
           <MarkerClusterer
             key={idx}
             averageCenter
-            enableRetinaIcons
             zoomOnClick={false}
+            enableRetinaIcons
             gridSize={60}
             title={!_.isEmpty(shipMarkers) ? _.first(shipMarkers).shipment.name : ''}
             onClick={(e) => {
-              props.clusterClick(!_.isEmpty(shipMarkers) && _.first(shipMarkers).shipment, true);
+              setSelectedCluster(!_.isEmpty(shipMarkers) && _.first(shipMarkers));
+              setCenter({
+                lat: !_.isEmpty(shipMarkers) && _.first(shipMarkers).lat,
+                lng: !_.isEmpty(shipMarkers) && _.first(shipMarkers).lng,
+              });
+              setMapZoom(18);
             }}
             styles={[
               {
@@ -216,13 +225,18 @@ const RenderedMap = withScriptjs(
               },
             ]}
           >
-            {_.map(shipMarkers, (marker, inx) => (
-              <Marker visible={false} key={`${marker.lat}-${marker.lng}-${inx}`} position={{ lat: marker.lat, lng: marker.lng }} />
+            {(clusterer) => _.map(shipMarkers, (marker, inx) => (
+              <Marker
+                visible={false}
+                key={`${marker.lat}-${marker.lng}-${inx}`}
+                position={{ lat: marker.lat, lng: marker.lng }}
+                clusterer={clusterer}
+              />
             ))}
           </MarkerClusterer>
         ))}
-      {props.isMarkerShown && props.markers && _.map(
-        props.markers,
+      {isMarkerShown && markers && _.map(
+        markers,
         (mark, index) => (mark.label ? (
           <Marker
             key={index}
@@ -233,28 +247,28 @@ const RenderedMap = withScriptjs(
                 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
               fillColor: `${mark.color}`,
               fillOpacity: 1,
-              strokeColor: props.theme.palette.background.dark,
+              strokeColor: theme.palette.background.dark,
               scale: 1.4,
               anchor: { x: 12, y: 24 },
             }}
-            onClick={() => props.onMarkerSelect(mark)}
+            onClick={() => onMarkerSelect(mark)}
           >
-            {_.isEqual(props.showInfoIndex, mark) && (
-              <InfoWindow onCloseClick={() => props.onMarkerSelect(null)}>
+            {_.isEqual(showInfoIndex, mark) && (
+              <InfoWindow onCloseClick={() => onMarkerSelect(null)}>
                 {_.isEqual(mark.label, 'Clustered')
                   ? (
                     <Grid
                       container
                       spacing={1}
                       style={{
-                        height: props.theme.spacing(13),
-                        width: props.theme.spacing(38),
-                        color: props.theme.palette.background.dark,
-                        fontSize: props.theme.spacing(1.25),
+                        height: theme.spacing(13),
+                        width: theme.spacing(38),
+                        color: theme.palette.background.dark,
+                        fontSize: theme.spacing(1.25),
                       }}
                       alignItems="center"
                     >
-                      {_.map(MARKER_DATA(props.unitOfMeasure), (item, idx) => (
+                      {_.map(MARKER_DATA(unitOfMeasure), (item, idx) => (
                         <Grid
                           item
                           xs={6}
@@ -267,7 +281,7 @@ const RenderedMap = withScriptjs(
                           {!_.isEqual(mark[item.id], null) && !_.isEqual(mark[item.id], undefined) ? (
                             <div
                               style={{
-                                marginLeft: props.theme.spacing(0.5),
+                                marginLeft: theme.spacing(0.5),
                                 color: _.find(mark.allAlerts, { id: item.id })
                                   ? _.find(mark.allAlerts, { id: item.id }).color
                                   : 'inherit',
@@ -278,25 +292,25 @@ const RenderedMap = withScriptjs(
                           ) : null}
                         </Grid>
                       ))}
-                      <Grid item xs={12} style={{ borderTop: `1px solid ${props.theme.palette.background.light}`, marginTop: props.theme.spacing(1.5) }}>
+                      <Grid item xs={12} style={{ borderTop: `1px solid ${theme.palette.background.light}`, marginTop: theme.spacing(1.5) }}>
                         <Grid container spacing={1}>
                           <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
                             <CalendarIcon />
-                            <div style={{ marginLeft: props.theme.spacing(0.5) }}>{mark.date}</div>
+                            <div style={{ marginLeft: theme.spacing(0.5) }}>{mark.date}</div>
                           </Grid>
                           <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
                             <ClockIcon />
-                            <div style={{ marginLeft: props.theme.spacing(0.5) }}>{mark.time}</div>
+                            <div style={{ marginLeft: theme.spacing(0.5) }}>{mark.time}</div>
                           </Grid>
                           <Grid item xs={2} style={{ display: 'flex', alignItems: 'center' }}>
                             {mark.battery && _.gte(_.toNumber(mark.battery), 90) && (
-                              <BatteryFullIcon htmlColor={props.theme.palette.success.main} />
+                              <BatteryFullIcon htmlColor={theme.palette.success.main} />
                             )}
                             {mark.battery && _.lt(_.toNumber(mark.battery), 90) && _.gte(_.toNumber(mark.battery), 60) && (
-                              <Battery80Icon htmlColor={props.theme.palette.warning.main} />
+                              <Battery80Icon htmlColor={theme.palette.warning.main} />
                             )}
                             {mark.battery && _.lt(_.toNumber(mark.battery), 60) && (
-                              <Battery50Icon htmlColor={props.theme.palette.error.main} />
+                              <Battery50Icon htmlColor={theme.palette.error.main} />
                             )}
                             {!mark.battery && (
                               <BatteryFullIcon />
@@ -307,7 +321,7 @@ const RenderedMap = withScriptjs(
                       </Grid>
                     </Grid>
                   ) : (
-                    <div style={{ color: props.theme.palette.background.default }}>
+                    <div style={{ color: theme.palette.background.default }}>
                       {mark.label}
                     </div>
                   )}
@@ -325,30 +339,30 @@ const RenderedMap = withScriptjs(
             position={
               mark.lat && mark.lng
                 ? { lat: mark.lat, lng: mark.lng }
-                : props.center
+                : center
             }
             onDragEnd={(e) => {
-              props.onMarkerDrag(e, mark.onMarkerDrag);
+              onMarkerDrag(e, mark.onMarkerDrag);
             }}
           />
         )),
       )}
-      {props.isMarkerShown && !_.isEmpty(props.markers) && props.showPath && (
+      {isMarkerShown && markers && !_.isEmpty(markers) && showPath && (
         <Polyline
-          path={_.map(props.markers, (marker) => ({
+          path={_.map(markers, (marker) => ({
             lat: marker.lat,
             lng: marker.lng,
           }))}
           geodesic
           options={{
-            strokeColor: props.theme.palette.background.dark,
+            strokeColor: theme.palette.background.dark,
             strokeOpacity: 0.75,
             strokeWeight: 1,
           }}
         />
       )}
-      {props.isMarkerShown && props.markers && !_.isEmpty(props.polygon) && _.map(
-        props.markers,
+      {isMarkerShown && markers && !_.isEmpty(polygon) && _.map(
+        markers,
         (mark, index) => (mark.radius ? (
           <Marker
             key={
@@ -359,7 +373,7 @@ const RenderedMap = withScriptjs(
             position={
               mark.lat && mark.lng
                 ? { lat: mark.lat, lng: mark.lng }
-                : props.center
+                : center
             }
           >
             <Circle
@@ -369,18 +383,18 @@ const RenderedMap = withScriptjs(
               }}
               radius={mark.radius * 1000}
               options={{
-                strokeColor: props.theme.palette.error.main,
+                strokeColor: theme.palette.error.main,
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
-                fillColor: props.theme.palette.error.main,
+                fillColor: theme.palette.error.main,
                 fillOpacity: 0.35,
               }}
             />
             <InfoWindow>
-              <div style={{ color: props.theme.palette.background.dark }}>
+              <div style={{ color: theme.palette.background.dark }}>
                 {`Geofence of ${mark.radius} ${_.toLower(
-                  _.find(props.unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance'))
-                    ? _.find(props.unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance')).unit_of_measure
+                  _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance'))
+                    ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'distance')).unit_of_measure
                     : '',
                 )}`}
               </div>
@@ -396,33 +410,33 @@ const RenderedMap = withScriptjs(
             position={
               mark.lat && mark.lng
                 ? { lat: mark.lat, lng: mark.lng }
-                : props.center
+                : center
             }
           >
             <InfoWindow>
-              <div style={{ color: props.theme.palette.background.dark }}>
+              <div style={{ color: theme.palette.background.dark }}>
                 Configure radius for geofence
               </div>
             </InfoWindow>
           </Marker>
         )),
       )}
-      {!_.isEmpty(props.polygon) && (
+      {!_.isEmpty(polygon) && (
         <Polygon
-          path={props.polygon}
+          path={polygon}
           editable={false}
           options={{
-            strokeColor: props.theme.palette.background.dark,
+            strokeColor: theme.palette.background.dark,
             strokeOpacity: 0.8,
             strokeWeight: 2,
-            fillColor: props.theme.palette.background.dark,
+            fillColor: theme.palette.background.dark,
             fillOpacity: 0.35,
             polygonKey: 1,
           }}
         />
       )}
     </GoogleMap>
-  )),
-);
+  );
+};
 
 export default MapComponent;

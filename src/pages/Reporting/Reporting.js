@@ -250,8 +250,8 @@ const Reporting = () => {
   }, [selectedShipment, markers, allGraphs, reports]);
 
   const getShipmentValue = (value) => {
-    let returnValue;
-    if (selectedShipment[value] !== null) {
+    let returnValue = '';
+    if (!_.isEqual(selectedShipment[value], null)) {
       if (moment(selectedShipment[value], true).isValid()) {
         returnValue = moment(selectedShipment[value])
           .tz(timeZone).format(`${dateFormat} ${timeFormat}`);
@@ -265,7 +265,7 @@ const Reporting = () => {
         }
       }
     } else {
-      returnValue = 'NA';
+      returnValue = 'N/A';
     }
     return returnValue;
   };
@@ -330,9 +330,6 @@ const Reporting = () => {
 
     const csvBody = rows.map((row) => columns.map((col, colIndex) => {
       let cell = row[col.name];
-      if (col.label === 'Date Time' && !_.isEmpty(cell)) {
-        return escapeCSV(moment(cell).tz(timeZone).format(`${dateFormat} ${timeFormat}`));
-      }
       if (!row.location || row.location === 'Error retrieving address') {
         row.location = 'N/A';
       }
@@ -1002,12 +999,9 @@ const Reporting = () => {
             screenshotMapCenter
             noInitialInfo
             markers={markers}
-            googleMapURL={window.env.MAP_API_URL}
             zoom={4}
             setSelectedMarker={setSelectedMarker}
-            loadingElement={<div style={{ height: '100%' }} />}
-            containerElement={<div style={{ height: '625px' }} />}
-            mapElement={<div style={{ height: '100%' }} />}
+            containerStyle={{ height: '625px' }}
             unitOfMeasure={unitData}
           />
         </Grid>
@@ -1072,10 +1066,6 @@ const Reporting = () => {
       </Grid>
       <SensorReport
         sensorReport={reports}
-        alerts={_.filter(
-          sensorAlertData,
-          { shipment_id: selectedShipment && selectedShipment.partner_shipment_id },
-        )}
         shipmentName={selectedShipment && selectedShipment.name}
         selectedShipment={selectedShipment}
         selectedMarker={selectedShipment && selectedMarker}

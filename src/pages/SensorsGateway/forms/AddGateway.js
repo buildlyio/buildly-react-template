@@ -469,22 +469,12 @@ const AddGateway = ({
                     </div>
                     <MapComponent
                       isMarkerShown
-                      googleMapURL={window.env.MAP_API_URL}
                       zoom={8}
-                      loadingElement={
-                        <div style={{ height: '100%' }} />
-                      }
-                      containerElement={(
-                        <div style={{
-                          height: '200px',
-                          marginTop: isMobile() ? '10px' : '30px',
-                          marginBottom: '14px',
-                        }}
-                        />
-                      )}
-                      mapElement={
-                        <div style={{ height: '100%' }} />
-                      }
+                      containerStyle={{
+                        height: '200px',
+                        marginTop: isMobile() ? '10px' : '30px',
+                        marginBottom: '14px',
+                      }}
                       markers={[
                         {
                           lat: last_known_location

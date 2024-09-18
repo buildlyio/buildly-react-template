@@ -93,3 +93,18 @@ export const dateDifference = (initialDate, finalDate) => {
   const dateString = `${days} days, ${hours} hrs., ${minutes} min.`;
   return dateString;
 };
+
+export const calculateLatLngBounds = (lat, lng, miles) => {
+  const milesToLatDegree = miles / 69;
+  const maxLat = lat + milesToLatDegree;
+  const minLat = lat - milesToLatDegree;
+  const milesToLngDegree = miles / (69 * Math.cos(lat * (Math.PI / 180)));
+  const maxLng = lng + milesToLngDegree;
+  const minLng = lng - milesToLngDegree;
+  return {
+    maxLat,
+    minLat,
+    maxLng,
+    minLng,
+  };
+};

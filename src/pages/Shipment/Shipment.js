@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
@@ -41,6 +42,7 @@ import useAlert from '@hooks/useAlert';
 import { useStore } from '@zustand/timezone/timezoneStore';
 import './ShipmentStyles.css';
 import { TIVE_GATEWAY_TIMES } from '@utils/mock';
+import { calculateLatLngBounds } from '@utils/utilMethods';
 
 const Shipment = ({ history }) => {
   const muiTheme = useTheme();
@@ -62,6 +64,8 @@ const Shipment = ({ history }) => {
   const [expandedRows, setExpandedRows] = useState([]);
   const [steps, setSteps] = useState([]);
   const [isLoading, setLoading] = useState(false);
+  const [selectedCluster, setSelectedCluster] = useState({});
+  const [zoom, setZoom] = useState(4);
 
   const { data: shipmentData, isLoading: isLoadingShipments, isFetching: isFetchingShipments } = useQuery(
     ['shipments', shipmentFilter, organization],
@@ -153,10 +157,20 @@ const Shipment = ({ history }) => {
       sensorReportData,
     );
     const filteredRows = _.filter(formattedRows, { type: shipmentFilter });
-    setRows(filteredRows);
+    if (_.isEmpty(selectedCluster)) {
+      setRows(filteredRows);
+    }
     setAllMarkers(_.map(filteredRows, 'allMarkers'));
   }, [shipmentFilter, shipmentData, custodianData, custodyData,
     itemData, allGatewayData, sensorAlertData, sensorReportData]);
+
+  useEffect(() => {
+    if (!_.isEmpty(markers) || !_.isEmpty(selectedCluster)) {
+      setZoom(12);
+    } else {
+      setZoom(4);
+    }
+  }, [markers, selectedCluster]);
 
   useEffect(() => {
     if (selectedShipment) {
@@ -175,6 +189,22 @@ const Shipment = ({ history }) => {
       }, 2000);
     }
   }, [selectedShipment, expandedRows]);
+
+  useEffect(() => {
+    if (!_.isEmpty(selectedCluster) && !_.isEmpty(rows)) {
+      const { lat, lng } = selectedCluster;
+      const { radius } = user.organization;
+      const values = calculateLatLngBounds(lat, lng, radius);
+      const filteredRows = rows.filter((obj) => !_.isEmpty(obj.allMarkers));
+      const clusterFilteredRows = filteredRows.filter((obj) => {
+        const firstMarker = _.first(obj.allMarkers);
+        const isLatInRange = firstMarker.lat >= values.minLat && firstMarker.lat <= values.maxLat;
+        const isLngInRange = firstMarker.lng >= values.minLng && firstMarker.lng <= values.maxLng;
+        return isLatInRange && isLngInRange;
+      });
+      setRows(clusterFilteredRows);
+    }
+  }, [selectedCluster]);
 
   const processMarkers = (shipment, setExpanded = false) => {
     const dateFormat = !_.isEmpty(unitData) && _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure;
@@ -537,6 +567,7 @@ const Shipment = ({ history }) => {
     setSelectedMarker({});
     setExpandedRows([]);
     setSteps([]);
+    setSelectedCluster({});
   };
 
   const renderSensorData = (marker) => {
@@ -673,6 +704,36 @@ const Shipment = ({ history }) => {
       <Button type="button" onClick={(e) => history.push(routes.CREATE_SHIPMENT)} className="shipmentCreateButton">
         + Create Shipment
       </Button>
+      {!_.isEmpty(selectedCluster) && (
+        <Button
+          type="button"
+          className="shipmentGoBackButton"
+          onClick={() => {
+            const formattedRows = getShipmentFormattedRow(
+              shipmentData,
+              custodianData,
+              custodyData,
+              itemData,
+              allGatewayData,
+              sensorAlertData,
+              muiTheme.palette.error.main,
+              muiTheme.palette.info.main,
+              sensorReportData,
+            );
+            const filteredRows = _.filter(formattedRows, { type: shipmentFilter });
+            setSelectedCluster({});
+            setRows(filteredRows);
+            setExpandedRows([]);
+            setSelectedShipment(null);
+            setSelectedMarker({});
+            setAllMarkers(_.map(filteredRows, 'allMarkers'));
+            setMarkers([]);
+            setSteps([]);
+          }}
+        >
+          Go back to Global View
+        </Button>
+      )}
       <Grid container>
         <Grid item xs={12}>
           <div className={selectedShipment ? 'shipmentTitle notranslate' : 'shipmentTitle'}>
@@ -687,20 +748,12 @@ const Shipment = ({ history }) => {
             isMarkerShown={!_.isEmpty(markers)}
             showPath
             markers={markers}
-            googleMapURL={window.env.MAP_API_URL}
-            zoom={_.isEmpty(markers) ? 2.5 : 12}
+            zoom={zoom}
             setSelectedMarker={setSelectedMarker}
-            loadingElement={
-              <div style={{ height: '100%' }} />
-            }
-            containerElement={
-              <div style={{ height: '600px' }} />
-            }
-            mapElement={
-              <div style={{ height: '100%' }} />
-            }
-            clusterClick={processMarkers}
+            containerStyle={{ height: '600px' }}
             unitOfMeasure={unitData}
+            setSelectedCluster={setSelectedCluster}
+            selectedCluster={selectedCluster}
           />
         </Grid>
         <Grid item xs={12} className="shipmentDataTableHeader">

@@ -1181,11 +1181,8 @@ const CreateShipment = ({ history, location }) => {
                   <Grid item xs={11}>
                     <MapComponent
                       isMarkerShown
-                      googleMapURL={window.env.MAP_API_URL}
                       zoom={10}
-                      loadingElement={<div style={{ height: '100%' }} />}
-                      containerElement={<div style={{ height: '300px', marginTop: '10px' }} />}
-                      mapElement={<div style={{ height: '100%' }} />}
+                      containerStyle={{ height: '300px', marginTop: '10px' }}
                       markers={[
                         {
                           lat: startingLocation && _.includes(startingLocation, ',') && parseFloat(startingLocation.split(',')[0]),
@@ -1255,11 +1252,8 @@ const CreateShipment = ({ history, location }) => {
                   <Grid item xs={11}>
                     <MapComponent
                       isMarkerShown
-                      googleMapURL={window.env.MAP_API_URL}
                       zoom={10}
-                      loadingElement={<div style={{ height: '100%' }} />}
-                      containerElement={<div style={{ height: '300px', marginTop: '10px' }} />}
-                      mapElement={<div style={{ height: '100%' }} />}
+                      containerStyle={{ height: '300px', marginTop: '10px' }}
                       markers={[
                         {
                           lat: endingLocation && _.includes(endingLocation, ',') && parseFloat(endingLocation.split(',')[0]),
