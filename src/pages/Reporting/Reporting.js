@@ -1,7 +1,10 @@
+/* eslint-disable no-lonely-if */
+/* eslint-disable no-plusplus */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable no-param-reassign */
-/* eslint-disable no-plusplus */
+/* eslint-disable no-else-return */
 import React, { useState, useEffect, useRef } from 'react';
+import { useTimezoneSelect, allTimezones } from 'react-timezone-select';
 import { useLocation } from 'react-router-dom';
 import _, { isArray } from 'lodash';
 import moment from 'moment-timezone';
@@ -63,6 +66,7 @@ const Reporting = () => {
   const location = useLocation();
   const theme = useTheme();
   const organization = getUser().organization.organization_uuid;
+  const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
 
   const [locShipmentID, setLocShipmentID] = useState('');
   const [shipmentFilter, setShipmentFilter] = useState('Active');
@@ -302,7 +306,8 @@ const Reporting = () => {
       if (col.label === 'Date Time') {
         const timeArray = _.split(timeFormat, ' ');
         const timePeriod = _.size(timeArray) === 1 ? '24-hour' : '12-hour';
-        const formattedLabel = `${col.label} (${getTimezone(new Date(), timeZone)}) (${dateFormat} ${timePeriod})`;
+        const filteredTimeZone = _.find(tzOptions, (option) => option.value === timeZone);
+        const formattedLabel = `${col.label} (${filteredTimeZone.abbrev}) (${dateFormat} ${timePeriod})`;
         return escapeCSV(formattedLabel);
       }
       if (col.name === 'temperature') {
@@ -315,16 +320,26 @@ const Reporting = () => {
     }).join(',');
 
     const dateTimeColumnIndex = columns.findIndex((col) => col.label === 'Date Time');
-    const departureTime = moment(selectedShipment.actual_time_of_departure).unix();
-    const arrivalTime = moment(selectedShipment.actual_time_of_arrival).unix();
+    const departureTime = moment(selectedShipment.actual_time_of_departure).tz(timeZone).format(`${dateFormat} ${timeFormat}`);
+    const arrivalTime = moment(selectedShipment.actual_time_of_arrival).isValid()
+      ? moment(selectedShipment.actual_time_of_arrival).tz(timeZone).format(`${dateFormat} ${timeFormat}`)
+      : null;
+    const formattedDepartureTime = moment(departureTime).unix();
+    const formattedArrivalTime = arrivalTime ? moment(arrivalTime).unix() : null;
     const rowsWithinTimeRange = rows.filter((row) => {
       const dateTimeValue = moment(row[columns[dateTimeColumnIndex].name]).unix();
-      return dateTimeValue >= departureTime && dateTimeValue <= arrivalTime;
+      if (formattedArrivalTime) {
+        return dateTimeValue >= formattedDepartureTime && dateTimeValue <= formattedArrivalTime;
+      } else {
+        return dateTimeValue >= formattedDepartureTime;
+      }
     });
     if (_.size(rowsWithinTimeRange) > 0) {
       const firstRowIndex = rows.findIndex((row) => row === rowsWithinTimeRange[0]);
       const lastRowIndex = rows.findIndex((row) => row === rowsWithinTimeRange[_.size(rowsWithinTimeRange) - 1]);
-      rows[firstRowIndex].allAlerts.push({ title: 'Arrived', color: '#000' });
+      if (formattedArrivalTime) {
+        rows[firstRowIndex].allAlerts.push({ title: 'Arrived', color: '#000' });
+      }
       rows[lastRowIndex].allAlerts.push({ title: 'En route', color: '#000' });
     }
 
@@ -551,7 +566,8 @@ const Reporting = () => {
       if (col.label === 'Date Time') {
         const timeArray = _.split(timeFormat, ' ');
         const timePeriod = _.size(timeArray) === 1 ? '24-hour' : '12-hour';
-        const formattedLabel = `Date Time (${getTimezone(new Date(), timeZone)}) (${dateFormat} ${timePeriod})`;
+        const filteredTimeZone = _.find(tzOptions, (option) => option.value === timeZone);
+        const formattedLabel = `Date Time (${filteredTimeZone.abbrev}) (${dateFormat} ${timePeriod})`;
         return formattedLabel;
       }
       if (col.name === 'battery') {
@@ -576,8 +592,12 @@ const Reporting = () => {
     });
 
     const dateTimeColIndex = columns.findIndex((col) => col.label === 'Date Time') + 1;
-    const departureTime = moment(selectedShipment.actual_time_of_departure).unix();
-    const arrivalTime = moment(selectedShipment.actual_time_of_arrival).unix();
+    const departureTime = moment(selectedShipment.actual_time_of_departure).tz(timeZone).format(`${dateFormat} ${timeFormat}`);
+    const arrivalTime = moment(selectedShipment.actual_time_of_arrival).isValid()
+      ? moment(selectedShipment.actual_time_of_arrival).tz(timeZone).format(`${dateFormat} ${timeFormat}`)
+      : null;
+    const formattedDepartureTime = moment(departureTime).unix();
+    const formattedArrivalTime = arrivalTime ? moment(arrivalTime).unix() : null;
     const greyRows = [];
 
     rows.forEach((row, rowIndex) => {
@@ -730,17 +750,32 @@ const Reporting = () => {
       };
 
       const dateValue = moment(row[columns[dateTimeColIndex - 1].name]).unix();
-      if (dateValue >= departureTime && dateValue <= arrivalTime) {
-        rowRef.eachCell((cell, colNumber) => {
-          if (!cell.fill) {
-            cell.fill = {
-              type: 'pattern',
-              pattern: 'solid',
-              fgColor: { argb: theme.palette.background.light6.replace('#', '') },
-            };
-          }
-        });
-        greyRows.push(rowRef.number);
+      if (formattedArrivalTime) {
+        if (dateValue >= formattedDepartureTime && dateValue <= formattedArrivalTime) {
+          rowRef.eachCell((cell, colNumber) => {
+            if (!cell.fill) {
+              cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: theme.palette.background.light6.replace('#', '') },
+              };
+            }
+          });
+          greyRows.push(rowRef.number);
+        }
+      } else {
+        if (dateValue >= formattedDepartureTime) {
+          rowRef.eachCell((cell, colNumber) => {
+            if (!cell.fill) {
+              cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: theme.palette.background.light6.replace('#', '') },
+              };
+            }
+          });
+          greyRows.push(rowRef.number);
+        }
       }
     });
 
@@ -751,18 +786,20 @@ const Reporting = () => {
       let firstGreyRowRichText = firstGreyRow.getCell(1).value.richText;
       let lastGreyRowRichText = lastGreyRow.getCell(1).value.richText;
 
-      if (_.size(firstGreyRowRichText) > 0) {
-        firstGreyRowRichText = [
-          ...firstGreyRowRichText,
-          {
-            text: ', Arrived',
-            font: { color: { argb: theme.palette.background.black2.replace('#', '') } },
-          },
-        ];
-      } else {
-        firstGreyRowRichText = [
-          { text: 'Arrived', font: { color: { argb: theme.palette.background.black2.replace('#', '') } } },
-        ];
+      if (formattedArrivalTime) {
+        if (_.size(firstGreyRowRichText) > 0) {
+          firstGreyRowRichText = [
+            ...firstGreyRowRichText,
+            {
+              text: ', Arrived',
+              font: { color: { argb: theme.palette.background.black2.replace('#', '') } },
+            },
+          ];
+        } else {
+          firstGreyRowRichText = [
+            { text: 'Arrived', font: { color: { argb: theme.palette.background.black2.replace('#', '') } } },
+          ];
+        }
       }
 
       if (_.size(lastGreyRowRichText) > 0) {
