@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import {
   Grid,
@@ -6,11 +6,14 @@ import {
   IconButton,
   Box,
   Typography,
+  TextField,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  Download as DownloadIcon,
+  Upload as UploadIcon,
 } from '@mui/icons-material';
 import Loader from '../Loader/Loader';
 import ConfirmModal from '../Modal/ConfirmModal';
@@ -45,6 +48,12 @@ const DataTableWrapper = ({
   extraOptions,
   className,
   shouldUseAllColumns,
+  downloadTemplateButton,
+  uploadDataButton,
+  downloadTemplateHref,
+  onUploadData,
+  downloadTemplateHeading,
+  uploadDataHeading,
 }) => {
   const user = getUser();
   const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
@@ -155,19 +164,59 @@ const DataTableWrapper = ({
     <Box mt={noSpace ? 0 : 5} mb={noSpace ? 0 : 5}>
       {loading && <Loader open={loading} />}
       <div>
-        {!hideAddButton && isAdmin && (
-          <Box mb={3} mt={2}>
-            <Button
-              type="button"
-              variant="contained"
-              color="primary"
-              onClick={onAddButtonClick}
-            >
-              <AddIcon />
-              {` ${addButtonHeading}`}
-            </Button>
-          </Box>
-        )}
+        <Grid container mb={3} mt={2}>
+          {!hideAddButton && isAdmin && (
+            <Grid item xs={12} sm={4}>
+              <Button
+                type="button"
+                variant="contained"
+                color="primary"
+                onClick={onAddButtonClick}
+              >
+                <AddIcon />
+                {` ${addButtonHeading}`}
+              </Button>
+            </Grid>
+          )}
+          <Grid item xs={12} sm={8}>
+            <Grid container flex className="dataTableDownloadUploadFlex">
+              {downloadTemplateButton && isAdmin && (
+                <Grid item>
+                  <Button
+                    type="button"
+                    variant="contained"
+                    color="primary"
+                    href={downloadTemplateHref}
+                  >
+                    <DownloadIcon />
+                    {` ${downloadTemplateHeading}`}
+                  </Button>
+                </Grid>
+              )}
+              {uploadDataButton && isAdmin && (
+                <Grid item>
+                  <Button
+                    component="label"
+                    role={undefined}
+                    variant="contained"
+                    tabIndex={-1}
+                    startIcon={<UploadIcon />}
+                    id="dataTableUploadButton"
+                  >
+                    {uploadDataHeading}
+                    <input
+                      type="file"
+                      className="dataTableUploadInput"
+                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                      onClick={(e) => { e.target.value = null; }}
+                      onChange={(event) => onUploadData(event.target.files[0])}
+                    />
+                  </Button>
+                </Grid>
+              )}
+            </Grid>
+          </Grid>
+        </Grid>
         {tableHeader && (
           <Typography
             className="dataTableDashboardHeading"

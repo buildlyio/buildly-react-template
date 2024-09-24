@@ -18,6 +18,7 @@ import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQu
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
 import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
 import { useDeleteCustodianMutation } from '@react-query/mutations/custodians/deleteCustodianMutation';
+import { useUploadBulkCustodianMutation } from '@react-query/mutations/custodians/uploadBulkCustodianMutation';
 import useAlert from '@hooks/useAlert';
 
 const Custodian = ({ history, redirectTo }) => {
@@ -67,6 +68,9 @@ const Custodian = ({ history, redirectTo }) => {
     { refetchOnWindowFocus: false },
   );
 
+  const { mutate: deleteCustodianMutation, isLoading: isDeletingCustodian } = useDeleteCustodianMutation(organization, displayAlert);
+  const { mutate: uploadBulkCustodianMutation, isLoading: isUploadingBulkCustodian } = useUploadBulkCustodianMutation(organization, displayAlert);
+
   const addCustodianPath = redirectTo
     ? `${redirectTo}/custodian`
     : `${routes.CUSTODIANS}/add`;
@@ -102,8 +106,6 @@ const Custodian = ({ history, redirectTo }) => {
     setDeleteModal(true);
   };
 
-  const { mutate: deleteCustodianMutation, isLoading: isDeletingCustodian } = useDeleteCustodianMutation(organization, displayAlert);
-
   const handleDeleteModal = () => {
     setDeleteModal(false);
     deleteCustodianMutation([deleteItemId, deleteContactObjId]);
@@ -119,10 +121,19 @@ const Custodian = ({ history, redirectTo }) => {
     });
   };
 
+  const onUploadData = (file) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append('bulk_data_file', file, file.name);
+    formData.append('organization_uuid', organization);
+    uploadBulkCustodianMutation(formData);
+  };
+
   return (
     <DataTableWrapper
       loading={
-        isLoadingCustodians || isLoadingCustodianTypes || isLoadingContact || isLoadingCountries || isLoadingUnits || isLoadingOrgs || isDeletingCustodian
+        isLoadingCustodians || isLoadingCustodianTypes || isLoadingContact || isLoadingCountries || isLoadingUnits
+        || isLoadingOrgs || isDeletingCustodian || isUploadingBulkCustodian
       }
       rows={rows || []}
       columns={custodianColumns}
@@ -136,6 +147,12 @@ const Custodian = ({ history, redirectTo }) => {
       handleDeleteModal={handleDeleteModal}
       deleteModalTitle="Are you sure you want to delete this Custodian?"
       tableHeader="Custodians"
+      downloadTemplateButton
+      uploadDataButton
+      downloadTemplateHref={window.env.CUSTODIAN_TEMPLATE_URL}
+      onUploadData={onUploadData}
+      downloadTemplateHeading="Bulk Custodian Template"
+      uploadDataHeading="Bulk Custodian Data"
     >
       <Route path={addCustodianPath} component={AddCustodians} />
       <Route path={`${editCustodianPath}/:id`} component={AddCustodians} />
