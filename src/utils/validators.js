@@ -63,10 +63,21 @@ const duplicateEmailValidator = (input) => {
       message: 'You have entered an invalid email address!',
     };
   }
-  if (value.some((element) => extra.includes(element))) {
+  const lowerCaseValue = value.map((email) => email.toLowerCase());
+  const lowerCaseExtra = extra.map((email) => email.toLowerCase());
+  const hasDuplicateInValue = lowerCaseValue.some((email, index) => lowerCaseValue.indexOf(email) !== index);
+  const hasDuplicateInExtra = lowerCaseValue.some((email) => lowerCaseExtra.includes(email));
+
+  if (hasDuplicateInValue) {
     return {
       error: true,
-      message: 'Duplicate email entered or user already registered!',
+      message: 'Duplicate email found within the entered values!',
+    };
+  }
+  if (hasDuplicateInExtra) {
+    return {
+      error: true,
+      message: 'User already registered with entered email!',
     };
   }
   return { error: false, message: '' };

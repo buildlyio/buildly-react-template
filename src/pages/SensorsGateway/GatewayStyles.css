@@ -7,6 +7,44 @@
   align-items: center;
 }
 
+.gatewayAccordion {
+  margin-bottom: 32px;
+  overflow: scroll hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border-radius: 0 !important;
+}
+
+.gatewayAccordion::-webkit-scrollbar {
+  display: none;
+}
+
+.gatewayAccordion .MuiAccordionSummary-root {
+  background: var(--color-palette-primary-main);
+}
+
+.gatewayAccordion .MuiAccordionSummary-root .MuiAccordionSummary-expandIconWrapper svg path {
+  color: var(--color-palette-background-default);
+}
+
+.gatewayAccordingHeading {
+  color: var(--color-palette-background-default);
+}
+
+.gatewayAccordion .MuiCollapse-vertical .MuiCollapse-wrapper .MuiCollapse-wrapperInner div .MuiAccordionDetails-root {
+  padding: 0 !important;
+}
+
+.gatewayAccordion .MuiCollapse-vertical .MuiCollapse-wrapper .MuiCollapse-wrapperInner div .MuiAccordionDetails-root div {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+
+.gatewayAccordion .MuiCollapse-vertical .MuiCollapse-wrapper .MuiCollapse-wrapperInner div .MuiAccordionDetails-root div div div .MuiGrid-item {
+  padding-top: 0 !important;
+}
+
 .gatewaySubmit {
   margin: 24px 0px 16px;
   border-radius: 18px;
@@ -17,15 +55,174 @@
   margin-top: 8px;
 }
 
+.gatewayInputWithTooltip {
+  display: flex;
+  align-items: center;
+}
+
+.gatewayAddressContainer {
+  margin-top: 32px;
+  padding-bottom: 8px;
+}
+
+.gatewayInventoryContainer {
+  box-shadow: 0px 4px 6px var(--color-palette-background-dark2);
+  border-radius: 10px;
+  padding-top: 20px;
+}
+
+.inventoryContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.inventoryTitle {
+  text-align: center;
+  width: 150px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.inventoryAvailableContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-palette-success-light);
+  border-radius: 6px;
+  margin: 5px 0;
+  padding: 10px 10px 5px;
+}
+
+.inventoryAvailableCountContainer {
+  background: var(--color-palette-background-default);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 5px;
+  border: 1px solid var(--color-palette-background-black);
+}
+
+.inventoryAvailableCount {
+  font-size: 24px;
+}
+
+.inventoryAvailableText {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.inventoryAssignedContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-palette-primary-main);
+  border-radius: 6px;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.inventoryAssignedCountContainer {
+  background: var(--color-palette-background-default);
+  border-radius: 6px;
+  padding: 0 5px;
+  border: 1px solid var(--color-palette-background-black);
+  margin-right: 10px;
+}
+
+.inventoryAssignedText {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-palette-background-default)
+}
+
+.inventoryUnavailableContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-palette-background-light2);
+  border-radius: 6px;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.inventoryUnavailableCountContainer {
+  background: var(--color-palette-background-default);
+  border-radius: 6px;
+  padding: 0 5px;
+  border: 1px solid var(--color-palette-background-black);
+  margin-right: 10px;
+}
+
+.inventoryUnavailableText {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.inventoryInTransitContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-palette-background-light7);
+  border-radius: 6px;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.inventoryInTransitCountContainer {
+  background: var(--color-palette-background-default);
+  border-radius: 6px;
+  padding: 0 5px;
+  border: 1px solid var(--color-palette-background-black);
+  margin-right: 10px;
+}
+
+.inventoryInTransitText {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.inventoryUnassignedText {
+  font-size: 24px;
+  font-weight: 500;
+}
+
 @media screen and (min-width: 600px) {
   .gatewayFormContainer {
     width: 70% !important;
     margin: auto;
+  }
+
+  .gatewayInputWithTooltip3 {
+    margin-top: -14px;
+  }
+
+  .gatewayInventoryContainer {
+    margin-left: 20px;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 960px) {
+  .gatewayInputWithTooltip2 {
+    margin-top: -14px;
   }
 }
 
 @media screen and (max-width: 600px) {
   .gatewaySubmit2 {
     margin-top: -30px;
+  }
+
+  .gatewayInputWithTooltip4 {
+    margin-top: 12px;
   }
 }

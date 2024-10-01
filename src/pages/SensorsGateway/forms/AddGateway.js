@@ -228,18 +228,12 @@ const AddGateway = ({
                   fullWidth
                   id="gateway_name"
                   required
+                  disabled={!!editData}
                   label="Tracker Name"
                   name="gateway_name"
                   autoComplete="gateway_name"
-                  error={
-                    formError.gateway_name
-                    && formError.gateway_name.error
-                  }
-                  helperText={
-                    formError.gateway_name
-                      ? formError.gateway_name.message
-                      : ''
-                  }
+                  error={formError.gateway_name && formError.gateway_name.error}
+                  helperText={formError.gateway_name ? formError.gateway_name.message : ''}
                   onBlur={(e) => handleBlur(e, 'required', gateway_name)}
                   {...gateway_name.bind}
                 />
@@ -251,32 +245,19 @@ const AddGateway = ({
                   Tracker Info
                 </Typography>
                 <Grid container spacing={isDesktop() ? 2 : 0}>
-                  <Grid
-                    className="gatewayInputWithTooltip"
-                    item
-                    xs={12}
-                    sm={6}
-                  >
+                  <Grid className="gatewayInputWithTooltip" item xs={12} sm={6}>
                     <TextField
                       className="notranslate"
                       variant="outlined"
                       margin="normal"
                       fullWidth
                       required
+                      disabled={!!editData}
                       id="gateway_type"
                       select
-                      label={(
-                        <span className="translate">Tracker Type</span>
-                      )}
-                      error={
-                        formError.gateway_type
-                        && formError.gateway_type.error
-                      }
-                      helperText={
-                        formError.gateway_type
-                          ? formError.gateway_type.message
-                          : ''
-                      }
+                      label={<span className="translate">Tracker Type</span>}
+                      error={formError.gateway_type && formError.gateway_type.error}
+                      helperText={formError.gateway_type ? formError.gateway_type.message : ''}
                       onBlur={(e) => handleBlur(e, 'required', gateway_type, 'gateway_type')}
                       {...gateway_type.bind}
                     >
@@ -296,12 +277,7 @@ const AddGateway = ({
                         )}
                     </TextField>
                   </Grid>
-                  <Grid
-                    className="gatewayInputWithTooltip"
-                    item
-                    xs={12}
-                    sm={6}
-                  >
+                  <Grid className="gatewayInputWithTooltip" item xs={12} sm={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -310,15 +286,8 @@ const AddGateway = ({
                       id="gateway_status"
                       select
                       label="Tracker Status"
-                      error={
-                        formError.gateway_status
-                        && formError.gateway_status.error
-                      }
-                      helperText={
-                        formError.gateway_status
-                          ? formError.gateway_status.message
-                          : ''
-                      }
+                      error={formError.gateway_status && formError.gateway_status.error}
+                      helperText={formError.gateway_status ? formError.gateway_status.message : ''}
                       onBlur={(e) => handleBlur(
                         e,
                         'required',
@@ -349,6 +318,7 @@ const AddGateway = ({
                         moment(activation_date)
                           .tz(data)
                       }
+                      disabled={!!editData}
                       handleDateChange={handleDateChange}
                       dateFormat={
                         _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
@@ -357,17 +327,12 @@ const AddGateway = ({
                       }
                     />
                   </Grid>
-                  <Grid
-                    className="gatewayInputWithTooltip"
-                    item
-                    xs={12}
-                    sm={6}
-                    mt={isMobile() ? 0.75 : 0}
-                  >
+                  <Grid className="gatewayInputWithTooltip" item xs={12} sm={6} mt={isMobile() ? 0.75 : 0}>
                     <TextField
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled={!!editData}
                       id="sim_card_id"
                       label="IMEI"
                       name="sim_card_id"
@@ -375,16 +340,12 @@ const AddGateway = ({
                       {...sim_card_id.bind}
                     />
                   </Grid>
-                  <Grid
-                    className="gatewayInputWithTooltip"
-                    item
-                    xs={12}
-                    sm={6}
-                  >
+                  <Grid className="gatewayInputWithTooltip" item xs={12} sm={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled={!!editData}
                       id="battery_level"
                       label="Battery(%)"
                       name="battery_level"
@@ -392,16 +353,12 @@ const AddGateway = ({
                       {...battery_level.bind}
                     />
                   </Grid>
-                  <Grid
-                    className="gatewayInputWithTooltip"
-                    item
-                    xs={12}
-                    sm={6}
-                  >
+                  <Grid className="gatewayInputWithTooltip" item xs={12} sm={6}>
                     <TextField
                       variant="outlined"
                       margin="normal"
                       fullWidth
+                      disabled={!!editData}
                       id="mac_address"
                       label="Mac Address"
                       name="mac_address"
@@ -409,11 +366,7 @@ const AddGateway = ({
                       {...mac_address.bind}
                     />
                   </Grid>
-                  <Grid
-                    className="gatewayInputWithTooltip"
-                    item
-                    xs={12}
-                  >
+                  <Grid className="gatewayInputWithTooltip" item xs={12}>
                     <TextField
                       variant="outlined"
                       margin="normal"
@@ -422,15 +375,8 @@ const AddGateway = ({
                       fullWidth
                       label="Shipper"
                       disabled={viewOnly}
-                      error={
-                        formError.shipper_uuid
-                        && formError.shipper_uuid.error
-                      }
-                      helperText={
-                        formError.shipper_uuid
-                          ? formError.shipper_uuid.message
-                          : ''
-                      }
+                      error={formError.shipper_uuid && formError.shipper_uuid.error}
+                      helperText={formError.shipper_uuid ? formError.shipper_uuid.message : ''}
                       onBlur={(e) => handleBlur(e, 'required', custodian_uuid, 'shipper_uuid')}
                       value={custodian_uuid}
                       onChange={onInputChange}
@@ -460,6 +406,7 @@ const AddGateway = ({
                         variant="outlined"
                         margin="normal"
                         fullWidth
+                        disabled={!!editData}
                         id="last_known_location"
                         label="Last Known Location"
                         name="last_known_location"

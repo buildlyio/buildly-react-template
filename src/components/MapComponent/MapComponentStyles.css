@@ -1,0 +1,26 @@
+.mapComponentInfoWindow {
+  max-width: 310px;
+  color: var(--color-palette-background-dark);
+  font-size: 10px;
+  align-items: center;
+}
+
+.mapComponentItem {
+  display: flex;
+  align-items: center;
+}
+
+.mapComponentInfoWindowBatterySection {
+  border-top: 1px solid var(--color-palette-background-light);
+  margin-top: 12px;
+}
+
+.mapComponentInfoWindowBox {
+  display: flex;
+  justify-content: space-between;
+}
+
+.gm-style-iw .gm-style-iw-chr button {
+  position: absolute !important;
+  right: 0 !important;
+}

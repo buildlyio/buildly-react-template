@@ -53,7 +53,6 @@ import {
 import { isDesktop2 } from '@utils/mediaQuery';
 import { getTimezone } from '@utils/utilMethods';
 import { useStore as useTimezoneStore } from '@zustand/timezone/timezoneStore';
-import { useStore as useReportPdfStore } from '@zustand/reportPdf/reportPdfStore';
 import ReportingActiveShipmentDetails from './components/ReportingActiveShipmentDetails';
 import ReportingDetailTable from './components/ReportingDetailTable';
 import AlertsReport from './components/AlertsReport';
@@ -90,7 +89,6 @@ const Reporting = () => {
 
   const { displayAlert } = useAlert();
   const { data: timeZone } = useTimezoneStore();
-  const { data: reportURLData, setData: setReportURLData } = useReportPdfStore();
 
   let isShipmentDataAvailable = false;
 
@@ -174,7 +172,7 @@ const Reporting = () => {
     },
   );
 
-  const { mutate: reportPDFDownloadMutation, isLoading: isReportPDFDownloading } = useReportPDFDownloadMutation(reportURLData, setReportURLData, displayAlert);
+  const { mutate: reportPDFDownloadMutation, isLoading: isReportPDFDownloading } = useReportPDFDownloadMutation((shipmentFilter === 'Active' ? 'Planned,En route,Arrived' : shipmentFilter), locShipmentID, organization, displayAlert);
 
   const dateFormat = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
     ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
@@ -1178,9 +1176,6 @@ const Reporting = () => {
         downloadExcel={downloadExcel}
         reportPDFDownloadMutation={reportPDFDownloadMutation}
         selectedShipment={selectedShipment}
-        isReportPDFDownloading={isReportPDFDownloading}
-        data={reportURLData}
-        setData={setReportURLData}
       />
     </Box>
   );

@@ -2029,7 +2029,7 @@ const CreateShipment = ({ history, location }) => {
                 >
                   <MenuItem value="">Select</MenuItem>
                   {!_.isEmpty(availableGateways) && _.map(availableGateways, (avgt) => (
-                    <MenuItem key={avgt.gateway_uuid} value={avgt}>
+                    <MenuItem key={avgt.gateway_uuid} value={avgt} className="notranslate">
                       {avgt.name}
                     </MenuItem>
                   ))}

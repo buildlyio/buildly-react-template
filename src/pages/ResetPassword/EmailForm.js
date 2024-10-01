@@ -31,7 +31,7 @@ const EmailForm = ({ history }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const loginFormValue = {
-      email: email.value,
+      email: email.value.toLowerCase(),
     };
     resetPasswordMutation(loginFormValue);
   };

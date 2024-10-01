@@ -19,6 +19,7 @@ const theme = extendTheme({
           light4: '#0000000A',
           light5: '#E7E9EC',
           light6: '#FFD8D8D8',
+          light7: '#B0C6E3',
           dark: '#383636',
           dark2: '#00000080',
           dark3: '#78787833',
@@ -39,6 +40,7 @@ const theme = extendTheme({
         },
         success: {
           main: '#009900',
+          light: '#4ACF48',
         },
         info: {
           main: '#0099CC',

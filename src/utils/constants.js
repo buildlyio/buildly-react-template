@@ -12,6 +12,7 @@ import {
   DeviceThermostatOutlined as TempIcon,
   LightModeOutlined as LightIcon,
   OpacityOutlined as HumidIcon,
+  Launch as LaunchIcon,
 } from '@mui/icons-material';
 import { extractCountry, numberWithCommas } from './utilMethods';
 import { TIVE_GATEWAY_TIMES } from '@utils/mock';
@@ -1277,42 +1278,42 @@ export const processReportsAndMarkers = (
               y: probe,
             },
           ];
-          minTempData = [
+          minTempData = _.includes(selectedShipment.alerts_to_suppress, 'temperature') ? [] : [
             ...minTempData,
             {
               x: dateTime,
               y: finalMinTempValue,
             },
           ];
-          maxTempData = [
+          maxTempData = _.includes(selectedShipment.alerts_to_suppress, 'temperature') ? [] : [
             ...maxTempData,
             {
               x: dateTime,
               y: finalMaxTempValue,
             },
           ];
-          minHumidityData = [
+          minHumidityData = _.includes(selectedShipment.alerts_to_suppress, 'humidity') ? [] : [
             ...minHumidityData,
             {
               x: dateTime,
               y: finalMinHumValue,
             },
           ];
-          maxHumidityData = [
+          maxHumidityData = _.includes(selectedShipment.alerts_to_suppress, 'humidity') ? [] : [
             ...maxHumidityData,
             {
               x: dateTime,
               y: finalMaxHumValue,
             },
           ];
-          shockThresholdData = [
+          shockThresholdData = _.includes(selectedShipment.alerts_to_suppress, 'shock') ? [] : [
             ...shockThresholdData,
             {
               x: dateTime,
               y: finalShockValue,
             },
           ];
-          lightThresholdData = [
+          lightThresholdData = _.includes(selectedShipment.alerts_to_suppress, 'light') ? [] : [
             ...lightThresholdData,
             {
               x: dateTime,
@@ -1740,7 +1741,27 @@ export const getAlertsReportColumns = (sensorReport, timezone, dateFormat, timeF
   },
 ]);
 
-export const gatewayColumns = (timezone, dateFormat) => ([
+export const gatewayColumns = (timezone, dateFormat, theme) => ([
+  {
+    name: 'is_active',
+    label: 'Power',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => {
+        const circleStyle = {
+          height: '10px',
+          width: '10px',
+          borderRadius: '50%',
+          display: 'block',
+          backgroundColor: value ? 'green' : 'grey',
+          marginLeft: '15px',
+        };
+        return <span style={circleStyle} />;
+      },
+    },
+  },
   {
     name: 'name',
     label: 'Tracker Identifier',
@@ -1778,11 +1799,46 @@ export const gatewayColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => (
-        value && value !== '-'
-          ? _.capitalize(value)
-          : value
-      ),
+      customBodyRender: (value) => {
+        const getStatusStyles = (status) => {
+          switch (status) {
+            case 'available':
+              return {
+                backgroundColor: theme.palette.success.light,
+                padding: '4px 8px',
+                borderRadius: '6px',
+              };
+            case 'assigned':
+              return {
+                backgroundColor: theme.palette.primary.main,
+                padding: '4px 8px',
+                borderRadius: '6px',
+              };
+            case 'in-transit':
+              return {
+                backgroundColor: theme.palette.background.light7,
+                padding: '4px 8px',
+                borderRadius: '6px',
+              };
+            case 'unavailable':
+              return {
+                backgroundColor: theme.palette.background.light2,
+                padding: '4px 8px',
+                borderRadius: '6px',
+              };
+            default:
+              return {};
+          }
+        };
+
+        const styles = getStatusStyles(value);
+
+        return (
+          <span style={styles}>
+            {value && value !== '-' ? _.capitalize(value) : value}
+          </span>
+        );
+      },
     },
   },
   {
@@ -1822,6 +1878,31 @@ export const gatewayColumns = (timezone, dateFormat) => ([
           ? moment(value).tz(timezone).format(`${dateFormat}`)
           : value
       ),
+    },
+  },
+  {
+    name: 'calibration_certificate',
+    label: 'Certificate of Calibration',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => {
+        const onPress = () => {
+          const link = document.createElement('a');
+          link.href = value;
+          link.target = '_blank';
+          link.download = 'TrackerCertificateOfCollaboration.pdf';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        };
+        return (value && (
+          <span style={{ marginLeft: '25px', cursor: 'pointer' }}>
+            <LaunchIcon onClick={onPress} style={{ fill: theme.palette.primary.main, width: '24px', height: '24px' }} />
+          </span>
+        ));
+      },
     },
   },
 ]);

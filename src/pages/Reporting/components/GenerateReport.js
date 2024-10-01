@@ -40,9 +40,6 @@ const GenerateReport = ({
   downloadExcel,
   reportPDFDownloadMutation,
   selectedShipment,
-  isReportPDFDownloading,
-  data,
-  setData,
 }) => {
   const user = getUser();
   const theme = useTheme();
@@ -53,7 +50,6 @@ const GenerateReport = ({
     excel: false,
     pdf: false,
   });
-  const selectedReport = !_.isEmpty(selectedShipment) && !_.isEmpty(data) && _.find(data, (obj) => obj.shipment_name === selectedShipment.name);
 
   const discardFormData = () => {
     setSelectedFormats({
@@ -121,6 +117,7 @@ const GenerateReport = ({
     }
     const apiData = {
       shipment_name: selectedShipment.name,
+      shipment_id: selectedShipment.id,
       user_email: user.email,
       images_data: base64DataArray,
     };
@@ -142,9 +139,9 @@ const GenerateReport = ({
     if (selectedFormats.excel) {
       await downloadExcel();
     }
-    if (selectedFormats.pdf && selectedReport.pdfUrl) {
+    if (selectedFormats.pdf && selectedShipment.report_download_url) {
       const link = document.createElement('a');
-      link.href = selectedReport.pdfUrl;
+      link.href = selectedShipment.report_download_url;
       link.target = '_blank';
       link.download = `${selectedShipment.name}.pdf`;
       document.body.appendChild(link);
@@ -200,7 +197,7 @@ const GenerateReport = ({
                     )}
                     label="Excel File"
                   />
-                  {!(_.isEmpty(selectedReport) || (!_.isEmpty(selectedReport) && !selectedReport.pdfUrl)) && (
+                  {!_.isEmpty(selectedShipment) && !_.isEmpty(selectedShipment.report_download_url) && (
                     <FormControlLabel
                       control={(
                         <Checkbox
@@ -209,7 +206,7 @@ const GenerateReport = ({
                           name="pdf"
                         />
                       )}
-                      label={!_.isEmpty(selectedReport) ? 'PDF File' : 'PDF Report (Processing may take several minutes)'}
+                      label="PDF File"
                     />
                   )}
                 </FormGroup>
@@ -217,20 +214,6 @@ const GenerateReport = ({
             </Grid>
           </Grid>
           <Grid container spacing={2} justifyContent="center">
-            {!(isReportPDFDownloading || (!_.isEmpty(selectedReport) && selectedReport.pdfUrl)) && (
-              <Grid item xs={12} sm={3}>
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className="generateReportButton"
-                  onClick={generatePdfReport}
-                >
-                  Generate PDF Report
-                </Button>
-              </Grid>
-            )}
             <Grid item xs={12} sm={3}>
               <Button
                 type="submit"
@@ -238,14 +221,28 @@ const GenerateReport = ({
                 variant="contained"
                 color="primary"
                 className="generateReportButton"
-                onClick={downloadFiles}
-                disabled={
-                  !(selectedFormats.csv || selectedFormats.excel || selectedFormats.pdf)
-                }
+                onClick={generatePdfReport}
               >
-                Download
+                Generate PDF Report
               </Button>
             </Grid>
+            {!_.isEmpty(selectedShipment) && !_.isEmpty(selectedShipment.report_download_url) && (
+              <Grid item xs={12} sm={3}>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className="generateReportButton"
+                  onClick={downloadFiles}
+                  disabled={
+                    !(selectedFormats.csv || selectedFormats.excel || selectedFormats.pdf)
+                  }
+                >
+                  Download
+                </Button>
+              </Grid>
+            )}
             <Grid item xs={12} sm={3}>
               <Button
                 type="button"

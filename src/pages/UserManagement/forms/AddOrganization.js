@@ -272,6 +272,7 @@ const AddOrganization = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const lowercaseAdminEmails = adminEmails.map((email) => email.toLowerCase());
 
     if (!_.isEmpty(adminEmails)
       || organization_name.hasChanged()
@@ -301,7 +302,7 @@ const AddOrganization = ({
       || supressLightAlerts.hasChanged()
     ) {
       const data = {
-        emails: adminEmails,
+        emails: lowercaseAdminEmails,
         org_data: {
           name: organization_name.value,
           alerts_to_suppress: _.without([

@@ -172,13 +172,14 @@ const AddUser = ({ open, setOpen }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const lowercaseUserEmails = userEmails.map((email) => email.toLowerCase());
 
     if (!_.isEmpty(userEmails)
       || organization_name.hasChanged()
       || user_role.hasChanged()
     ) {
       const data = {
-        emails: userEmails,
+        emails: lowercaseUserEmails,
         org_data: {
           name: organization_name.value || user.organization.name,
         },

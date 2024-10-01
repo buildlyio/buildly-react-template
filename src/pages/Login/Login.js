@@ -60,7 +60,7 @@ const Login = ({ history }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const loginFormValue = {
-      username: email.value,
+      username: email.value.toLowerCase(),
       password: password.value,
     };
     if (isChecked) {

@@ -90,7 +90,7 @@ const Register = ({ history }) => {
     let registerFormValue;
     registerFormValue = {
       username: email.value,
-      email: email.value,
+      email: email.value.toLowerCase(),
       password,
       organization_name: organization_name.value,
       first_name: first_name.value,

@@ -22,6 +22,7 @@ import {
   CalendarToday as CalendarIcon,
 } from '@mui/icons-material';
 import { MARKER_DATA, getIcon } from '@utils/constants';
+import './MapComponentStyles.css';
 
 const libraries = ['places', 'geometry', 'drawing'];
 
@@ -260,20 +261,14 @@ export const MapComponent = (props) => {
                     <Grid
                       container
                       spacing={1}
-                      style={{
-                        height: theme.spacing(13),
-                        width: theme.spacing(38),
-                        color: theme.palette.background.dark,
-                        fontSize: theme.spacing(1.25),
-                      }}
-                      alignItems="center"
+                      className="mapComponentInfoWindow"
                     >
                       {_.map(MARKER_DATA(unitOfMeasure), (item, idx) => (
                         <Grid
                           item
                           xs={6}
                           key={`${item.id}-${idx}`}
-                          style={{ display: 'flex', alignItems: 'center' }}
+                          className="mapComponentItem"
                         >
                           {_.find(mark.allAlerts, { id: item.id })
                             ? getIcon(_.find(mark.allAlerts, { id: item.id }))
@@ -292,17 +287,17 @@ export const MapComponent = (props) => {
                           ) : null}
                         </Grid>
                       ))}
-                      <Grid item xs={12} style={{ borderTop: `1px solid ${theme.palette.background.light}`, marginTop: theme.spacing(1.5) }}>
-                        <Grid container spacing={1}>
-                          <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
+                      <Grid item xs={12} className="mapComponentInfoWindowBatterySection">
+                        <Grid container spacing={1} className="mapComponentInfoWindowBox">
+                          <Grid item className="mapComponentItem">
                             <CalendarIcon />
                             <div style={{ marginLeft: theme.spacing(0.5) }}>{mark.date}</div>
                           </Grid>
-                          <Grid item xs={5} style={{ display: 'flex', alignItems: 'center' }}>
+                          <Grid item className="mapComponentItem">
                             <ClockIcon />
                             <div style={{ marginLeft: theme.spacing(0.5) }}>{mark.time}</div>
                           </Grid>
-                          <Grid item xs={2} style={{ display: 'flex', alignItems: 'center' }}>
+                          <Grid item className="mapComponentItem">
                             {mark.battery && _.gte(_.toNumber(mark.battery), 90) && (
                               <BatteryFullIcon htmlColor={theme.palette.success.main} />
                             )}
