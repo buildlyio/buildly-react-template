@@ -121,7 +121,7 @@ const TopBar = ({
     if (!_.isEqual(document.cookie.search('googtrans'), -1)) {
       // remove cookies
       document.cookie = 'googtrans=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      document.cookie = 'googtrans=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Domain=.tpath.io';
+      document.cookie = 'googtrans=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; Domain=.transparentpath.com';
 
       // set new googtrans cookies
       const googtransLng = document.cookie.split('googtrans')[1].split(';')[0].split('/')[2];
