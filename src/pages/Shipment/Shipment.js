@@ -144,6 +144,20 @@ const Shipment = ({ history }) => {
   const isLoadingSensorReports = selectedShipment ? isLoadingReports2 : isLoadingReports1;
   const isFetchingSensorReports = selectedShipment ? isFetchingReports2 : isFetchingReports1;
 
+  const isLoaded = isLoadingShipments
+    || isLoadingCustodians
+    || isLoadingItems
+    || isLoadingUnits
+    || isLoadingAllGateways
+    || isLoadingCustodies
+    || isLoadingSensorAlerts
+    || isLoadingSensorReports
+    || isLoading
+    || isFetchingShipments
+    || isFetchingAllGateways
+    || isFetchingSensorAlerts
+    || isFetchingSensorReports;
+
   useEffect(() => {
     const formattedRows = getShipmentFormattedRow(
       shipmentData,
@@ -163,6 +177,21 @@ const Shipment = ({ history }) => {
     setAllMarkers(_.map(filteredRows, 'allMarkers'));
   }, [shipmentFilter, shipmentData, custodianData, custodyData,
     itemData, allGatewayData, sensorAlertData, sensorReportData]);
+
+  useEffect(() => {
+    if (!_.isEmpty(shipmentData) && !_.isEqual(isLoaded, true)) {
+      const localDelayedShipments = JSON.parse(localStorage.getItem('delayedShipments')) || [];
+      const delayedShipments = _.filter(shipmentData, (item) => item.delayed === true && item.status === 'Planned');
+      const newDelayedShipments = _.filter(delayedShipments, (item) => !localDelayedShipments.includes(item.name));
+      if (!_.isEmpty(newDelayedShipments)) {
+        newDelayedShipments.forEach((item) => {
+          displayAlert('error', `Shipment: ${item.name} has not yet departed.`);
+        });
+      }
+      const updatedDelayedShipments = [...localDelayedShipments, ...newDelayedShipments.map((item) => item.name)];
+      localStorage.setItem('delayedShipments', JSON.stringify(updatedDelayedShipments));
+    }
+  }, [shipmentData, isLoaded]);
 
   useEffect(() => {
     if (!_.isEmpty(markers) || !_.isEmpty(selectedCluster)) {
@@ -671,36 +700,7 @@ const Shipment = ({ history }) => {
 
   return (
     <Box mt={5} mb={5}>
-      {(isLoadingShipments
-        || isLoadingCustodians
-        || isLoadingItems
-        || isLoadingUnits
-        || isLoadingAllGateways
-        || isLoadingCustodies
-        || isLoadingSensorAlerts
-        || isLoadingSensorReports
-        || isLoading
-        || isFetchingShipments
-        || isFetchingAllGateways
-        || isFetchingSensorAlerts
-        || isFetchingSensorReports
-      )
-        && (
-          <Loader open={isLoadingShipments
-            || isLoadingCustodians
-            || isLoadingItems
-            || isLoadingUnits
-            || isLoadingAllGateways
-            || isLoadingCustodies
-            || isLoadingSensorAlerts
-            || isLoadingSensorReports
-            || isLoading
-            || isFetchingShipments
-            || isFetchingAllGateways
-            || isFetchingSensorAlerts
-            || isFetchingSensorReports}
-          />
-        )}
+      {isLoaded && <Loader open={isLoaded} />}
       <Button type="button" onClick={(e) => history.push(routes.CREATE_SHIPMENT)} className="shipmentCreateButton">
         + Create Shipment
       </Button>
@@ -855,6 +855,7 @@ const Shipment = ({ history }) => {
                   ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
                   : '',
                 userLanguage,
+                muiTheme,
               ),
               {
                 name: 'battery_levels',

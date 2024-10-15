@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
+import GatewayActions from './components/GatewayActions';
 import { getUser } from '@context/User.context';
 import { routes } from '@routes/routesConstants';
 import { gatewayColumns, getGatewayFormattedRow } from '@utils/constants';
@@ -29,13 +30,20 @@ import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQu
 import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
 import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
+import { useSyncGatewayMutation } from '@react-query/mutations/sensorGateways/syncGatewayMutation';
+import { useEditGatewayMutation } from '@react-query/mutations/sensorGateways/editGatewayMutation';
 import useAlert from '@hooks/useAlert';
+import { useInput } from '@hooks/useInput';
 import { useStore } from '@zustand/timezone/timezoneStore';
 import Loader from '@components/Loader/Loader';
 import AddShipper from './forms/AddShipper';
+import { GATEWAY_ACTIONS } from '@utils/mock';
+import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 
 const Gateway = ({ history, redirectTo }) => {
   const user = getUser();
+  const isSuperAdmin = checkForGlobalAdmin(user);
+  const isAdmin = checkForAdmin(user);
   const organization = user.organization.organization_uuid;
   const theme = useTheme();
 
@@ -45,6 +53,8 @@ const Gateway = ({ history, redirectTo }) => {
   const [rows, setRows] = useState([]);
   const [shippers, setShippers] = useState([]);
   const [showAddShipper, setShowAddShipper] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedIndices, setSelectedIndices] = useState({});
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization],
@@ -100,9 +110,9 @@ const Gateway = ({ history, redirectTo }) => {
     { refetchOnWindowFocus: false },
   );
 
-  const addPath = redirectTo
-    ? `${redirectTo}/gateways`
-    : `${routes.TRACKERS}/gateway/add`;
+  const { mutate: syncGatewayMutation, isLoading: isSyncingGateway } = useSyncGatewayMutation(organization, displayAlert);
+
+  const { mutate: editGatewayMutation, isLoading: isEditingGateway } = useEditGatewayMutation(organization, null, null, displayAlert);
 
   const editPath = redirectTo
     ? `${redirectTo}/gateways`
@@ -118,6 +128,8 @@ const Gateway = ({ history, redirectTo }) => {
           custodianData,
         ),
       );
+    } else {
+      setRows([]);
     }
   }, [gatewayData, gatewayTypesData, shipmentData, custodianData]);
 
@@ -128,8 +140,17 @@ const Gateway = ({ history, redirectTo }) => {
         uniqueShippers = uniqueShippers.filter((shipper) => shipper !== '-').concat('-');
       }
       setShippers(uniqueShippers);
+    } else {
+      setShippers([]);
     }
   }, [rows]);
+
+  useEffect(() => {
+    if (!isEditingGateway) {
+      setSelectedRows([]);
+      setSelectedIndices({});
+    }
+  }, [isEditingGateway]);
 
   const editGatewayAction = (item) => {
     history.push(`${editPath}/:${item.id}`, {
@@ -143,14 +164,24 @@ const Gateway = ({ history, redirectTo }) => {
     });
   };
 
-  const onAddButtonClick = () => {
-    history.push(addPath, {
-      from: redirectTo || routes.TRACKERS,
-      gatewayTypesData,
-      unitData,
-      custodianData,
-      contactInfo,
-    });
+  const handleSelectedTrackers = (allRows, custodianName) => {
+    const selectIndices = selectedIndices;
+    const selectRows = selectedRows;
+    const prevSelectedRows = _.filter(selectedRows, (row) => row.custodian.toString() !== custodianName);
+    const filteredRows = _.filter(rows, (row) => row.custodian.toString() === custodianName);
+    const selectedFilteredRows = allRows.map((item) => filteredRows[item.dataIndex]);
+    selectIndices[custodianName] = allRows.map((item) => item.dataIndex);
+    setSelectedRows([...prevSelectedRows, ...selectedFilteredRows]);
+    setSelectedIndices(selectIndices);
+  };
+
+  const handleSyncGateways = (event) => {
+    event.preventDefault();
+    const gatewaySyncValue = {
+      organization_uuid: organization,
+      platform_type: 'Tive',
+    };
+    syncGatewayMutation(gatewaySyncValue);
   };
 
   return (
@@ -163,7 +194,8 @@ const Gateway = ({ history, redirectTo }) => {
         || isLoadingShipments
         || isLoadingCountries
         || isLoadingUnits
-        || isLoadingOrgs)
+        || isLoadingOrgs
+        || isSyncingGateway)
         && (
           <Loader open={isLoadingGateways
             || isLoadingGatewayTypes
@@ -173,21 +205,38 @@ const Gateway = ({ history, redirectTo }) => {
             || isLoadingShipments
             || isLoadingCountries
             || isLoadingUnits
-            || isLoadingOrgs}
+            || isLoadingOrgs
+            || isSyncingGateway}
           />
         )}
       <Grid container spacing={1} mt={5} ml={0.4}>
-        <Typography variant="h4">Trackers</Typography>
-        <Button
-          type="button"
-          variant="contained"
-          color="primary"
-          style={{ marginLeft: '20px' }}
-          onClick={() => setShowAddShipper(true)}
-        >
-          + Add Shipper
-        </Button>
+        <Grid item xs={12} sm={6} className="gatewayHeaderContainer">
+          <Typography variant="h4">Trackers</Typography>
+          {(isSuperAdmin || isAdmin) && (
+            <Button
+              type="button"
+              variant="contained"
+              color="primary"
+              style={{ marginLeft: '20px' }}
+              onClick={() => setShowAddShipper(true)}
+            >
+              + Add Shipper
+            </Button>
+          )}
+        </Grid>
+
+        {isSuperAdmin && (
+          <GatewayActions
+            handleSyncGateways={handleSyncGateways}
+            selectedRows={selectedRows}
+            custodianData={custodianData}
+            contactInfo={contactInfo}
+            editGatewayMutation={editGatewayMutation}
+            isEditingGateway={isEditingGateway}
+          />
+        )}
       </Grid>
+
       <AddShipper
         open={showAddShipper}
         setOpen={setShowAddShipper}
@@ -196,117 +245,143 @@ const Gateway = ({ history, redirectTo }) => {
         orgData={orgData}
         custodianTypesData={custodianTypesData}
       />
-      <Grid container mt={2} pb={4}>
-        <Grid item xs={12} sm={8} lg={9}>
-          {!_.isEmpty(shippers) && shippers.map((custodianName, index) => (
-            <Accordion key={index} className="gatewayAccordion">
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={_.isEqual(custodianName, '-') ? 'unassigned-content' : `${custodianName}-content`}
-                id={_.isEqual(custodianName, '-') ? 'unassigned-header' : `${custodianName}-header`}
-              >
-                <Typography className="gatewayAccordingHeading">
-                  {_.isEqual(custodianName, '-') ? 'UNASSIGNED TRACKERS' : custodianName.toUpperCase()}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <DataTableWrapper
-                  hideAddButton
-                  filename={_.isEqual(custodianName, '-') ? 'Unassigned Trackers' : `${custodianName} Trackers`}
-                  rows={rows.filter((row) => row.custodian.toString() === custodianName) || []}
-                  columns={gatewayColumns(
-                    data,
-                    _.find(
-                      unitData,
-                      (unit) => _.toLower(unit.unit_of_measure_for) === 'date',
-                    )
-                      ? _.find(
+
+      <Grid container mt={3} pb={4}>
+        {_.isEmpty(shippers) && (
+          <Typography className="gatewayEmptyText">No data to display</Typography>
+        )}
+
+        {!_.isEmpty(shippers) && (
+          <Grid item xs={12} sm={8} lg={9}>
+            {shippers.map((custodianName, index) => (
+              <Accordion key={index} className="gatewayAccordion">
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls={_.isEqual(custodianName, '-') ? 'unassigned-content' : `${custodianName}-content`}
+                  id={_.isEqual(custodianName, '-') ? 'unassigned-header' : `${custodianName}-header`}
+                >
+                  <Typography className="gatewayAccordingHeading">
+                    {_.isEqual(custodianName, '-') ? 'UNASSIGNED TRACKERS' : custodianName.toUpperCase()}
+                  </Typography>
+                </AccordionSummary>
+
+                <AccordionDetails>
+                  <DataTableWrapper
+                    hideAddButton
+                    filename={_.isEqual(custodianName, '-') ? 'Unassigned Trackers' : `${custodianName} Trackers`}
+                    rows={rows.filter((row) => row.custodian.toString() === custodianName) || []}
+                    columns={gatewayColumns(
+                      data,
+                      _.find(
                         unitData,
                         (unit) => _.toLower(unit.unit_of_measure_for) === 'date',
-                      ).unit_of_measure
-                      : '',
-                    theme,
-                  )}
-                  addButtonHeading="Add Tracker"
-                  onAddButtonClick={onAddButtonClick}
-                  editAction={editGatewayAction}
-                />
-                <Route path={`${addPath}`} component={AddGateway} />
-                <Route path={`${editPath}/:id`} component={AddGateway} />
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </Grid>
-        <Grid item xs={12} sm={3.5} lg={2.7} className="gatewayInventoryContainer">
-          {!_.isEmpty(shippers) && shippers.map((custodianName, index) => {
-            const trackers = rows.filter((row) => row.custodian.toString() === custodianName);
-            const {
-              availableCount,
-              assignedCount,
-              inTransitCount,
-              unavailableCount,
-            } = trackers.reduce(
-              (acc, tracker) => {
-                if (tracker.gateway_status === 'available') {
-                  acc.availableCount++;
-                } else if (tracker.gateway_status === 'assigned') {
-                  acc.assignedCount++;
-                } else if (tracker.gateway_status === 'in-transit') {
-                  acc.inTransitCount++;
-                } else if (tracker.gateway_status === 'unavailable') {
-                  acc.unavailableCount++;
-                }
-                return acc;
-              },
-              {
-                availableCount: 0,
-                assignedCount: 0,
-                inTransitCount: 0,
-                unavailableCount: 0,
-              },
-            );
+                      )
+                        ? _.find(
+                          unitData,
+                          (unit) => _.toLower(unit.unit_of_measure_for) === 'date',
+                        ).unit_of_measure
+                        : '',
+                      theme,
+                    )}
+                    selectable={{
+                      rows: isSuperAdmin ? 'multiple' : 'none',
+                      rowsHeader: !!isSuperAdmin,
+                    }}
+                    onRowSelectionChange={(rowsSelectedData, allRows, rowsSelected) => {
+                      if (isSuperAdmin) {
+                        handleSelectedTrackers(allRows, custodianName);
+                      }
+                    }}
+                    selected={selectedIndices[custodianName]}
+                    editAction={editGatewayAction}
+                  />
+                  <Route path={`${editPath}/:id`} component={AddGateway} />
+                </AccordionDetails>
+              </Accordion>
+            ))}
+          </Grid>
+        )}
 
-            return (
-              <>
-                {!_.isEqual(custodianName, '-')
-                  ? (
-                    <Box className="inventoryContainer">
-                      <Typography className="inventoryTitle">{custodianName.toUpperCase()}</Typography>
-                      <Box className="inventoryAvailableContainer">
-                        <div className="inventoryAvailableCountContainer">
-                          <Typography className="inventoryAvailableCount">{availableCount}</Typography>
-                        </div>
-                        <Typography className="inventoryAvailableText">Available</Typography>
+        {!_.isEmpty(shippers) && (
+          <Grid item xs={12} sm={3.5} lg={2.7} className="gatewayInventoryContainer">
+            {!_.isEmpty(shippers) && shippers.map((custodianName, index) => {
+              const trackers = rows.filter((row) => row.custodian.toString() === custodianName);
+              const {
+                availableCount,
+                assignedCount,
+                inTransitCount,
+                unavailableCount,
+              } = trackers.reduce(
+                (acc, tracker) => {
+                  if (tracker.gateway_status === 'available') {
+                    acc.availableCount++;
+                  } else if (tracker.gateway_status === 'assigned') {
+                    acc.assignedCount++;
+                  } else if (tracker.gateway_status === 'in-transit') {
+                    acc.inTransitCount++;
+                  } else if (tracker.gateway_status === 'unavailable') {
+                    acc.unavailableCount++;
+                  }
+                  return acc;
+                },
+                {
+                  availableCount: 0,
+                  assignedCount: 0,
+                  inTransitCount: 0,
+                  unavailableCount: 0,
+                },
+              );
+
+              return (
+                <div key={index}>
+                  {!_.isEqual(custodianName, '-')
+                    ? (
+                      <Box className="inventoryContainer">
+                        <Typography className="inventoryTitle">{custodianName.toUpperCase()}</Typography>
+                        {availableCount > 0 && (
+                          <Box className="inventorySubContainer inventoryAvailable">
+                            <div className="inventoryCountContainer">
+                              <Typography>{availableCount}</Typography>
+                            </div>
+                            <Typography className="inventoryText">Available</Typography>
+                          </Box>
+                        )}
+                        {assignedCount > 0 && (
+                          <Box className="inventorySubContainer inventoryAssigned">
+                            <div className="inventoryCountContainer">
+                              <Typography>{assignedCount}</Typography>
+                            </div>
+                            <Typography className="inventoryText">Assigned</Typography>
+                          </Box>
+                        )}
+                        {inTransitCount > 0 && (
+                          <Box className="inventorySubContainer inventoryInTransit">
+                            <div className="inventoryCountContainer">
+                              <Typography>{inTransitCount}</Typography>
+                            </div>
+                            <Typography className="inventoryText">In Transit</Typography>
+                          </Box>
+                        )}
+                        {unavailableCount > 0 && (
+                          <Box className="inventorySubContainer inventoryUnavailable">
+                            <div className="inventoryCountContainer">
+                              <Typography>{unavailableCount}</Typography>
+                            </div>
+                            <Typography className="inventoryText">Unavailable</Typography>
+                          </Box>
+                        )}
                       </Box>
-                      <Box className="inventoryAssignedContainer">
-                        <div className="inventoryAssignedCountContainer">
-                          <Typography>{assignedCount}</Typography>
-                        </div>
-                        <Typography className="inventoryAssignedText">Assigned</Typography>
+                    ) : (
+                      <Box className="inventoryContainer">
+                        <Typography>UNASSIGNED</Typography>
+                        <Typography className="inventoryUnassignedText">{_.size(trackers)}</Typography>
                       </Box>
-                      <Box className="inventoryInTransitContainer">
-                        <div className="inventoryInTransitCountContainer">
-                          <Typography>{inTransitCount}</Typography>
-                        </div>
-                        <Typography className="inventoryInTransitText">In Transit</Typography>
-                      </Box>
-                      <Box className="inventoryUnavailableContainer">
-                        <div className="inventoryUnavailableCountContainer">
-                          <Typography>{unavailableCount}</Typography>
-                        </div>
-                        <Typography className="inventoryUnavailableText">Unavailable</Typography>
-                      </Box>
-                    </Box>
-                  ) : (
-                    <Box className="inventoryContainer">
-                      <Typography>UNASSIGNED</Typography>
-                      <Typography className="inventoryUnassignedText">{_.size(trackers)}</Typography>
-                    </Box>
-                  )}
-              </>
-            );
-          })}
-        </Grid>
+                    )}
+                </div>
+              );
+            })}
+          </Grid>
+        )}
       </Grid>
     </div>
   );

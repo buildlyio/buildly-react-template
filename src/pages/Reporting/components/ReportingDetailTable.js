@@ -340,7 +340,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
               <Typography fontWeight={700}>
                 Tracker ID:
                 {' '}
-                <span style={{ fontWeight: 400 }}>{selectedShipment.tracker}</span>
+                <span className="notranslate" style={{ fontWeight: 400 }}>{selectedShipment.tracker}</span>
                 {' T: '}
                 <span style={{ fontWeight: 400 }}>{`${selectedShipment.transmission_time} Min.`}</span>
                 {' M: '}

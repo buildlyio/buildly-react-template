@@ -116,7 +116,7 @@ const AccountSettings = ({ open, setOpen }) => {
       <DialogContent className="accountSettingsDialogContent">
         <Grid container display="flex" alignItems="center" className="accountSettingsUserIconName">
           <Avatar alt={user && `${user.first_name} ${user.last_name}`} src={profile} />
-          <Typography ml={2} variant="h5" fontWeight={500}>{user && `${user.first_name} ${user.last_name}`}</Typography>
+          <Typography ml={2} variant="h5" fontWeight={500} className="notranslate">{user && `${user.first_name} ${user.last_name}`}</Typography>
         </Grid>
         <Grid container spacing={2} className="accountSettingsPersonalNotification">
           <Grid item xs={12} mb={2}>
@@ -127,13 +127,13 @@ const AccountSettings = ({ open, setOpen }) => {
             <Typography variant="body1" fontWeight={500}>First Name:</Typography>
           </Grid>
           <Grid item xs={6} sm={8}>
-            <Typography variant="body1" fontWeight={500}>{user && user.first_name}</Typography>
+            <Typography variant="body1" fontWeight={500} className="notranslate">{user && user.first_name}</Typography>
           </Grid>
           <Grid item xs={6} sm={4}>
             <Typography variant="body1" fontWeight={500}>Last Name:</Typography>
           </Grid>
           <Grid item xs={6} sm={8}>
-            <Typography variant="body1" fontWeight={500}>{user && user.last_name}</Typography>
+            <Typography variant="body1" fontWeight={500} className="notranslate">{user && user.last_name}</Typography>
           </Grid>
           <Grid item xs={6} sm={4}>
             <Typography variant="body1" fontWeight={500}>Customer ID:</Typography>

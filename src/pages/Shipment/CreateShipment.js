@@ -1986,9 +1986,7 @@ const CreateShipment = ({ history, location }) => {
                   select
                   fullWidth
                   placeholder="Select..."
-                  label={(
-                    <span className="translate">Tracker platform</span>
-                  )}
+                  label={<span className="translate">Tracker platform</span>}
                   onBlur={(e) => handleBlur(e, 'required', gatewayType, 'gateway-type')}
                   disabled={
                     (!_.isEmpty(editData)
@@ -2011,11 +2009,12 @@ const CreateShipment = ({ history, location }) => {
               <Grid item xs={1} sm={0.5} className="createShipmentOuterAsterisk" mt={isMobile() ? -3.5 : 0}>*</Grid>
               <Grid item xs={5} sm={5.75} ml={isMobile() ? 2 : 0}>
                 <TextField
+                  className="notranslate"
                   id="gateway"
                   select
                   fullWidth
                   placeholder="Select..."
-                  label="Tracker identifier"
+                  label={<span className="translate">Tracker identifier</span>}
                   onBlur={(e) => handleBlur(e, 'required', gateway, 'gateway')}
                   disabled={
                     (!_.isEmpty(editData)

@@ -228,7 +228,7 @@ const AddGateway = ({
                   fullWidth
                   id="gateway_name"
                   required
-                  disabled={!!editData}
+                  disabled={!_.isEmpty(editData)}
                   label="Tracker Name"
                   name="gateway_name"
                   autoComplete="gateway_name"
@@ -252,7 +252,7 @@ const AddGateway = ({
                       margin="normal"
                       fullWidth
                       required
-                      disabled={!!editData}
+                      disabled={!_.isEmpty(editData)}
                       id="gateway_type"
                       select
                       label={<span className="translate">Tracker Type</span>}
@@ -318,7 +318,7 @@ const AddGateway = ({
                         moment(activation_date)
                           .tz(data)
                       }
-                      disabled={!!editData}
+                      disabled={!_.isEmpty(editData)}
                       handleDateChange={handleDateChange}
                       dateFormat={
                         _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
@@ -332,7 +332,7 @@ const AddGateway = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      disabled={!!editData}
+                      disabled={!_.isEmpty(editData)}
                       id="sim_card_id"
                       label="IMEI"
                       name="sim_card_id"
@@ -345,7 +345,7 @@ const AddGateway = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      disabled={!!editData}
+                      disabled={!_.isEmpty(editData)}
                       id="battery_level"
                       label="Battery(%)"
                       name="battery_level"
@@ -358,7 +358,7 @@ const AddGateway = ({
                       variant="outlined"
                       margin="normal"
                       fullWidth
-                      disabled={!!editData}
+                      disabled={!_.isEmpty(editData)}
                       id="mac_address"
                       label="Mac Address"
                       name="mac_address"
@@ -406,7 +406,7 @@ const AddGateway = ({
                         variant="outlined"
                         margin="normal"
                         fullWidth
-                        disabled={!!editData}
+                        disabled={!_.isEmpty(editData)}
                         id="last_known_location"
                         label="Last Known Location"
                         name="last_known_location"

@@ -65,3 +65,9 @@ export const LANGUAGES = [
   { value: 'ja', label: 'Japanese' },
   { value: 'it', label: 'Italian' },
 ];
+
+export const GATEWAY_ACTIONS = [
+  { value: 'Edit Status', label: 'Edit Status' },
+  { value: 'Remove Tracker', label: 'Remove Tracker' },
+  { value: 'Edit Shipper', label: 'Edit Shipper' },
+];

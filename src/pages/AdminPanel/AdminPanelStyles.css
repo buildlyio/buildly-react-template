@@ -132,3 +132,9 @@
   justify-content: space-between;
   align-items: center;
 }
+
+/* Trackers Styles */
+.adminTrackersButton {
+  margin: 0px 0px 16px;
+  border-radius: 8px;
+}

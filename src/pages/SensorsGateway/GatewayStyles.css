@@ -1,3 +1,39 @@
+.gatewayHeaderContainer {
+  display: flex;
+  align-items: center;
+}
+
+.gatewayHeaderActionContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 20px;
+}
+
+.gatewayActions {
+  width: 192px;
+  margin-left: 20px;
+}
+
+.gatewayActions .MuiOutlinedInput-input {
+  padding: 8px 28px 8px 16px;
+}
+
+.gatewayActions .MuiFormLabel-root {
+  margin-top: -8px;
+}
+
+.gatewayActions .Mui-focused {
+  margin-top: 0 !important;
+}
+
+.gatewaySyncIcon {
+  fill: var(--color-palette-primary-main);
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
 .gatewayCardItems {
   margin-top: 32px;
 }
@@ -5,6 +41,13 @@
 .gatewayInputWithTooltip {
   display: flex;
   align-items: center;
+}
+
+.gatewayEmptyText {
+  font-size: 20px;
+  margin: 0 auto;
+  font-weight: 700;
+  margin-top: 100px;
 }
 
 .gatewayAccordion {
@@ -86,109 +129,43 @@
   font-weight: 500;
 }
 
-.inventoryAvailableContainer {
+.inventorySubContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
+  border-radius: 6px;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.inventoryCountContainer {
+  background: var(--color-palette-background-default);
+  border-radius: 6px;
+  padding: 0 5px;
+  border: 1px solid var(--color-palette-background-black);
+  margin-right: 10px;
+}
+
+.inventoryText {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.inventoryAvailable {
   background: var(--color-palette-success-light);
-  border-radius: 6px;
-  margin: 5px 0;
-  padding: 10px 10px 5px;
 }
 
-.inventoryAvailableCountContainer {
-  background: var(--color-palette-background-default);
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  margin-bottom: 5px;
-  border: 1px solid var(--color-palette-background-black);
-}
-
-.inventoryAvailableCount {
-  font-size: 24px;
-}
-
-.inventoryAvailableText {
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.inventoryAssignedContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+.inventoryAssigned {
   background: var(--color-palette-primary-main);
-  border-radius: 6px;
-  margin-bottom: 5px;
-  padding: 5px;
 }
 
-.inventoryAssignedCountContainer {
-  background: var(--color-palette-background-default);
-  border-radius: 6px;
-  padding: 0 5px;
-  border: 1px solid var(--color-palette-background-black);
-  margin-right: 10px;
-}
-
-.inventoryAssignedText {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--color-palette-background-default)
-}
-
-.inventoryUnavailableContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+.inventoryUnavailable {
   background: var(--color-palette-background-light2);
-  border-radius: 6px;
-  margin-bottom: 5px;
-  padding: 5px;
 }
 
-.inventoryUnavailableCountContainer {
-  background: var(--color-palette-background-default);
-  border-radius: 6px;
-  padding: 0 5px;
-  border: 1px solid var(--color-palette-background-black);
-  margin-right: 10px;
-}
-
-.inventoryUnavailableText {
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.inventoryInTransitContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+.inventoryInTransit {
   background: var(--color-palette-background-light7);
-  border-radius: 6px;
-  margin-bottom: 5px;
-  padding: 5px;
-}
-
-.inventoryInTransitCountContainer {
-  background: var(--color-palette-background-default);
-  border-radius: 6px;
-  padding: 0 5px;
-  border: 1px solid var(--color-palette-background-black);
-  margin-right: 10px;
-}
-
-.inventoryInTransitText {
-  font-size: 12px;
-  font-weight: 500;
 }
 
 .inventoryUnassignedText {
@@ -218,6 +195,15 @@
 }
 
 @media screen and (max-width: 600px) {
+  .gatewayHeaderActionContainer {
+    justify-content: flex-start;
+    padding-right: 0;
+  }
+
+  .gatewayActions {
+    width: 250px;
+  }
+
   .gatewaySubmit2 {
     margin-top: -30px;
   }

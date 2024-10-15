@@ -48,7 +48,7 @@ const AccountMenu = ({
           justifyContent="center"
           textAlign="center"
         >
-          <Typography variant="h6">
+          <Typography variant="h6" className="notranslate">
             {user && `${user.first_name} ${user.last_name}`}
           </Typography>
           <Typography variant="body2">

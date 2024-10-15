@@ -202,7 +202,7 @@ const Register = ({ history }) => {
                     required
                     fullWidth
                     id="first_name"
-                    label="First Name"
+                    label={<span className="translate">First Name</span>}
                     name="first_name"
                     autoComplete="first_name"
                     error={
@@ -214,7 +214,7 @@ const Register = ({ history }) => {
                         ? formError.first_name.message
                         : ''
                     }
-                    className="registerTextField"
+                    className="notranslate registerTextField"
                     onBlur={(e) => handleBlur(e, 'required', first_name)}
                     {...first_name.bind}
                   />
@@ -225,7 +225,7 @@ const Register = ({ history }) => {
                     margin="normal"
                     fullWidth
                     id="last_name"
-                    label="Last Name"
+                    label={<span className="translate">Last Name</span>}
                     name="last_name"
                     autoComplete="last_name"
                     error={
@@ -237,7 +237,7 @@ const Register = ({ history }) => {
                         ? formError.last_name.message
                         : ''
                     }
-                    className="registerTextField"
+                    className="notranslate registerTextField"
                     onBlur={(e) => handleBlur(e)}
                     {...last_name.bind}
                   />

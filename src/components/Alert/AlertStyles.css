@@ -2,7 +2,7 @@
   width: 100%;
 }
 
-.alertRoot > * + * {
+.alertRoot>*+* {
   margin-top: 16px;
 }
 
