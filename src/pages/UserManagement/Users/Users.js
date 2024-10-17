@@ -81,7 +81,6 @@ const Users = () => {
     <div>
       <DataTableWrapper
         hideAddButton
-        centerLabel
         filename="Users"
         tableHeader="Users"
         loading={isLoadingCoreuser

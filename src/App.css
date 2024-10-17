@@ -1,0 +1,32 @@
+#google_translate_element {
+  width: 0;
+  float: right;
+  text-align: right;
+  display: block;
+}
+
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+#goog-gt-tt {
+  display: none !important;
+  top: 0px !important;
+}
+
+.goog-tooltip.skiptranslate {
+  display: none !important;
+  top: 0px !important;
+}
+
+.activity-root {
+  display: hide !important;
+}
+
+.status-message {
+  display: hide !important;
+}
+
+.started-activity-container {
+  display: hide !important;
+}

@@ -1,11 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
-export const numberWithCommas = (x) => {
-  if (!x) return '';
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-};
-
 export const checkForGlobalAdmin = (userData) => {
   let isGlobalAdmin = false;
   if (userData && userData.core_groups) {

@@ -129,7 +129,6 @@ const Items = ({ history, redirectTo }) => {
         handleDeleteModal={handleDeleteModal}
         deleteModalTitle="Are you sure you want to delete this Item?"
         tableHeader="Items"
-        centerLabel
       >
         <Route path={`${addItemPath}`} component={AddItems} />
         <Route path={`${editItemPath}/:id`} component={AddItems} />

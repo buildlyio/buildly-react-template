@@ -245,7 +245,7 @@ const CreateShipment = ({ history, location }) => {
   const [showNote, setShowNote] = useState(!_.isEmpty(editData) && !!editData.note);
   const [showAddCustodian, setShowAddCustodian] = useState(false);
   const note = useInput((!_.isEmpty(editData) && editData.note) || '');
-  const [additionalCustodians, setAdditionalCustocations] = useState([]);
+  const [additionalCustodians, setAdditionalCustodians] = useState([]);
 
   const gatewayType = useInput((!_.isEmpty(editData) && editData.platform_name) || 'Tive');
   const [availableGateways, setAvailableGateways] = useState([]);
@@ -364,7 +364,7 @@ const CreateShipment = ({ history, location }) => {
       }
 
       if (carriers) {
-        setAdditionalCustocations(carriers);
+        setAdditionalCustodians(carriers);
       }
 
       if (!_.isEmpty(editData.gateway_imei)) {
@@ -1869,7 +1869,7 @@ const CreateShipment = ({ history, location }) => {
                               additionalCustodians,
                               (cust, idx) => (idx === index ? e.target.value : cust),
                             );
-                            setAdditionalCustocations(newList);
+                            setAdditionalCustodians(newList);
                           }}
                           InputLabelProps={{ shrink: true }}
                           SelectProps={{ displayEmpty: true }}
@@ -1917,7 +1917,7 @@ const CreateShipment = ({ history, location }) => {
                               additionalCustodians,
                               (cust, idx) => (idx !== index),
                             );
-                            setAdditionalCustocations(newList);
+                            setAdditionalCustodians(newList);
                           }}
                         >
                           <CancelIcon fontSize="large" className="createShipmentCancel" />
@@ -1940,7 +1940,7 @@ const CreateShipment = ({ history, location }) => {
                       <span className="translate">Add carriers/warehouses</span>
                     )}
                     onChange={(e) => {
-                      setAdditionalCustocations([...additionalCustodians, e.target.value]);
+                      setAdditionalCustodians([...additionalCustodians, e.target.value]);
                       setShowAddCustodian(false);
                     }}
                     InputLabelProps={{ shrink: true }}

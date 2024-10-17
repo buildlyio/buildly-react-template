@@ -71,3 +71,8 @@ export const GATEWAY_ACTIONS = [
   { value: 'Remove Tracker', label: 'Remove Tracker' },
   { value: 'Edit Shipper', label: 'Edit Shipper' },
 ];
+
+export const ORDER_TYPES = [
+  { value: 'Tive Non Lithium Solo 5G', label: 'Tive Non Lithium Solo 5G' },
+  { value: 'Tive Lithium Solo 5G', label: 'Tive Lithium Solo 5G' },
+];

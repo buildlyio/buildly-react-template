@@ -24,6 +24,7 @@ import theme from '@styles/theme';
 import {
   Experimental_CssVarsProvider as CssVarsProvider,
 } from '@mui/material/styles';
+import './App.css';
 
 const App = () => (
   <Router>

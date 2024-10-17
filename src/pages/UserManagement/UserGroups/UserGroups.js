@@ -50,7 +50,6 @@ const UserGroups = () => {
     <div>
       <DataTableWrapper
         hideAddButton
-        centerLabel
         filename="User Groups"
         tableHeader="User Groups"
         loading={isLoadingCoregroup || isLoadingOrganizations || isEditingGroup}

@@ -28,6 +28,7 @@
 .dataTableIconButton {
   padding: 0;
   color: var(--color-palette-primary-dark);
+  text-align: center;
 }
 
 .dataTableIconButton:hover {

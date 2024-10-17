@@ -14,7 +14,7 @@ import {
   OpacityOutlined as HumidIcon,
   Launch as LaunchIcon,
 } from '@mui/icons-material';
-import { extractCountry, numberWithCommas } from './utilMethods';
+import { extractCountry } from './utilMethods';
 import { TIVE_GATEWAY_TIMES } from '@utils/mock';
 
 const showValue = (value, timezone, dateFormat, timeFormat) => (
@@ -50,6 +50,49 @@ export const PressureIcon = (color) => (
     />
     <path
       d="M 12.40625 13.554688 L 10.226562 8.71875 C 10.179688 8.613281 10.0625 8.554688 9.945312 8.582031 C 9.8125 8.613281 9.734375 8.746094 9.765625 8.878906 L 11.007812 14.03125 C 10.699219 14.398438 10.589844 14.914062 10.753906 15.398438 C 11.007812 16.140625 11.816406 16.535156 12.558594 16.28125 C 13.300781 16.027344 13.695312 15.222656 13.441406 14.480469 C 13.277344 13.992188 12.871094 13.65625 12.40625 13.554688 Z M 12.40625 13.554688 "
+    />
+  </SvgIcon>
+);
+
+export const FlightSafeIcon = () => (
+  <SvgIcon
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M15.02 0.437234L10.9633 4.49396L1.81133 2.61164C1.49977 2.48183 1.11898 2.66573 0.96753 2.77391L0.221096 3.52035C-0.246239 3.88383 0.134552 4.19106 0.383365 4.29924L7.78284 8.16125L4.34273 12.2829L1.9736 11.6987C1.68801 11.5689 1.42189 11.7528 1.32453 11.861L0.902623 12.2829C0.513177 12.6464 0.870169 12.9536 1.09735 13.0618L3.01212 14.0029L2.16832 15.009C2.1164 15.7619 2.77413 15.7554 3.10949 15.6581L3.92083 14.9116L4.99181 17.1185C5.17355 17.3262 5.45698 17.205 5.57598 17.1185L5.99788 16.6642C6.30943 16.4824 6.27914 16.0692 6.22505 15.8853L5.80315 13.5486L9.11344 10.79V8.64805C9.06152 7.81724 10.0654 7.63117 10.5739 7.64198C12.3653 7.53813 13.5596 6.58183 14.3385 6.05175L15.8314 4.59132L17.162 3.26072C17.6921 2.76309 18.5056 1.52768 17.519 0.567049C16.5324 -0.393584 15.4419 0.0802418 15.02 0.437234Z"
+      fill="black"
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M9.89229 8.45329C10.7577 8.45329 12.904 8.14173 14.5656 6.89551C15.1174 7.41477 16.8114 8.45329 19.1741 8.45329V12.0557C19.1957 13.581 18.3043 17.0341 14.5656 18.6438C13.5379 18.1678 11.2748 16.6381 10.444 14.3274C10.0762 13.0726 9.45091 10.1409 9.89229 8.45329ZM16.4155 10.5953L13.8516 13.1267L12.878 12.153C12.6617 12.0016 12.1835 11.7636 12.0018 12.0232C11.82 12.2829 11.9261 12.629 12.0018 12.7697L13.6245 14.3599C13.6514 14.3868 13.6785 14.4082 13.7057 14.4248C13.8881 14.5368 14.0684 14.4353 14.1437 14.3599L17.1619 11.3417C17.2809 11.2119 17.4475 10.8809 17.1619 10.5953C16.8763 10.3097 16.5453 10.4763 16.4155 10.5953Z"
+      fill="#8AE983"
+    />
+  </SvgIcon>
+);
+
+export const FlightUnsafeIcon = () => (
+  <SvgIcon
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M14.9835 0.442921L10.9367 4.55242L1.80693 2.64561C1.49613 2.51411 1.11626 2.70041 0.965177 2.80999L0.220558 3.56614C-0.245641 3.93435 0.134225 4.24558 0.382433 4.35516L7.76392 8.2674L4.33217 12.4427L1.9688 11.8509C1.68391 11.7194 1.41843 11.9057 1.32131 12.0153L0.900428 12.4427C0.511929 12.8109 0.868053 13.1221 1.09468 13.2317L3.0048 14.1851L2.16305 15.2042C2.11125 15.967 2.76738 15.9604 3.10193 15.8618L3.9113 15.1056L4.97967 17.3412C5.16097 17.5516 5.44371 17.4288 5.56242 17.3412L5.98329 16.8809C6.29409 16.6968 6.26388 16.2782 6.20992 16.0919L5.78904 13.7248L9.09128 10.9304V8.76054C9.03948 7.91892 10.0409 7.73043 10.5482 7.74139C12.3353 7.63618 13.5266 6.66744 14.3036 6.13047L15.7929 4.65105L17.1203 3.30313C17.6491 2.79903 18.4606 1.54755 17.4764 0.574425C16.4922 -0.398704 15.4044 0.0812856 14.9835 0.442921Z"
+      fill="black"
+    />
+    <path
+      d="M14.5722 6.73889C12.9146 8.00133 10.7736 8.31694 9.91023 8.31694C9.46993 10.0265 10.0937 12.9963 10.4606 14.2675C11.2894 16.6083 13.547 18.1578 14.5722 18.64C18.3018 17.0093 19.191 13.5113 19.1695 11.9662V8.31694C16.8126 8.31694 15.1226 7.26491 14.5722 6.73889Z"
+      fill="#D05162"
+    />
+    <path
+      d="M11.7109 9.91016L16.9809 14.4688M17.176 9.91016L11.7109 14.4688"
+      stroke="white"
+      strokeLinecap="round"
     />
   </SvgIcon>
 );
@@ -147,7 +190,7 @@ export const getProductColumns = (timezone, uomw, dateFormat, timeFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => _.round(_.toNumber(value), 1),
+      customBodyRender: (value) => _.round(_.toNumber(value), 2),
     },
   },
   {
@@ -157,7 +200,7 @@ export const getProductColumns = (timezone, uomw, dateFormat, timeFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
-      customBodyRender: (value) => _.round(_.toNumber(value), 0),
+      customBodyRender: (value) => _.round(_.toNumber(value), 2),
     },
   },
   {
@@ -304,6 +347,9 @@ export const custodianColumns = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        style: { maxWidth: '300px', wordWrap: 'break-word' },
+      }),
     },
   },
   {
@@ -417,7 +463,7 @@ export const delayColumns = [
       sortThirdClickReset: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? `$${numberWithCommas(value)}`
+          ? `$${value}`
           : value
       ),
     },
@@ -508,7 +554,7 @@ export const itemColumns = (currUnit) => ([
       filter: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? `${numberWithCommas(value)} ${currUnit}`
+          ? `${value} ${currUnit}`
           : value
       ),
     },
@@ -522,7 +568,7 @@ export const itemColumns = (currUnit) => ([
       filter: true,
       customBodyRender: (value) => (
         value && value !== '-'
-          ? `${numberWithCommas(value)}`
+          ? `${_.round(_.toNumber(value), 2)}`
           : value
       ),
     },
@@ -1820,6 +1866,7 @@ export const gatewayColumns = (timezone, dateFormat, theme) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({ style: { width: '50px' } }),
     },
   },
   {
@@ -1918,6 +1965,7 @@ export const gatewayColumns = (timezone, dateFormat, theme) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({ style: { width: '50px' } }),
       customBodyRender: (value) => {
         const onPress = () => {
           const link = document.createElement('a');
@@ -1929,9 +1977,7 @@ export const gatewayColumns = (timezone, dateFormat, theme) => ([
           document.body.removeChild(link);
         };
         return (value && (
-          <span style={{ marginLeft: '25px', cursor: 'pointer' }}>
-            <LaunchIcon onClick={onPress} style={{ fill: theme.palette.primary.main, width: '24px', height: '24px' }} />
-          </span>
+          <LaunchIcon onClick={onPress} style={{ fill: theme.palette.primary.main, width: '100%', margin: 'auto' }} />
         ));
       },
     },
@@ -2542,6 +2588,89 @@ export const getAlertNotificationsColumns = (timezone, dateFormat, timeFormat) =
       sortThirdClickReset: true,
       filter: true,
       setCellProps: () => ({ style: { maxWidth: '300px', wordWrap: 'break-word' } }),
+    },
+  },
+]);
+
+export const getRecipientAddressColumns = (timezone, dateFormat, timeFormat) => ([
+  {
+    name: 'name',
+    label: 'Name',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'address',
+    label: 'Address',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+    },
+  },
+  {
+    name: 'create_date',
+    label: 'Created At',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => showValue(value, timezone, dateFormat, timeFormat),
+    },
+  },
+  {
+    name: 'edit_date',
+    label: 'Last Edited At',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => showValue(value, timezone, dateFormat, timeFormat),
+    },
+  },
+]);
+
+export const getTrackerOrderColumns = (timezone, dateFormat, timeFormat) => ([
+  {
+    name: 'order_date',
+    label: 'Order Date',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => showValue(value, timezone, dateFormat, timeFormat),
+    },
+  },
+  {
+    name: 'order_quantity',
+    label: 'Quantity',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => _.map(value, (v) => <div>{v}</div>),
+    },
+  },
+  {
+    name: 'order_type',
+    label: 'Type',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
+      customBodyRender: (value) => _.map(value, (v) => <div>{v}</div>),
+    },
+  },
+  {
+    name: 'order_recipient',
+    label: 'Recipient',
+    options: {
+      sort: true,
+      sortThirdClickReset: true,
+      filter: true,
     },
   },
 ]);

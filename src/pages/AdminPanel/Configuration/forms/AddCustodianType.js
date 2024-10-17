@@ -18,11 +18,7 @@ const AddCustodianType = ({ history, location }) => {
   const { displayAlert } = useAlert();
 
   const editPage = location.state && location.state.type === 'edit';
-  const editData = (
-    location.state
-    && location.state.type === 'edit'
-    && location.state.data
-  ) || {};
+  const editData = (editPage && location.state.data) || {};
 
   const name = useInput((editData && editData.name) || '', {
     required: true,

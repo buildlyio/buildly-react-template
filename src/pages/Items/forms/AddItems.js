@@ -36,7 +36,7 @@ const AddItems = ({
   } = location.state || {};
 
   const editPage = location.state && location.state.type === 'edit';
-  const editData = (location.state && location.state.type === 'edit' && location.state.data) || {};
+  const editData = (editPage && location.state.data) || {};
 
   const item_name = useInput(editData.name || '', {
     required: true,
@@ -49,7 +49,7 @@ const AddItems = ({
   const [product_desc, setProductDesc] = useState('');
   const [product_type, setProductType] = useState('');
   const [product_value, setProductValue] = useState('');
-  const [product_weight, setProductWeight] = useState(editData.product_weight || '');
+  const [product_weight, setProductWeight] = useState(_.round(editData.product_weight, 2) || '');
   const [gtin, setGtin] = useState(editData.gtin || '');
   const [upc, setUpc] = useState(editData.upc || '');
   const [ean, setEan] = useState(editData.ean || '');
@@ -58,7 +58,7 @@ const AddItems = ({
   const [bin_id, setBinId] = useState(editData.bin_id || '');
   const [units, setContainerUnits] = useState(editData.number_of_units || 0);
   const [item_value, setItemValue] = useState(editData.value || 0);
-  const [item_weight, setItemWeight] = useState(editData.gross_weight || 0);
+  const [item_weight, setItemWeight] = useState(_.round(editData.gross_weight, 2) || 0);
 
   const [formError, setFormError] = useState({});
 
@@ -79,7 +79,7 @@ const AddItems = ({
         onProductChange(selectedProduct);
       }
       setContainerUnits(editData.number_of_units);
-      setItemWeight(editData.gross_weight);
+      setItemWeight(_.round(editData.gross_weight, 2));
       setItemValue(editData.value);
     }
   }, [editPage, editData, productData, productTypesData]);
@@ -119,7 +119,7 @@ const AddItems = ({
       item_type: item_type.value,
       name: item_name.value,
       value: item_value,
-      gross_weight: item_weight,
+      gross_weight: _.round(_.toNumber(item_weight), 2),
       number_of_units: units,
       ean,
       upc,
@@ -127,7 +127,7 @@ const AddItems = ({
       bin_id,
       batch_run_id: batch_id,
       paper_tag_number: paper_tag_no,
-      product_weight,
+      product_weight: _.round(_.toNumber(product_weight), 2),
       product_value,
       product: [product_url],
       ...(editPage && editData && { id: editData.id }),
@@ -186,7 +186,7 @@ const AddItems = ({
       setProductUrl(value.url);
       setProductDesc(value.description);
       setProductValue(value.value);
-      setProductWeight(value.gross_weight);
+      setProductWeight(_.round(value.gross_weight, 2));
       setGtin(value.gtin);
       setUpc(value.upc);
       setEan(value.ean);
@@ -195,7 +195,7 @@ const AddItems = ({
       setBinId(value.bin_id);
       setContainerUnits(1);
       setItemValue(value.value);
-      setItemWeight(value.gross_weight);
+      setItemWeight(_.round(value.gross_weight, 2));
       if (productTypesData && productTypesData.length) {
         _.forEach(productTypesData, (type) => {
           if (type.url === value.product_type) {
@@ -208,7 +208,7 @@ const AddItems = ({
 
   const onNumberOfUnitsChange = (e) => {
     const previousValue = product_value;
-    const previousWeight = product_weight;
+    const previousWeight = _.round(_.toNumber(product_weight), 2);
     setContainerUnits(e.target.value);
     setItemValue(_.round(_.toNumber(e.target.value * previousValue), 2));
     setItemWeight(_.round(_.toNumber(e.target.value * previousWeight), 2));

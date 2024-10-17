@@ -4,16 +4,16 @@ import { Grid, Button, TextField } from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import FormModal from '@components/Modal/FormModal';
 import { getUser } from '@context/User.context';
+import useAlert from '@hooks/useAlert';
 import { useInput } from '@hooks/useInput';
+import { useAddRecipientAddressMutation } from '@react-query/mutations/recipientaddress/addRecipientAddressMutation';
+import { useEditRecipientAddressMutation } from '@react-query/mutations/recipientaddress/editRecipientAddressMutation';
 import { validators } from '@utils/validators';
 import { isDesktop } from '@utils/mediaQuery';
-import { useAddItemTypeMutation } from '@react-query/mutations/items/addItemTypeMutation';
-import { useEditItemTypeMutation } from '@react-query/mutations/items/editItemTypeMutation';
-import useAlert from '@hooks/useAlert';
 import '../../AdminPanelStyles.css';
 
-const AddItemType = ({ history, location }) => {
-  const organization = getUser().organization.organization_uuid;
+const AddRecipientAddress = ({ history, location }) => {
+  const { organization_uuid } = getUser().organization;
   const [openFormModal, setFormModal] = useState(true);
   const [openConfirmModal, setConfirmModal] = useState(false);
 
@@ -22,16 +22,15 @@ const AddItemType = ({ history, location }) => {
   const editPage = location.state && location.state.type === 'edit';
   const editData = (editPage && location.state.data) || {};
 
-  const name = useInput((editData && editData.name) || '', {
-    required: true,
-  });
+  const name = useInput((editData && editData.name) || '', { required: true });
+  const address = useInput((editData && editData.address) || '', { required: true });
   const [formError, setFormError] = useState({});
 
-  const buttonText = editPage ? 'Save' : 'Add Item Type';
-  const formTitle = editPage ? 'Edit Item Type' : 'Add Item Type';
+  const buttonText = editPage ? 'Save' : 'Add Recipient Address';
+  const formTitle = editPage ? 'Edit Recipient Address' : 'Add Recipient Address';
 
   const closeFormModal = () => {
-    if (name.hasChanged()) {
+    if (name.hasChanged() || address.hasChanged()) {
       setConfirmModal(true);
     } else {
       setFormModal(false);
@@ -49,9 +48,9 @@ const AddItemType = ({ history, location }) => {
     }
   };
 
-  const { mutate: addItemTypeMutation, isLoading: isAddingItemType } = useAddItemTypeMutation(organization, history, location.state.from, displayAlert);
+  const { mutate: addRecipientAddressMutation, isLoading: isAddingRecipientAddress } = useAddRecipientAddressMutation(history, location.state.from, displayAlert);
 
-  const { mutate: editItemTypeMutation, isLoading: isEditingItemType } = useEditItemTypeMutation(organization, history, location.state.from, displayAlert);
+  const { mutate: editRecipientAddressMutation, isLoading: isEditingRecipientAddress } = useEditRecipientAddressMutation(history, location.state.from, displayAlert);
 
   /**
    * Submit The form and add/edit custodian type
@@ -59,21 +58,16 @@ const AddItemType = ({ history, location }) => {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    const currentDateTime = new Date();
-    let data = {
+    const data = {
       ...editData,
       name: name.value,
-      organization_uuid: organization,
-      edit_date: currentDateTime,
+      address: address.value,
+      organization_uuid,
     };
     if (editPage) {
-      editItemTypeMutation(data);
+      editRecipientAddressMutation(data);
     } else {
-      data = {
-        ...data,
-        create_date: currentDateTime,
-      };
-      addItemTypeMutation(data);
+      addRecipientAddressMutation(data);
     }
   };
 
@@ -105,7 +99,7 @@ const AddItemType = ({ history, location }) => {
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!name.value) {
+    if (!name.value || !address.value) {
       return true;
     }
     let errorExists = false;
@@ -128,8 +122,8 @@ const AddItemType = ({ history, location }) => {
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          {(isAddingItemType || isEditingItemType) && (
-            <Loader open={isAddingItemType || isEditingItemType} />
+          {(isAddingRecipientAddress || isEditingRecipientAddress) && (
+            <Loader open={isAddingRecipientAddress || isEditingRecipientAddress} />
           )}
           <form
             className="adminPanelFormContainer"
@@ -143,16 +137,34 @@ const AddItemType = ({ history, location }) => {
                   margin="normal"
                   fullWidth
                   required
-                  id="name"
-                  label="Item Type"
-                  name="name"
-                  autoComplete="name"
+                  id="recipient-name"
+                  label="Recipient Name"
+                  name="recipient-name"
+                  autoComplete="recipient-name"
                   error={formError.name && formError.name.error}
                   helperText={
                     formError.name ? formError.name.message : ''
                   }
                   onBlur={(e) => handleBlur(e, 'required', name)}
                   {...name.bind}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  required
+                  id="recipient-address"
+                  label="Recipient Address"
+                  name="recipient-address"
+                  autoComplete="recipient-address"
+                  error={formError.address && formError.address.error}
+                  helperText={
+                    formError.address ? formError.address.message : ''
+                  }
+                  onBlur={(e) => handleBlur(e, 'required', address)}
+                  {...address.bind}
                 />
               </Grid>
               <Grid container spacing={2} justifyContent="center">
@@ -163,7 +175,7 @@ const AddItemType = ({ history, location }) => {
                     variant="contained"
                     color="primary"
                     className="adminPanelSubmit"
-                    disabled={isAddingItemType || isEditingItemType || submitDisabled()}
+                    disabled={isAddingRecipientAddress || isEditingRecipientAddress || submitDisabled()}
                   >
                     {buttonText}
                   </Button>
@@ -189,4 +201,4 @@ const AddItemType = ({ history, location }) => {
   );
 };
 
-export default AddItemType;
+export default AddRecipientAddress;

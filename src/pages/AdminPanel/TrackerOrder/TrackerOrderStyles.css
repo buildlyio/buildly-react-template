@@ -1,0 +1,175 @@
+/* Add order css */
+.addOrderContainer {
+  margin-top: 32px;
+  border-radius: 4px;
+  border: 1px solid var(--color-palette-background-light);
+}
+
+.trackerOrderBold {
+  font-weight: bold;
+}
+
+.addOrderTypeContainer {
+  border-top: 1px solid var(--color-palette-background-light);
+  padding-top: 32px;
+  margin: 0 24px;
+}
+
+.addOrderTypeWithIcon {
+  display: flex;
+  align-items: center;
+}
+
+.addOrderTypeWithIcon > span {
+  height: 24px;
+  margin-top: 4px;
+  margin-left: 8px;
+}
+
+.addOrderTextField {
+  margin: 32px;
+  margin-bottom: 16px;
+  margin-top: 0;
+}
+
+.orderDeviceImage {
+  text-align: center;
+}
+
+.orderDeviceImage > img {
+  width: 100px;
+}
+
+.addOrderQuantityField {
+  width: 30%;
+  margin-bottom: 32px;
+}
+
+.addOrderTextArea {
+  margin: 0 32px;
+  margin-bottom: 16px;
+}
+
+.addOrderMoreTracker {
+  text-decoration: underline;
+  margin-top: 16px;
+  color: var(--color-palette-primary-main);
+}
+
+.addOrderMoreTracker:hover {
+  cursor: pointer;
+}
+
+.addOrderActions {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+/* Tracker order css */
+.trackerOrderPrimaryColor {
+  color: var(--color-palette-primary-main);
+}
+
+.trackerOrderNormalFont {
+  font-weight: normal;
+}
+
+.orderCartBadge > .MuiBadge-badge {
+  margin-right: 4px;
+  margin-top: 4px;
+}
+
+.orderSummaryDialogContent {
+  padding: 30px 20px;
+}
+
+.orderSummaryContent {
+  padding: 20px;
+  border-radius: 4px;
+  border: 1px solid var(--color-palette-background-light);
+}
+
+.orderSummaryIconDiv {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.orderSummaryOrderNumber {
+  text-align: end;
+}
+
+/* Cart css */
+.cartModalRoot {
+  margin: 0px;
+  padding: 40px;
+  padding-bottom: 0;
+}
+
+.cartContainer {
+  border: 1px solid var(--color-palette-background-light);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0px 8px 10px 0px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 0px 8px 10px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 8px 10px 0px rgba(0,0,0,0.75);
+}
+
+.cartTitle {
+  color: var(--color-palette-primary-main);
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.cartNoOrder {
+  padding: 64px;
+}
+
+.cartMarginTop32 {
+  margin-top: 32px;
+}
+
+.cartMarginTop16 {
+  margin-top: 16px;
+}
+
+.cartQuantityDisplay {
+  display: flex;
+}
+
+.cartQuantityDisplay > .MuiTextField-root {
+  margin: 0;
+}
+
+.cartQuantityDisplay > .MuiTextField-root > .MuiInputBase-root {
+  margin-left: 8px;
+  height: 24px;
+}
+
+.cartRemoveButton {
+  margin-top: 8px;
+  border-radius: 16px;
+}
+
+.cartTopBorder {
+  border-top: 1px solid var(--color-palette-background-light);
+}
+
+.cartTypeTopBorder {
+  height: 2px;
+  width: 85%;
+  margin: 16px 0;
+  border-top: 1px solid var(--color-palette-background-light);
+}
+
+.cartActions {
+  margin: 16px 0;
+}
+
+/* Media css */
+@media screen and (max-width: 960px) {
+  .orderSummaryOrderNumber {
+    text-align: start;
+  }
+}

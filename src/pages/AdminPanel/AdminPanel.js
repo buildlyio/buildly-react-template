@@ -15,6 +15,7 @@ import Configuration from './Configuration/Configuration';
 // import ImportExport from './ImportExport/ImportExport';
 import ConsortiumSettings from './Consortium/ConsortiumSettings';
 import TrackerSettings from './Trackers/TrackerSettings';
+import TrackerOrder from './TrackerOrder/TrackerOrder';
 import './AdminPanelStyles.css';
 
 const AdminPanel = ({
@@ -40,6 +41,7 @@ const AdminPanel = ({
       ...subNav,
       { label: 'Consortium', value: 'consortium' },
       { label: 'Trackers', value: 'trackers' },
+      { label: 'Order More Trackers', value: 'order-more-trackers' },
     ];
   }
 
@@ -86,6 +88,7 @@ const AdminPanel = ({
           )} */}
           <Route path={routes.CONSORTIUM} component={ConsortiumSettings} />
           <Route path={routes.ADMIN_TRACKERS} component={TrackerSettings} />
+          <Route path={routes.TRACKERORDER} component={TrackerOrder} />
         </Box>
       )}
       {!isAdmin && (

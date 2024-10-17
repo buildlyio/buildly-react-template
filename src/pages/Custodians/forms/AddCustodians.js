@@ -32,7 +32,7 @@ const AddCustodians = ({ history, location }) => {
   } = location.state || {};
 
   const editPage = location.state && location.state.type === 'edit';
-  const editData = (location.state && location.state.type === 'edit' && location.state.data) || {};
+  const editData = (editPage && location.state.data) || {};
   const contactData = editPage && location.state.contactData;
 
   const company = useInput(editData.name || '', {

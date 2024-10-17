@@ -44,7 +44,6 @@ const DataTableWrapper = ({
   customTheme,
   noSpace,
   noOptionsIcon,
-  centerLabel,
   extraOptions,
   className,
   shouldUseAllColumns,
@@ -69,7 +68,6 @@ const DataTableWrapper = ({
           filter: false,
           sort: false,
           empty: true,
-          setCellHeaderProps: () => ({ style: { textAlign: centerLabel ? 'center' : 'start' } }),
           customBodyRenderLite: (dataIndex) => (
             <IconButton
               className="dataTableIconButton"

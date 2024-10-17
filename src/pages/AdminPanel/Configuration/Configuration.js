@@ -15,6 +15,7 @@ import ItemType from './components/ItemType';
 import OrganizationType from './components/OrganizationType';
 import Product from './components/Product';
 import ProductType from './components/ProductType';
+import RecipientAddress from './components/RecipientAddress';
 import '../AdminPanelStyles.css';
 
 const Configuration = (props) => {
@@ -39,6 +40,20 @@ const Configuration = (props) => {
               <OrganizationSettings {...props} />
             </AccordionDetails>
           </Accordion>
+          <Accordion className="adminPanelAccordion">
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="recipient-address-content"
+              id="recipient-address-header"
+            >
+              <Typography variant="h5">
+                Recipient Address
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <RecipientAddress {...props} />
+            </AccordionDetails>
+          </Accordion>
         </div>
       )}
       {superAdmin && (
@@ -55,6 +70,20 @@ const Configuration = (props) => {
             </AccordionSummary>
             <AccordionDetails>
               <OrganizationSettings {...props} />
+            </AccordionDetails>
+          </Accordion>
+          <Accordion className="adminPanelAccordion">
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="recipient-address-content"
+              id="recipient-address-header"
+            >
+              <Typography variant="h5">
+                Recipient Address
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <RecipientAddress {...props} />
             </AccordionDetails>
           </Accordion>
           <Accordion className="adminPanelAccordion">
