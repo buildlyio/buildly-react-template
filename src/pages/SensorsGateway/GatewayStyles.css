@@ -1,6 +1,16 @@
+.gatewayContainer {
+  align-items: flex-end;
+}
+
 .gatewayHeaderContainer {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  flex-direction: column-reverse;
+}
+
+.gatewayHeader {
+  display: flex;
+  flex-direction: row;
 }
 
 .gatewayHeaderActionContainer {
@@ -8,11 +18,11 @@
   align-items: center;
   justify-content: flex-end;
   padding-right: 20px;
+  padding-bottom: 8px;
 }
 
 .gatewayActions {
   width: 192px;
-  margin-left: 20px;
 }
 
 .gatewayActions .MuiOutlinedInput-input {
@@ -43,11 +53,65 @@
   align-items: center;
 }
 
+.gatewayRow {
+  align-items: flex-start !important;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.gatewayPhoneLabel {
+  margin-bottom: -12px;
+  margin-left: 14px;
+  color: var(--color-palette-background-dark5);
+}
+
 .gatewayEmptyText {
   font-size: 20px;
   margin: 0 auto;
   font-weight: 700;
   margin-top: 100px;
+}
+
+.gatewayPhoneInput {
+  width: 100% !important;
+  height: 54px !important;
+  border: 0px !important;
+  font-family: "IBM Plex Sans" !important;
+  font-size: 16px !important;
+  padding-left: 62px !important;
+}
+
+.gatewayPhoneInputFocused {
+  width: 100% !important;
+  height: 54px !important;
+  border: 0px !important;
+  font-family: "IBM Plex Sans" !important;
+  font-size: 16px !important;
+  padding-left: 62px !important;
+}
+
+.gatewayPhoneInputContainerFocused {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  border: 2px solid var(--color-palette-primary-main);
+}
+
+.gatewayPhoneInputContainer {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  border-radius: 4px !important;
+  border: 1px solid var(--color-palette-background-light) !important;
+}
+
+.gatewayFlagDropdown {
+  border: 0px !important;
+  border-right: 1px solid var(--color-palette-background-light) !important;
+}
+
+.gatewayFlagDropdown .selected-flag {
+  padding: 0 12px !important;
+  width: 48px !important;
 }
 
 .gatewayAccordion {

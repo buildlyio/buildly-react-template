@@ -29,6 +29,7 @@
     "dayjs": "1.11.0",
     "exceljs": "^4.4.0",
     "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
     "lodash": "^4.17.20",
     "midgard-core": "^0.1.4",
     "moment-timezone": "^0.5.33",

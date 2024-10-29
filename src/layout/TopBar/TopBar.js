@@ -169,6 +169,7 @@ const TopBar = ({
       updateUserMutation(updateData);
     }
     setMainMenuOpen(false);
+    setSubmenuAnchorEl(null);
   };
 
   const handleLanguageChange = (e) => {
@@ -293,6 +294,10 @@ const TopBar = ({
             <OrganizationSelector
               handleOrganizationChange={handleOrganizationChange}
               selectedOrg={organization}
+              mainMenuOpen={mainMenuOpen}
+              setMainMenuOpen={setMainMenuOpen}
+              submenuAnchorEl={submenuAnchorEl}
+              setSubmenuAnchorEl={setSubmenuAnchorEl}
             />
           )}
           <IconButton

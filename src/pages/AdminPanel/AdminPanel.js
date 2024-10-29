@@ -16,6 +16,7 @@ import Configuration from './Configuration/Configuration';
 import ConsortiumSettings from './Consortium/ConsortiumSettings';
 import TrackerSettings from './Trackers/TrackerSettings';
 import TrackerOrder from './TrackerOrder/TrackerOrder';
+import Invoices from './Invoices/Invoices';
 import './AdminPanelStyles.css';
 
 const AdminPanel = ({
@@ -42,6 +43,7 @@ const AdminPanel = ({
       { label: 'Consortium', value: 'consortium' },
       { label: 'Trackers', value: 'trackers' },
       { label: 'Order More Trackers', value: 'order-more-trackers' },
+      { label: 'Invoices', value: 'invoices' },
     ];
   }
 
@@ -89,6 +91,7 @@ const AdminPanel = ({
           <Route path={routes.CONSORTIUM} component={ConsortiumSettings} />
           <Route path={routes.ADMIN_TRACKERS} component={TrackerSettings} />
           <Route path={routes.TRACKERORDER} component={TrackerOrder} />
+          <Route path={routes.INVOICES} component={Invoices} />
         </Box>
       )}
       {!isAdmin && (

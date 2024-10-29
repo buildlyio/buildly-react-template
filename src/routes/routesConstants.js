@@ -21,5 +21,6 @@ export const routes = {
   CONSORTIUM: '/app/admin-panel/consortium',
   ADMIN_TRACKERS: '/app/admin-panel/trackers',
   TRACKERORDER: '/app/admin-panel/order-more-trackers',
+  INVOICES: '/app/admin-panel/invoices',
   CREATE_SHIPMENT: '/app/create-shipment',
 };

@@ -1,10 +1,5 @@
-import {
-  responsiveFontSizes,
-} from '@mui/material';
-
-import {
-  experimental_extendTheme as extendTheme,
-} from '@mui/material/styles';
+import { responsiveFontSizes } from '@mui/material';
+import { experimental_extendTheme as extendTheme } from '@mui/material/styles';
 
 const theme = extendTheme({
   cssVarPrefix: 'color',
@@ -24,6 +19,7 @@ const theme = extendTheme({
           dark2: '#00000080',
           dark3: '#78787833',
           dark4: '#78787866',
+          dark5: '#00000099',
           black: '#000000',
           black2: '#FF000000',
         },
@@ -102,6 +98,10 @@ const theme = extendTheme({
     },
     body2: {
       fontSize: '14px',
+    },
+    body3: {
+      fontSize: '18px',
+      fontWeight: 500,
     },
     caption: {
       fontSize: '12px',

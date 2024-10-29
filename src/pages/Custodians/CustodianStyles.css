@@ -8,9 +8,63 @@
   align-items: center;
 }
 
+.custodianRow {
+  align-items: flex-start !important;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
 .custodianAddressContainer {
   margin-top: 32px;
   padding-bottom: 8px;
+}
+
+.custodianPhoneLabel {
+  margin-bottom: -12px;
+  margin-left: 14px;
+  color: var(--color-palette-background-dark5);
+}
+
+.custodianPhoneInput {
+  width: 100% !important;
+  height: 54px !important;
+  border: 0px !important;
+  font-family: "IBM Plex Sans" !important;
+  font-size: 16px !important;
+  padding-left: 62px !important;
+}
+
+.custodianPhoneInputFocused {
+  width: 100% !important;
+  height: 54px !important;
+  border: 0px !important;
+  font-family: "IBM Plex Sans" !important;
+  font-size: 16px !important;
+  padding-left: 62px !important;
+}
+
+.custodianPhoneInputContainerFocused {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  border: 2px solid var(--color-palette-primary-main);
+}
+
+.custodianPhoneInputContainer {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  border-radius: 4px !important;
+  border: 1px solid var(--color-palette-background-light) !important;
+}
+
+.custodianFlagDropdown {
+  border: 0px !important;
+  border-right: 1px solid var(--color-palette-background-light) !important;
+}
+
+.custodianFlagDropdown .selected-flag {
+  padding: 0 12px !important;
+  width: 48px !important;
 }
 
 .custodianSubmit {
@@ -23,6 +77,7 @@
     width: 70% !important;
     margin: auto;
   }
+
   .custodianInputWithTooltip3 {
     margin-top: -14px;
   }
@@ -38,6 +93,7 @@
   .custodianSubmit2 {
     margin-top: -30px;
   }
+
   .custodianInputWithTooltip4 {
     margin-top: 12px;
   }

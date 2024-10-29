@@ -18,7 +18,6 @@ import { isDesktop } from '@utils/mediaQuery';
 import { GATEWAY_STATUS, getCustodianFormattedRow } from '@utils/constants';
 
 const GatewayActions = ({
-  handleSyncGateways,
   selectedRows,
   custodianData,
   contactInfo,
@@ -158,9 +157,6 @@ const GatewayActions = ({
   return (
     <>
       <Grid item xs={12} sm={6} className="gatewayHeaderActionContainer">
-        <Tooltip placement="bottom" title="Sync Trackers">
-          <CloudSyncIcon className="gatewaySyncIcon" onClick={handleSyncGateways} />
-        </Tooltip>
         <TextField
           className="gatewayActions"
           variant="outlined"

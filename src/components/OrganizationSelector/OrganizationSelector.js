@@ -14,16 +14,21 @@ import { useQuery } from 'react-query';
 import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
 import './OrganizationSelectorStyles.css';
 
-const OrganizationSelector = ({ handleOrganizationChange, selectedOrg }) => {
+const OrganizationSelector = ({
+  handleOrganizationChange,
+  selectedOrg,
+  mainMenuOpen,
+  setMainMenuOpen,
+  submenuAnchorEl,
+  setSubmenuAnchorEl,
+}) => {
   const user = getUser();
   const isAdmin = checkForAdmin(user);
   const isSuperAdmin = checkForGlobalAdmin(user);
 
-  const [submenuAnchorEl, setSubmenuAnchorEl] = useState(null);
   const [submenuOrg, setSubmenuOrg] = useState(null);
   const [custOrgs, setCustOrgs] = useState(null);
   const [displayOrgs, setDisplayOrgs] = useState(null);
-  const [mainMenuOpen, setMainMenuOpen] = useState(false);
 
   const { displayAlert } = useAlert();
 

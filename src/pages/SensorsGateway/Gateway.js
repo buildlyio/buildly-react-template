@@ -12,8 +12,9 @@ import {
   useTheme,
   Button,
   Box,
+  Tooltip,
 } from '@mui/material';
-import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
+import { ExpandMore as ExpandMoreIcon, Add as AddIcon, CloudSync as CloudSyncIcon } from '@mui/icons-material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import GatewayActions from './components/GatewayActions';
 import { getUser } from '@context/User.context';
@@ -37,7 +38,6 @@ import { useInput } from '@hooks/useInput';
 import { useStore } from '@zustand/timezone/timezoneStore';
 import Loader from '@components/Loader/Loader';
 import AddShipper from './forms/AddShipper';
-import { GATEWAY_ACTIONS } from '@utils/mock';
 import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 
 const Gateway = ({ history, redirectTo }) => {
@@ -209,25 +209,30 @@ const Gateway = ({ history, redirectTo }) => {
             || isSyncingGateway}
           />
         )}
-      <Grid container spacing={1} mt={5} ml={0.4}>
+      <Grid container spacing={1} mt={4.3} className="gatewayContainer">
         <Grid item xs={12} sm={6} className="gatewayHeaderContainer">
-          <Typography variant="h4">Trackers</Typography>
+          <div className="gatewayHeader">
+            <Typography variant="h4" mr={2}>Trackers</Typography>
+            <Tooltip placement="bottom" title="Sync Trackers">
+              <CloudSyncIcon className="gatewaySyncIcon" onClick={handleSyncGateways} />
+            </Tooltip>
+          </div>
           {(isSuperAdmin || isAdmin) && (
             <Button
               type="button"
               variant="contained"
               color="primary"
-              style={{ marginLeft: '20px' }}
+              style={{ marginBottom: '25px' }}
               onClick={() => setShowAddShipper(true)}
             >
-              + Add Shipper
+              <AddIcon />
+              Add Shipper
             </Button>
           )}
         </Grid>
 
         {isSuperAdmin && (
           <GatewayActions
-            handleSyncGateways={handleSyncGateways}
             selectedRows={selectedRows}
             custodianData={custodianData}
             contactInfo={contactInfo}

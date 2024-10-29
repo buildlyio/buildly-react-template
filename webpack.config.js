@@ -123,6 +123,11 @@ module.exports = (env, argv) => {
         skipWaiting: true,
       }),
     ],
+    externals: {
+      // only define the dependencies you are NOT using as externals!
+      canvg: "canvg",
+      dompurify: "dompurify"
+    },
   };
 
   if (env && env.build === 'local') {

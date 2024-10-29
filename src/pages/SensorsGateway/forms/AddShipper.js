@@ -21,6 +21,8 @@ import { useAddCustodianMutation } from '@react-query/mutations/custodians/addCu
 import useAlert from '@hooks/useAlert';
 import { useStore } from '@zustand/timezone/timezoneStore';
 import '../GatewayStyles.css';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const AddShipper = ({
   open,
@@ -39,6 +41,9 @@ const AddShipper = ({
   const company = useInput('', { required: true });
   const abbrevation = useInput('');
   const glnNumber = useInput('');
+  const firstName = useInput('', { required: true });
+  const lastName = useInput('', { required: true });
+  const email = useInput('', { required: true });
   const country = useInput('', { required: true });
   const state = useInput('', { required: true });
   const address_1 = useInput('', { required: true });
@@ -46,6 +51,8 @@ const AddShipper = ({
   const city = useInput('', { required: true });
   const zip = useInput('', { required: true });
 
+  const [number, setNumber] = useState('');
+  const [numberFocus, setNumberFocus] = useState(false);
   const [formError, setFormError] = useState({});
 
   useEffect(() => {
@@ -64,6 +71,10 @@ const AddShipper = ({
   const closeFormModal = () => {
     const dataHasChanged = (
       company.hasChanged()
+      || firstName.hasChanged()
+      || lastName.hasChanged()
+      || email.hasChanged()
+      || !_.isEmpty(number)
       || city.hasChanged()
       || state.hasChanged()
       || zip.hasChanged()
@@ -106,6 +117,10 @@ const AddShipper = ({
       city: city.value,
       postal_code: zip.value,
       organization_uuid: organization,
+      phone: `+${number}`,
+      first_name: firstName.value,
+      last_name: lastName.value,
+      email_address: email.value.toLowerCase(),
     };
     const orgNames = _.map(orgData, 'name');
     const custodianName = new RegExp(
@@ -161,7 +176,17 @@ const AddShipper = ({
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (
-      !company.value || !address_1.value || !state.value || !country.value || !city.value || !zip.value
+      !company.value
+      || !firstName.value
+      || !lastName.value
+      || !email.value
+      || _.isEmpty(number)
+      || number.length < 11
+      || !address_1.value
+      || !state.value
+      || !country.value
+      || !city.value
+      || !zip.value
     ) {
       return true;
     }
@@ -187,7 +212,7 @@ const AddShipper = ({
         {isAddingShipper && <Loader open={isAddingShipper} />}
         <form className="gatewayFormContainer" noValidate onSubmit={handleSubmit}>
           <Grid container spacing={isDesktop() ? 2 : 0}>
-            <Grid className="gatewayInputWithTooltip" item xs={12} md={6} sm={6}>
+            <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
               <TextField
                 className="notranslate"
                 variant="outlined"
@@ -213,7 +238,6 @@ const AddShipper = ({
               item
               xs={12}
               md={6}
-              sm={6}
               style={{ paddingTop: isDesktop() ? 39 : 10 }}
             >
               <TextField
@@ -234,7 +258,7 @@ const AddShipper = ({
             </Grid>
           </Grid>
           <Grid container spacing={isDesktop() ? 2 : 0}>
-            <Grid className="gatewayInputWithTooltip" item xs={12} md={6} sm={6}>
+            <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -245,7 +269,7 @@ const AddShipper = ({
                 value="Shipper"
               />
             </Grid>
-            <Grid className="gatewayInputWithTooltip gatewayInputWithTooltip4" item xs={12} md={6} sm={6}>
+            <Grid className="gatewayInputWithTooltip gatewayInputWithTooltip4" item xs={12} md={6}>
               <TextField
                 variant="filled"
                 margin="normal"
@@ -264,6 +288,77 @@ const AddShipper = ({
               <Typography variant="h6" gutterBottom mt={1} mb={isMobile() ? 0 : 1.65}>
                 Contact Info
               </Typography>
+              <Grid container spacing={isDesktop() ? 2 : 0}>
+                <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
+                  <TextField
+                    className="notranslate"
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="first_name"
+                    label={<span className="translate">First Name</span>}
+                    name="first_name"
+                    autoComplete="first_name"
+                    error={formError.first_name && formError.first_name.error}
+                    helperText={formError.first_name ? formError.first_name.message : ''}
+                    onBlur={(e) => handleBlur(e, 'required', firstName)}
+                    {...firstName.bind}
+                  />
+                </Grid>
+                <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
+                  <TextField
+                    className="notranslate"
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="last_name"
+                    label={<span className="translate">Last Name</span>}
+                    name="last_name"
+                    autoComplete="last_name"
+                    error={formError.last_name && formError.last_name.error}
+                    helperText={formError.last_name ? formError.last_name.message : ''}
+                    onBlur={(e) => handleBlur(e, 'required', lastName)}
+                    {...lastName.bind}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={isDesktop() ? 2 : 0}>
+                <Grid className="gatewayInputWithTooltip" item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email"
+                    name="email"
+                    autoComplete="email"
+                    error={formError.email && formError.email.error}
+                    helperText={formError.email ? formError.email.message : ''}
+                    onBlur={(e) => handleBlur(e, 'required', email)}
+                    {...email.bind}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={isDesktop() ? 2 : 0}>
+                <Grid className="gatewayInputWithTooltip gatewayRow" item xs={12}>
+                  <Typography className="gatewayPhoneLabel">Phone Number *</Typography>
+                  <PhoneInput
+                    value={number}
+                    onChange={(value) => setNumber(value)}
+                    placeholder="Phone Number"
+                    specialLabel="Phone"
+                    inputClass={numberFocus ? 'gatewayPhoneInputFocused' : 'gatewayPhoneInput'}
+                    containerClass={numberFocus ? 'gatewayPhoneInputContainerFocused' : 'gatewayPhoneInputContainer'}
+                    buttonClass="gatewayFlagDropdown"
+                    country="us"
+                    onFocus={() => setNumberFocus(true)}
+                    onBlur={() => setNumberFocus(false)}
+                  />
+                </Grid>
+              </Grid>
               <Grid container spacing={isDesktop() ? 2 : 0}>
                 <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
                   <TextField
@@ -299,8 +394,6 @@ const AddShipper = ({
                       ))}
                   </TextField>
                 </Grid>
-              </Grid>
-              <Grid container spacing={isDesktop() ? 2 : 0}>
                 <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
                   <TextField
                     variant="outlined"
