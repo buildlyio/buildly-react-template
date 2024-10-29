@@ -1,0 +1,43 @@
+.graphLegendDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.graphNormalColor {
+  width: 30px;
+  height: 15px;
+  background-color: var(--color-palette-background-dark);
+  margin-right: 8px;
+}
+
+.graphMaxColor {
+  width: 30px;
+  height: 15px;
+  background-color: var(--color-palette-error-main);
+  margin-right: 8px;
+  margin-left: 16px;
+}
+
+.graphMinColor {
+  width: 30px;
+  height: 15px;
+  background-color: var(--color-palette-info-main);
+  margin-right: 8px;
+  margin-left: 16px;
+}
+
+.graphTooltip {
+  padding: 8px 16px;
+  background-color: var(--color-palette-background-dark);
+  color: var(--color-palette-background-default);
+}
+
+@media screen and (max-width: 600px) {
+  .graphLegendDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 8px;
+  }
+}

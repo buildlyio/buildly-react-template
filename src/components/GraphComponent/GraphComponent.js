@@ -1,258 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import { Line } from 'react-chartjs-2';
 import _ from 'lodash';
 import moment from 'moment-timezone';
+import {
+  CartesianGrid,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { Typography, useTheme } from '@mui/material';
+import './GraphComponent.css';
 
 const GraphComponent = ({
   data,
   selectedGraph,
-  unitOfMeasure,
-  minTemp,
-  maxTemp,
-  minHumidity,
-  maxHumidity,
-  shockThreshold,
-  lightThreshold,
-  timeGap,
-  minColor,
-  maxColor,
 }) => {
   const theme = useTheme();
-  const [dataChart, setDataChart] = useState({});
-  const dateFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))
-    ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date')).unit_of_measure
-    : '';
-  const timeFormat = _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
-    ? _.find(unitOfMeasure, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
-    : '';
 
-  const options = {
-    responsive: true,
-    scales: {
-      xAxes: [
-        {
-          type: 'time',
-          time: {
-            unit: 'minute',
-            unitStepSize: timeGap,
-            displayFormats: {
-              minute: dateFormat,
-            },
-            tooltipFormat: `${dateFormat} ${timeFormat}`,
-          },
-        },
-      ],
-      yAxes: [
-        {
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-    },
+  const legendContent = (
+    <div className="graphLegendDiv">
+      <div className="graphNormalColor" />
+      {_.capitalize(selectedGraph)}
+      <div className="graphMaxColor" />
+      {`Max ${_.capitalize(selectedGraph)}`}
+      {_.size(data) > 0 && _.includes(_.keysIn(data[0]), 'min') && (<div className="graphMinColor" />)}
+      {_.size(data) > 0 && _.includes(_.keysIn(data[0]), 'min') && `Min ${_.capitalize(selectedGraph)}`}
+    </div>
+  );
+
+  const customDot = <circle r="0.5" />;
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="graphTooltip">
+          <div>{label}</div>
+          <div>{payload[0].value}</div>
+        </div>
+      );
+    }
+
+    return null;
   };
-
-  const generateDatasets = (type) => {
-    let datasets = [{
-      label: _.upperCase(selectedGraph),
-      data: _.orderBy(
-        data,
-        (item) => moment(item.x),
-        ['asc'],
-      ),
-      fill: false,
-      showLine: true,
-      spanGaps: true,
-      borderColor: theme.palette.background.dark,
-      backgroundColor: theme.palette.background.default,
-      borderCapStyle: 'butt',
-      borderDash: [],
-      borderDashOffset: 0.0,
-      borderJoinStyle: 'miter',
-      pointBorderColor: theme.palette.background.dark,
-      pointBackgroundColor: theme.palette.background.default,
-      pointBorderWidth: 1,
-      pointHoverRadius: 5,
-      pointHoverBackgroundColor: theme.palette.background.dark,
-      pointHoverBorderColor: theme.palette.background.light,
-      pointHoverBorderWidth: 2,
-      pointRadius: 1,
-      pointHitRadius: 10,
-    }];
-
-    if (_.isEqual(selectedGraph, 'temperature')) {
-      datasets = [
-        ...datasets,
-        {
-          label: 'Max Temperature',
-          data: maxTemp,
-          fill: false,
-          showLine: true,
-          spanGaps: true,
-          borderColor: maxColor,
-          backgroundColor: maxColor,
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: maxColor,
-          pointBackgroundColor: maxColor,
-          pointBorderWidth: 1,
-          pointHoverRadius: 0,
-          pointHoverBackgroundColor: maxColor,
-          pointHoverBorderColor: maxColor,
-          pointHoverBorderWidth: 1,
-          pointRadius: 1,
-          pointHitRadius: 10,
-        },
-        {
-          label: 'Min Temperature',
-          data: minTemp,
-          fill: false,
-          showLine: true,
-          spanGaps: true,
-          borderColor: minColor,
-          backgroundColor: minColor,
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: minColor,
-          pointBackgroundColor: minColor,
-          pointBorderWidth: 1,
-          pointHoverRadius: 0,
-          pointHoverBackgroundColor: minColor,
-          pointHoverBorderColor: minColor,
-          pointHoverBorderWidth: 1,
-          pointRadius: 1,
-          pointHitRadius: 10,
-        },
-      ];
-    }
-
-    if (_.isEqual(selectedGraph, 'humidity')) {
-      datasets = [
-        ...datasets,
-        {
-          label: 'Max Humidity',
-          data: maxHumidity,
-          fill: false,
-          showLine: true,
-          spanGaps: true,
-          borderColor: maxColor,
-          backgroundColor: maxColor,
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: maxColor,
-          pointBackgroundColor: maxColor,
-          pointBorderWidth: 1,
-          pointHoverRadius: 0,
-          pointHoverBackgroundColor: maxColor,
-          pointHoverBorderColor: maxColor,
-          pointHoverBorderWidth: 1,
-          pointRadius: 1,
-          pointHitRadius: 10,
-        },
-        {
-          label: 'Min Humidity',
-          data: minHumidity,
-          fill: false,
-          showLine: true,
-          spanGaps: true,
-          borderColor: minColor,
-          backgroundColor: minColor,
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: minColor,
-          pointBackgroundColor: minColor,
-          pointBorderWidth: 1,
-          pointHoverRadius: 0,
-          pointHoverBackgroundColor: minColor,
-          pointHoverBorderColor: minColor,
-          pointHoverBorderWidth: 1,
-          pointRadius: 1,
-          pointHitRadius: 10,
-        },
-      ];
-    }
-
-    if (_.isEqual(selectedGraph, 'shock')) {
-      datasets = [
-        ...datasets,
-        {
-          label: 'Shock Threshold',
-          data: shockThreshold,
-          fill: false,
-          showLine: true,
-          spanGaps: true,
-          borderColor: maxColor,
-          backgroundColor: maxColor,
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: maxColor,
-          pointBackgroundColor: maxColor,
-          pointBorderWidth: 1,
-          pointHoverRadius: 0,
-          pointHoverBackgroundColor: maxColor,
-          pointHoverBorderColor: maxColor,
-          pointHoverBorderWidth: 1,
-          pointRadius: 1,
-          pointHitRadius: 10,
-        },
-      ];
-    }
-
-    if (_.isEqual(selectedGraph, 'light')) {
-      datasets = [
-        ...datasets,
-        {
-          label: 'Light Threshold',
-          data: lightThreshold,
-          fill: false,
-          showLine: true,
-          spanGaps: true,
-          borderColor: maxColor,
-          backgroundColor: maxColor,
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: maxColor,
-          pointBackgroundColor: maxColor,
-          pointBorderWidth: 1,
-          pointHoverRadius: 0,
-          pointHoverBackgroundColor: maxColor,
-          pointHoverBorderColor: maxColor,
-          pointHoverBorderWidth: 1,
-          pointRadius: 1,
-          pointHitRadius: 10,
-        },
-      ];
-    }
-
-    return datasets;
-  };
-
-  useEffect(() => {
-    if (data && data.length > 0 && selectedGraph) {
-      setDataChart({
-        labels: _.map(data, 'x'),
-        datasets: generateDatasets(selectedGraph),
-      });
-    }
-  }, [data, selectedGraph]);
 
   return (
     <div>
-      {data && data.length > 0 ? (
-        <Line data={dataChart} options={options} />
+      {data && _.size(data) > 0 ? (
+        <ResponsiveContainer width="100%" height={700}>
+          <LineChart width="100%" height="100%" data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="x" angle={90} textAnchor="start" height={120} tick={{ fontSize: '8px' }} reversed />
+            <YAxis width={30} />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend verticalAlign="top" height={36} content={legendContent} />
+            <Line connectNulls dot={false} type="monotone" dataKey="y" stroke={theme.palette.background.dark} fill={theme.palette.background.dark} strokeWidth={3} />
+            <Line connectNulls dot={false} type="monotone" dataKey="max" stroke={theme.palette.error.main} fill={theme.palette.error.main} strokeWidth={3} />
+            {_.includes(_.keysIn(data[0]), 'min') && (
+              <Line connectNulls dot={false} type="monotone" dataKey="min" stroke={theme.palette.info.main} fill={theme.palette.info.main} strokeWidth={3} />
+            )}
+          </LineChart>
+        </ResponsiveContainer>
       ) : (
         <Typography
           variant="body1"

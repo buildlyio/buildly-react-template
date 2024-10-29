@@ -54,6 +54,7 @@ const DataTableWrapper = ({
   downloadTemplateHeading,
   uploadDataHeading,
   onRowSelectionChange,
+  customIconButtonRight,
 }) => {
   const user = getUser();
   const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
@@ -180,6 +181,7 @@ const DataTableWrapper = ({
           )}
           <Grid item xs={12} sm={8}>
             <Grid container flex className="dataTableDownloadUploadFlex">
+              {isAdmin && customIconButtonRight}
               {downloadTemplateButton && isAdmin && (
                 <Grid item>
                   <Button

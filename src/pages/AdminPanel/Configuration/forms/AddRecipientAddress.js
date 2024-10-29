@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
-import { Grid, Button, TextField } from '@mui/material';
+import { useQuery } from 'react-query';
+import {
+  Grid,
+  Button,
+  TextField,
+  MenuItem,
+} from '@mui/material';
 import Loader from '@components/Loader/Loader';
 import FormModal from '@components/Modal/FormModal';
 import { getUser } from '@context/User.context';
 import useAlert from '@hooks/useAlert';
 import { useInput } from '@hooks/useInput';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
+import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
 import { useAddRecipientAddressMutation } from '@react-query/mutations/recipientaddress/addRecipientAddressMutation';
 import { useEditRecipientAddressMutation } from '@react-query/mutations/recipientaddress/editRecipientAddressMutation';
 import { validators } from '@utils/validators';
@@ -23,14 +31,54 @@ const AddRecipientAddress = ({ history, location }) => {
   const editData = (editPage && location.state.data) || {};
 
   const name = useInput((editData && editData.name) || '', { required: true });
-  const address = useInput((editData && editData.address) || '', { required: true });
+  const country = useInput((editData && editData.country) || '', {
+    required: true,
+  });
+  const state = useInput((editData && editData.state) || '', {
+    required: true,
+  });
+  const address_1 = useInput((editData && editData.address1) || '', {
+    required: true,
+  });
+  const address_2 = useInput((editData && editData.address2) || '');
+  const city = useInput((editData && editData.city) || '', {
+    required: true,
+  });
+  const zip = useInput((editData && editData.postal_code) || '', {
+    required: true,
+  });
   const [formError, setFormError] = useState({});
 
   const buttonText = editPage ? 'Save' : 'Add Recipient Address';
   const formTitle = editPage ? 'Edit Recipient Address' : 'Add Recipient Address';
 
+  const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
+    ['countries'],
+    () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: unitData, isLoading: isLoadingUnits } = useQuery(
+    ['unit', organization_uuid],
+    () => getUnitQuery(organization_uuid, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  useEffect(() => {
+    const defaultCountry = !_.isEmpty(unitData) && _.find(
+      unitData,
+      (unit) => _.toLower(unit.unit_of_measure_for) === 'country',
+    ).unit_of_measure;
+    if (!country.value && defaultCountry && !_.isEmpty(countriesData)) {
+      const found = _.find(countriesData, { country: defaultCountry });
+      if (found) {
+        country.setValue(found.iso3);
+      }
+    }
+  }, [unitData, countriesData]);
+
   const closeFormModal = () => {
-    if (name.hasChanged() || address.hasChanged()) {
+    if (name.hasChanged() || country.hasChanged() || state.hasChanged() || address_1.hasChanged() || address_2.hasChanged() || city.hasChanged() || state.hasChanged()) {
       setConfirmModal(true);
     } else {
       setFormModal(false);
@@ -61,7 +109,12 @@ const AddRecipientAddress = ({ history, location }) => {
     const data = {
       ...editData,
       name: name.value,
-      address: address.value,
+      country: country.value,
+      state: state.value,
+      address1: address_1.value,
+      address2: address_2.value,
+      city: city.value,
+      postal_code: zip.value,
       organization_uuid,
     };
     if (editPage) {
@@ -99,7 +152,7 @@ const AddRecipientAddress = ({ history, location }) => {
 
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
-    if (!name.value || !address.value) {
+    if (!name.value || !country.value || !state.value || !address_1.value || !city.value || !zip.value) {
       return true;
     }
     let errorExists = false;
@@ -122,8 +175,8 @@ const AddRecipientAddress = ({ history, location }) => {
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          {(isAddingRecipientAddress || isEditingRecipientAddress) && (
-            <Loader open={isAddingRecipientAddress || isEditingRecipientAddress} />
+          {(isLoadingCountries || isLoadingUnits || isAddingRecipientAddress || isEditingRecipientAddress) && (
+            <Loader open={isLoadingCountries || isLoadingUnits || isAddingRecipientAddress || isEditingRecipientAddress} />
           )}
           <form
             className="adminPanelFormContainer"
@@ -149,24 +202,147 @@ const AddRecipientAddress = ({ history, location }) => {
                   {...name.bind}
                 />
               </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="country"
+                  select
+                  required
+                  label="Country"
+                  error={formError.country && formError.country.error}
+                  helperText={
+                    formError.country ? formError.country.message : ''
+                  }
+                  onBlur={(e) => handleBlur(e, 'required', country, 'country')}
+                  value={country.value}
+                  onChange={(e) => {
+                    country.setValue(e.target.value);
+                    state.setValue('');
+                    address_1.setValue('');
+                    address_2.setValue('');
+                    city.setValue('');
+                    zip.setValue('');
+                  }}
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  {countriesData && _.map(_.sortBy(_.map(countriesData, (c) => _.pick(c, 'country', 'iso3'))),
+                    (value, index) => (
+                      <MenuItem
+                        key={`custodianCountry${index}${value.country}`}
+                        value={value.iso3}
+                      >
+                        {value.country}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="state"
+                  select
+                  required
+                  label="State/Province"
+                  error={formError.state && formError.state.error}
+                  helperText={
+                    formError.state ? formError.state.message : ''
+                  }
+                  onBlur={(e) => handleBlur(e, 'required', state, 'state')}
+                  {...state.bind}
+                  disabled={countriesData && !country.value}
+                  placeholder={
+                    countriesData && !country.value
+                      ? 'Select country for states options'
+                      : ''
+                  }
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  {countriesData && country.value && _.map(_.sortBy(_.find(countriesData, { iso3: country.value }).states),
+                    (value, index) => (
+                      <MenuItem
+                        key={`custodianState${index}${value}`}
+                        value={value.state_code}
+                      >
+                        {value.name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="address_1"
+                  label="Address Line 1"
+                  name="address_1"
+                  autoComplete="address_1"
+                  disabled={!country.value || !state.value}
+                  error={formError.address_1 && formError.address_1.error}
+                  helperText={
+                    formError.address_1 ? formError.address_1.message : ''
+                  }
+                  onBlur={(e) => handleBlur(e, 'required', address_1)}
+                  {...address_1.bind}
+                />
+              </Grid>
+
               <Grid item xs={12}>
                 <TextField
                   variant="outlined"
                   margin="normal"
                   fullWidth
-                  required
-                  id="recipient-address"
-                  label="Recipient Address"
-                  name="recipient-address"
-                  autoComplete="recipient-address"
-                  error={formError.address && formError.address.error}
-                  helperText={
-                    formError.address ? formError.address.message : ''
-                  }
-                  onBlur={(e) => handleBlur(e, 'required', address)}
-                  {...address.bind}
+                  id="address_2"
+                  label="Address Line 2"
+                  name="address_2"
+                  autoComplete="address_2"
+                  disabled={!country.value || !state.value}
+                  {...address_2.bind}
                 />
               </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="city"
+                  label="City"
+                  name="city"
+                  autoComplete="city"
+                  disabled={!country.value || !state.value}
+                  error={formError.city && formError.city.error}
+                  helperText={formError.city ? formError.city.message : ''}
+                  onBlur={(e) => handleBlur(e, 'required', city)}
+                  {...city.bind}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="zip"
+                  label="ZIP/Postal Code"
+                  name="zip"
+                  autoComplete="zip"
+                  disabled={!country.value || !state.value}
+                  error={formError.zip && formError.zip.error}
+                  helperText={formError.zip ? formError.zip.message : ''}
+                  onBlur={(e) => handleBlur(e, 'required', zip)}
+                  {...zip.bind}
+                />
+              </Grid>
+
               <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={6} sm={5.15} md={4}>
                   <Button
@@ -175,7 +351,7 @@ const AddRecipientAddress = ({ history, location }) => {
                     variant="contained"
                     color="primary"
                     className="adminPanelSubmit"
-                    disabled={isAddingRecipientAddress || isEditingRecipientAddress || submitDisabled()}
+                    disabled={isLoadingCountries || isLoadingUnits || isAddingRecipientAddress || isEditingRecipientAddress || submitDisabled()}
                   >
                     {buttonText}
                   </Button>

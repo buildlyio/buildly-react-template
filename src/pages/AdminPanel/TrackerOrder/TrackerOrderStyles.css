@@ -26,14 +26,23 @@
   margin-left: 8px;
 }
 
+.addOrderTextFieldWithClose {
+  margin: 0 0 16px 32px;
+}
+
 .addOrderTextField {
   margin: 32px;
   margin-bottom: 16px;
   margin-top: 0;
 }
 
+.addOrderClose {
+  margin-top: 8px;
+}
+
 .orderDeviceImage {
   text-align: center;
+  margin: auto;
 }
 
 .orderDeviceImage > img {
@@ -60,6 +69,16 @@
   cursor: pointer;
 }
 
+.addOrderNewRecipient {
+  text-decoration: underline;
+  margin-top: 16px;
+  color: var(--color-palette-primary-main);
+}
+
+.addOrderNewRecipient:hover {
+  cursor: pointer;
+}
+
 .addOrderActions {
   margin-top: 32px;
   margin-bottom: 32px;
@@ -77,6 +96,10 @@
 .orderCartBadge > .MuiBadge-badge {
   margin-right: 4px;
   margin-top: 4px;
+}
+
+.orderCartGrey > .MuiBadge-badge {
+  background-color: var(--color-palette-background-light);
 }
 
 .orderSummaryDialogContent {

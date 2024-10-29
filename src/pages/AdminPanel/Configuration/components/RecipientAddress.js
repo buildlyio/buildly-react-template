@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route } from 'react-router-dom';
 import _ from 'lodash';
 import { useQuery } from 'react-query';
@@ -9,7 +9,7 @@ import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
 import { getRecipientAddressQuery } from '@react-query/queries/recipientaddress/getRecipientAddressQuery';
 import { useDeleteRecipientAddressMutation } from '@react-query/mutations/recipientaddress/deleteRecipientAddressMutation';
 import { routes } from '@routes/routesConstants';
-import { getRecipientAddressColumns } from '@utils/constants';
+import { getFormattedRecipientAddresses, getRecipientAddressColumns } from '@utils/constants';
 import { useStore } from '@zustand/timezone/timezoneStore';
 import AddRecipientAddress from '../forms/AddRecipientAddress';
 
@@ -17,6 +17,7 @@ const RecipientAddress = ({ redirectTo, history }) => {
   const organization = getUser().organization.organization_uuid;
   const [openDeleteModal, setDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [rows, setRows] = useState([]);
 
   const { displayAlert } = useAlert();
   const { data } = useStore();
@@ -40,6 +41,10 @@ const RecipientAddress = ({ redirectTo, history }) => {
     () => getRecipientAddressQuery(organization, displayAlert),
     { refetchOnWindowFocus: false },
   );
+
+  useEffect(() => {
+    setRows(getFormattedRecipientAddresses(recipientAddressData));
+  }, [recipientAddressData]);
 
   const onAddButtonClick = () => {
     history.push(`${addPath}`, {
@@ -71,7 +76,7 @@ const RecipientAddress = ({ redirectTo, history }) => {
     <DataTableWrapper
       noSpace
       loading={isLoadingRecipientAddresses || isDeletingRecipientAddress || isLoadingUnits}
-      rows={recipientAddressData || []}
+      rows={rows}
       columns={getRecipientAddressColumns(
         data,
         _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'date'))

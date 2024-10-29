@@ -42,7 +42,7 @@ const AdminPanel = ({
       ...subNav,
       { label: 'Consortium', value: 'consortium' },
       { label: 'Trackers', value: 'trackers' },
-      { label: 'Order More Trackers', value: 'order-more-trackers' },
+      { label: 'Order More Trackers', value: 'orders' },
       { label: 'Invoices', value: 'invoices' },
     ];
   }

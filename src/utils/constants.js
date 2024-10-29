@@ -939,12 +939,6 @@ export const processReportsAndMarkers = (
   let batteryData = [];
   let pressureData = [];
   let probeData = [];
-  let minTempData = [];
-  let maxTempData = [];
-  let minHumidityData = [];
-  let maxHumidityData = [];
-  let shockThresholdData = [];
-  let lightThresholdData = [];
   let markersToSet = [];
   const dateFormat = _.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'date'))).unit_of_measure;
   const timeFormat = _.find(unitOfMeasure, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'time'))).unit_of_measure;
@@ -1274,6 +1268,8 @@ export const processReportsAndMarkers = (
             {
               x: dateTime,
               y: temperature,
+              min: _.includes(selectedShipment.alerts_to_suppress, 'temperature') ? null : finalMinTempValue,
+              max: _.includes(selectedShipment.alerts_to_suppress, 'temperature') ? null : finalMaxTempValue,
             },
           ];
           lightData = [
@@ -1281,6 +1277,7 @@ export const processReportsAndMarkers = (
             {
               x: dateTime,
               y: report_entry.report_light,
+              max: _.includes(selectedShipment.alerts_to_suppress, 'light') ? null : finalLightValue,
             },
           ];
           shockData = [
@@ -1288,6 +1285,7 @@ export const processReportsAndMarkers = (
             {
               x: dateTime,
               y: report_entry.report_shock,
+              max: _.includes(selectedShipment.alerts_to_suppress, 'shock') ? null : finalShockValue,
             },
           ];
           tiltData = [
@@ -1302,6 +1300,8 @@ export const processReportsAndMarkers = (
             {
               x: dateTime,
               y: report_entry.report_humidity,
+              min: _.includes(selectedShipment.alerts_to_suppress, 'humidity') ? null : finalMinHumValue,
+              max: _.includes(selectedShipment.alerts_to_suppress, 'humidity') ? null : finalMaxHumValue,
             },
           ];
           batteryData = [
@@ -1323,48 +1323,6 @@ export const processReportsAndMarkers = (
             {
               x: dateTime,
               y: probe,
-            },
-          ];
-          minTempData = _.includes(selectedShipment.alerts_to_suppress, 'temperature') ? [] : [
-            ...minTempData,
-            {
-              x: dateTime,
-              y: finalMinTempValue,
-            },
-          ];
-          maxTempData = _.includes(selectedShipment.alerts_to_suppress, 'temperature') ? [] : [
-            ...maxTempData,
-            {
-              x: dateTime,
-              y: finalMaxTempValue,
-            },
-          ];
-          minHumidityData = _.includes(selectedShipment.alerts_to_suppress, 'humidity') ? [] : [
-            ...minHumidityData,
-            {
-              x: dateTime,
-              y: finalMinHumValue,
-            },
-          ];
-          maxHumidityData = _.includes(selectedShipment.alerts_to_suppress, 'humidity') ? [] : [
-            ...maxHumidityData,
-            {
-              x: dateTime,
-              y: finalMaxHumValue,
-            },
-          ];
-          shockThresholdData = _.includes(selectedShipment.alerts_to_suppress, 'shock') ? [] : [
-            ...shockThresholdData,
-            {
-              x: dateTime,
-              y: finalShockValue,
-            },
-          ];
-          lightThresholdData = _.includes(selectedShipment.alerts_to_suppress, 'light') ? [] : [
-            ...lightThresholdData,
-            {
-              x: dateTime,
-              y: finalLightValue,
             },
           ];
         }
@@ -1391,12 +1349,6 @@ export const processReportsAndMarkers = (
       battery: batteryData,
       pressure: pressureData,
       probe: probeData,
-      minTemp: minTempData,
-      maxTemp: maxTempData,
-      minHumidity: minHumidityData,
-      maxHumidity: maxHumidityData,
-      shockThreshold: shockThresholdData,
-      lightThreshold: lightThresholdData,
     },
   };
 };
@@ -2592,6 +2544,20 @@ export const getAlertNotificationsColumns = (timezone, dateFormat, timeFormat) =
   },
 ]);
 
+export const getFormattedRecipientAddresses = (recipientAddresses) => {
+  const ra = _.map(recipientAddresses, (address) => ({
+    ...address,
+    formattedAddress: `${address.address1
+      && `${address.address1},`} ${address.address2
+      && `${address.address2},`} ${address.city
+      && `${address.city},`} ${address.state
+      && `${address.state},`} ${address.country
+      && `${address.country},`} ${address.postal_code
+      && `${address.postal_code}`}`,
+  }));
+  return ra;
+};
+
 export const getRecipientAddressColumns = (timezone, dateFormat, timeFormat) => ([
   {
     name: 'name',
@@ -2603,7 +2569,7 @@ export const getRecipientAddressColumns = (timezone, dateFormat, timeFormat) => 
     },
   },
   {
-    name: 'address',
+    name: 'formattedAddress',
     label: 'Address',
     options: {
       sort: true,

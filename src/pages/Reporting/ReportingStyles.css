@@ -79,11 +79,6 @@
   margin: 0px auto;
 }
 
-.reportingGraphIconBar2 {
-  background-color: var(--color-palette-primary-light);
-  height: 100%;
-}
-
 .reportingSelectInput {
   margin-left: 8px;
 }

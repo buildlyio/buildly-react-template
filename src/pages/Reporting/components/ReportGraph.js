@@ -1,5 +1,4 @@
 import React, { useState, useEffect, forwardRef } from 'react';
-import { Line } from 'react-chartjs-2';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import {
@@ -30,8 +29,8 @@ const ReportGraph = forwardRef((props, ref) => {
             : 'Graph View'}
         </Typography>
       </div>
-      <Grid item xs={2} sm={1.1} md={1}>
-        <List component="nav" aria-label="main graph-type" className="reportingGraphIconBar2">
+      <Grid item xs={2} sm={1}>
+        <List component="nav" aria-label="main graph-type" className="reportingGraphIconBar">
           {_.map(REPORT_TYPES(unitOfMeasure), (item, index) => (
             <ListItem
               key={`iconItem${index}${item.id}`}
@@ -43,21 +42,10 @@ const ReportGraph = forwardRef((props, ref) => {
           ))}
         </List>
       </Grid>
-      <Grid item xs={10} sm={10.9} md={11}>
+      <Grid item xs={10} sm={11}>
         <GraphComponent
           data={data[graphType]}
           selectedGraph={graphType}
-          unitOfMeasure={unitOfMeasure}
-          selectedShipment={selectedShipment}
-          minTemp={data.minTemp}
-          maxTemp={data.maxTemp}
-          minHumidity={data.minHumidity}
-          maxHumidity={data.maxHumidity}
-          shockThreshold={data.shockThreshold}
-          lightThreshold={data.lightThreshold}
-          timeGap={!_.isEmpty(selectedShipment) ? selectedShipment.measurement_time : 5}
-          minColor={theme.palette.info.main}
-          maxColor={theme.palette.error.main}
         />
       </Grid>
     </Grid>

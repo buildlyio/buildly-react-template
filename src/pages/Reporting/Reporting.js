@@ -1052,7 +1052,7 @@ const Reporting = () => {
             ) : 'Graph View'}
           </Typography>
         </div>
-        <Grid item xs={2} sm={1.1} md={1}>
+        <Grid item xs={2} sm={1}>
           <List
             component="nav"
             aria-label="main graph-type"
@@ -1071,22 +1071,12 @@ const Reporting = () => {
             ))}
           </List>
         </Grid>
-        <Grid item xs={10} sm={10.9} md={11}>
+        <Grid item xs={10} sm={11}>
           {selectedShipment && selectedGraph && allGraphs && !_.isEmpty(allGraphs) && allGraphs[selectedGraph]
             ? (
               <GraphComponent
                 data={allGraphs[selectedGraph]}
                 selectedGraph={selectedGraph}
-                unitOfMeasure={unitData}
-                minTemp={allGraphs.minTemp}
-                maxTemp={allGraphs.maxTemp}
-                minHumidity={allGraphs.minHumidity}
-                maxHumidity={allGraphs.maxHumidity}
-                shockThreshold={allGraphs.shockThreshold}
-                lightThreshold={allGraphs.lightThreshold}
-                timeGap={!_.isEmpty(selectedShipment) ? selectedShipment.measurement_time : 5}
-                minColor={theme.palette.info.main}
-                maxColor={theme.palette.error.main}
               />
             )
             : (

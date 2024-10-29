@@ -138,37 +138,22 @@ const TrackerOrder = ({ redirectTo, history }) => {
 
   return (
     <div>
-      <Grid container>
-        <Grid item xs={9}>
-          <IconButton onClick={onCartClick}>
-            <Badge color="error" showZero badgeContent={_.size(cartData)} className="orderCartBadge">
-              <ShoppingCartIcon fontSize="large" color="primary" />
-            </Badge>
-          </IconButton>
-        </Grid>
-
-        <Grid item xs={3} textAlign="end">
-          <Button
-            type="button"
-            variant="contained"
-            color="primary"
-            onClick={onAddButtonClick}
-          >
-            New Order
-            {' '}
-            <AddIcon />
-          </Button>
-        </Grid>
-      </Grid>
-
       <DataTableWrapper
-        hideAddButton
         noSpace
         loading={isLoadingTrackerOrder || isLoadingUnits}
         rows={trackerOrderData || []}
         columns={finalColumns}
         filename="TrackerOrders"
+        addButtonHeading="New Order"
+        onAddButtonClick={onAddButtonClick}
         tableHeight="300px"
+        customIconButtonRight={(
+          <IconButton onClick={onCartClick}>
+            <Badge color="error" showZero badgeContent={_.size(cartData)} className={_.size(cartData) > 0 ? 'orderCartBadge' : 'orderCartBadge orderCartGrey'}>
+              <ShoppingCartIcon fontSize="large" color="primary" />
+            </Badge>
+          </IconButton>
+        )}
       >
         <Route path={`${routes.TRACKERORDER}/add`} component={AddTrackerOrder} />
         <Route path={`${routes.TRACKERORDER}/cart`} component={ShowCart} />
@@ -204,7 +189,7 @@ const TrackerOrder = ({ redirectTo, history }) => {
             </Grid>
 
             {selectedOrder && _.map(selectedOrder.order_type, (sot, index) => (
-              <Grid item xs={12} mt={1}>
+              <Grid item xs={12} mt={1} key={`${index}-${sot}`}>
                 <Typography className="trackerOrderBold">
                   Number of Devices:
                   {'  '}

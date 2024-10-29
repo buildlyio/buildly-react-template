@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import _ from 'lodash';
 
 export const useInput = (
   initialValue = '',
@@ -26,7 +27,7 @@ export const useInput = (
       if (typeof (initialValue) === 'number') {
         newValue = Number(value);
       }
-      return !!(initialValue !== newValue);
+      return !_.isEqual(initialValue, newValue);
     },
     setValue,
   };
