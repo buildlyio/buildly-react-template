@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable new-cap */
 /* eslint-disable no-console */
 /* eslint-disable no-confusing-arrow */
@@ -58,12 +59,15 @@ const Invoices = () => {
     additionalCost: '',
     notes: '',
   });
+  const [selectYear, setSelectYear] = useState(moment().year() || '');
+  const [selectMonth, setSelectMonth] = useState(moment().format('MMMM') || '');
+  const [availableYears, setAvailableYears] = useState([]);
+  const [availableMonths, setAvailableMonths] = useState([]);
+  const [totalCost, setTotalCost] = useState(0);
 
   const invoicesDetailsRef = useRef();
 
   const { displayAlert } = useAlert();
-
-  const month = useInput(moment().format('MMMM'));
 
   const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
     ['organizations'],
@@ -82,6 +86,40 @@ const Invoices = () => {
   const { mutate: editTrackerOrderMutation, isLoading: isTrackerOrderEditing } = useEditTrackerOrderMutation(org_uuid, displayAlert);
 
   useEffect(() => {
+    const creationDate = moment(user.organization.create_date);
+    const currentYear = moment().year();
+    const years = [];
+    for (let year = creationDate.year(); year <= currentYear; year++) {
+      years.push(year);
+    }
+    setAvailableYears(years);
+  }, [user.organization.create_date]);
+
+  useEffect(() => {
+    if (selectYear) {
+      const creationDate = moment(user.organization.create_date);
+      const currentYear = moment().year();
+      const currentMonth = moment().month();
+      const isCreationYear = selectYear === creationDate.year();
+      const isCurrentYear = selectYear === currentYear;
+      const months = [];
+
+      MONTHS.forEach((mth, index) => {
+        if (isCreationYear && index >= creationDate.month() && index <= currentMonth) {
+          months.push(mth);
+        } else if (isCurrentYear && !isCreationYear && index <= currentMonth) {
+          months.push(mth);
+        } else if (!isCreationYear && !isCurrentYear) {
+          months.push(mth);
+        }
+      });
+      setAvailableMonths(months);
+    } else {
+      setAvailableMonths([]);
+    }
+  }, [selectYear, user.organization.create_date]);
+
+  useEffect(() => {
     if (!_.isEmpty(trackerOrderData) && !_.isEmpty(selectedMonthFirstDate) && !_.isEmpty(nextMonthFirstDate)) {
       const filteredOrders = trackerOrderData.filter((order) => {
         const orderDate = moment(order.order_date);
@@ -93,6 +131,19 @@ const Invoices = () => {
     }
   }, [trackerOrderData, selectedMonthFirstDate, nextMonthFirstDate]);
 
+  useEffect(() => {
+    let cost = 0;
+    if (!_.isEmpty(whatsappChargesData)) {
+      cost += (whatsappChargesData.total_whatsapp_messages * window.env.WHATSAPP_MSG_COST);
+    }
+    if (!_.isEmpty(ordersData)) {
+      ordersData.forEach((item) => {
+        cost += item.shipping_cost + item.additional_cost;
+      });
+    }
+    setTotalCost(cost);
+  }, [whatsappChargesData, ordersData]);
+
   const handleOrganizationChange = (e) => {
     const organization_name = e.target ? e.target.value : e;
     if (!_.isEqual(organization, organization_name)) {
@@ -100,6 +151,15 @@ const Invoices = () => {
     }
     setMainMenuOpen(false);
     setSubmenuAnchorEl(null);
+  };
+
+  const handleYearChange = (event) => {
+    setSelectYear(parseInt(event.target.value, 10));
+    setSelectMonth('');
+  };
+
+  const handleMonthChange = (event) => {
+    setSelectMonth(event.target.value);
   };
 
   const captureScreenshot = async (ref) => {
@@ -129,7 +189,7 @@ const Invoices = () => {
         const pdfWidth = pdf.internal.pageSize.getWidth() - 10;
         const pdfHeight = pdfWidth - ((imgProps.height * pdfWidth) / imgProps.width);
         pdf.addImage(dataUrl, 'PNG', padding, padding, pdfWidth, pdfHeight);
-        pdf.save(`${_.toLower(organization)}_${_.toLower(month.value)}_invoice.pdf`);
+        pdf.save(`${_.toLower(organization)}_${_.toLower(selectMonth)}_invoice.pdf`);
       }
       setGeneratingPdf(false);
     } catch (error) {
@@ -142,10 +202,9 @@ const Invoices = () => {
     const { organization_uuid } = isSuperAdmin
       ? _.filter(orgData, (org) => _.isEqual(org.name, organization))[0]
       : _.filter(adminOrgs, (org) => _.isEqual(org.name, organization))[0];
-    const selectedMonth = month.value;
     const year = moment().year();
-    const firstDateOfSelectedMonth = moment(`${year}-${selectedMonth}-01`).startOf('month').format('YYYY-MM-DD');
-    const firstDateOfNextMonth = moment(`${year}-${selectedMonth}-01`).add(1, 'month').startOf('month').format('YYYY-MM-DD');
+    const firstDateOfSelectedMonth = moment(`${year}-${selectMonth}-01`).startOf('month').format('YYYY-MM-DD');
+    const firstDateOfNextMonth = moment(`${year}-${selectMonth}-01`).add(1, 'month').startOf('month').format('YYYY-MM-DD');
     const chargesData = {
       organization_uuid,
       start_date: `${firstDateOfSelectedMonth}T00:00:00.000000Z`,
@@ -203,7 +262,7 @@ const Invoices = () => {
       <Grid container>
         <Grid item xs={12} sm={4} className="invoiceContainer">
           <Typography className="invoiceHeading" variant="h4">
-            Invoicing
+            Monthly Invoice
           </Typography>
           <Tooltip placement="bottom" title="Download PDF">
             <LoginIcon className="invoiceDownloadIcon" onClick={generatePdfInvoice} />
@@ -221,19 +280,31 @@ const Invoices = () => {
           <TextField
             className="invoiceMonths"
             variant="outlined"
+            id="year"
+            select
+            value={selectYear}
+            onChange={handleYearChange}
+            label="Year"
+            disabled={!organization}
+          >
+            <MenuItem value="">Select Year</MenuItem>
+            {availableYears.map((item, index) => (
+              <MenuItem key={`year${index}`} value={item}>{item}</MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            className="invoiceMonths"
+            variant="outlined"
             id="month"
             select
             label="Month"
-            {...month.bind}
+            value={selectMonth}
+            onChange={handleMonthChange}
+            disabled={!selectYear}
           >
-            <MenuItem value="">Select</MenuItem>
-            {_.map(MONTHS, (item, index) => (
-              <MenuItem
-                key={`months${index}:${item.id}`}
-                value={item.value}
-              >
-                {item.label}
-              </MenuItem>
+            <MenuItem value="">Select Month</MenuItem>
+            {availableMonths.map((item, index) => (
+              <MenuItem key={`month${index}`} value={item.value}>{item.label}</MenuItem>
             ))}
           </TextField>
           <Button
@@ -241,7 +312,7 @@ const Invoices = () => {
             variant="contained"
             color="primary"
             style={{ marginLeft: '20px', marginTop: '4px', height: '38px' }}
-            disabled={!!_.isEmpty(month.value)}
+            disabled={!selectMonth || !selectYear}
             onClick={handleSubmit}
           >
             OK
@@ -251,24 +322,31 @@ const Invoices = () => {
       {!_.isEmpty(whatsappChargesData)
         ? (
           <Grid container className="invoiceDetailsContainer" ref={invoicesDetailsRef}>
-            <Grid item xs={12} sm={5} className="invoiceChargesContainer">
-              <Typography variant="body3" component="div" textAlign="center">CHARGES</Typography>
-              <Typography mt={1.25} fontSize={16}>{`Total alerts per month: ${whatsappChargesData.alerts_count}`}</Typography>
-              <Typography fontSize={16} mt={1}>{`Total WhatsApp messages: ${whatsappChargesData.total_whatsapp_messages}`}</Typography>
-              {!_.isEmpty(whatsappChargesData.detailed_whatsapp_messages) && whatsappChargesData.detailed_whatsapp_messages.map((item, index) => (
-                <Typography key={index} className="invoiceMsgText">{`${item.user} - ${item.message_count} message(s)`}</Typography>
-              ))}
-
-              <Typography mt={3.25} variant="body3" component="div" textAlign="center">ORDERS</Typography>
+            <Typography className="invoiceDetailsHeader">Charges & Shipments</Typography>
+            <Grid item xs={12} sm={5.98} className="invoiceChargesContainer">
+              <Grid container>
+                <Grid item xs={7}>
+                  <Typography className="invoiceChargesTitle">{`Email Alerts: ${whatsappChargesData.total_alerts_count}`}</Typography>
+                  {!_.isEmpty(whatsappChargesData.detailed_email_messages) && whatsappChargesData.detailed_email_messages.map((item, index) => (
+                    <Typography key={index} className="invoiceMsgText">{`${item.user} - ${item.message_count}`}</Typography>
+                  ))}
+                </Grid>
+                <Grid item xs={5}>
+                  <Typography className="invoiceChargesTitle">{`Whatsapp Alerts: ${whatsappChargesData.total_whatsapp_messages}`}</Typography>
+                  {!_.isEmpty(whatsappChargesData.detailed_whatsapp_messages) && whatsappChargesData.detailed_whatsapp_messages.map((item, index) => (
+                    <Typography key={index} className="invoiceMsgText">{`${item.user} - ${item.message_count}`}</Typography>
+                  ))}
+                </Grid>
+              </Grid>
               <div className="invoiceOrderListContainer">
                 {!_.isEmpty(ordersData) ? ordersData.map((item, index) => (
                   <div key={index} className="invoiceOrderListItemContainer">
-                    <Typography>
-                      {`Device Order: ${item.order_quantity.map((quantity, i) => (
+                    <Typography className="invoiceChargesTitle">Device Order: YES</Typography>
+                    <Typography className="invoiceMsgText">
+                      {`${moment(item.order_date).format('DD/MM/YYYY')} - ${item.order_quantity.map((quantity, i) => (
                         `${quantity} ${item.order_type && item.order_type[i] ? item.order_type[i] : ''}`
                       )).join(', ')}`}
                     </Typography>
-                    <Typography className="invoiceMsgText">{`Order Placed: ${moment(item.order_date).format('DD/MM/YYYY')}`}</Typography>
                     <div className="invoiceOrderListItemSubContainer">
                       <Typography className="invoiceMsgText">Shipping Fees:</Typography>
                       {isEditing.field === 'shippingCost' && isEditing.index === index ? (
@@ -288,31 +366,6 @@ const Invoices = () => {
                       )}
                       <IconButton onClick={() => handleEditClick('shippingCost', index, item.id)}>
                         {isEditing.field === 'shippingCost' && isEditing.index === index ? (
-                          <CheckIcon className="invoiceEditIcon" />
-                        ) : (
-                          <EditIcon className="invoiceEditIcon" />
-                        )}
-                      </IconButton>
-                    </div>
-                    <div className="invoiceOrderListItemSubContainer">
-                      <Typography className="invoiceMsgText">Additional Fees:</Typography>
-                      {isEditing.field === 'additionalCost' && isEditing.index === index ? (
-                        <TextField
-                          className="invoiceTextInput"
-                          value={formData.additionalCost}
-                          name="additionalCost"
-                          onChange={handleInputChange}
-                          size="small"
-                          variant="outlined"
-                          InputProps={{
-                            startAdornment: <InputAdornment position="start"><DollarIcon style={{ width: '15px', height: '15px' }} /></InputAdornment>,
-                          }}
-                        />
-                      ) : (
-                        <Typography ml={1} className="invoiceMsgText">{`$${item.additional_cost}`}</Typography>
-                      )}
-                      <IconButton onClick={() => handleEditClick('additionalCost', index, item.id)}>
-                        {isEditing.field === 'additionalCost' && isEditing.index === index ? (
                           <CheckIcon className="invoiceEditIcon" />
                         ) : (
                           <EditIcon className="invoiceEditIcon" />
@@ -341,25 +394,59 @@ const Invoices = () => {
                         )}
                       </IconButton>
                     </div>
+                    <div className="invoiceOrderListItemSubContainer">
+                      <Typography className="invoiceMsgText">Extra Charges:</Typography>
+                      {isEditing.field === 'additionalCost' && isEditing.index === index ? (
+                        <TextField
+                          className="invoiceTextInput"
+                          value={formData.additionalCost}
+                          name="additionalCost"
+                          onChange={handleInputChange}
+                          size="small"
+                          variant="outlined"
+                          InputProps={{
+                            startAdornment: <InputAdornment position="start"><DollarIcon style={{ width: '15px', height: '15px' }} /></InputAdornment>,
+                          }}
+                        />
+                      ) : (
+                        <Typography ml={1} className="invoiceMsgText">{`$${item.additional_cost}`}</Typography>
+                      )}
+                      <IconButton onClick={() => handleEditClick('additionalCost', index, item.id)}>
+                        {isEditing.field === 'additionalCost' && isEditing.index === index ? (
+                          <CheckIcon className="invoiceEditIcon" />
+                        ) : (
+                          <EditIcon className="invoiceEditIcon" />
+                        )}
+                      </IconButton>
+                    </div>
                   </div>
                 )) : <Typography className="invoiceDataEmptyText">No orders are available</Typography>}
               </div>
+              <Grid container mb={2}>
+                <Grid item xs={7} />
+                <Grid item xs={5}>
+                  <Typography className="invoiceTotalChargesTitle">
+                    {`Total: $${totalCost}`}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Grid>
-
-            <Grid item xs={12} sm={7} className="invoiceShipmentsContainer">
-              <Typography variant="body3">SHIPMENTS</Typography>
+            <div className="invoiceDivider" />
+            <Grid item xs={12} sm={5.98} className="invoiceShipmentsContainer">
               {!_.isEmpty(whatsappChargesData.shipments)
                 ? (
-                  <div className="invoiceShipmentListContainer">
-                    <div className="invoiceShipmentListScroll">
-                      {whatsappChargesData.shipments.map((item, index) => (
-                        <Typography key={index} variant="body2">{item}</Typography>
-                      ))}
-                    </div>
-                    <div style={{ alignSelf: 'center' }}>
-                      <Typography variant="body3">{`TOTAL SHIPMENTS: ${_.size(whatsappChargesData.shipments)}`}</Typography>
-                    </div>
-                  </div>
+                  <Grid container>
+                    {whatsappChargesData.shipments.map((item, index) => (
+                      <>
+                        <Grid item xs={7}>
+                          <Typography variant="body2">{item.name}</Typography>
+                        </Grid>
+                        <Grid item xs={5}>
+                          <Typography variant="body2">{`Tracker: ${item.tracker[0]}`}</Typography>
+                        </Grid>
+                      </>
+                    ))}
+                  </Grid>
                 )
                 : <Typography className="invoiceDataEmptyText">No shipments are available</Typography>}
             </Grid>

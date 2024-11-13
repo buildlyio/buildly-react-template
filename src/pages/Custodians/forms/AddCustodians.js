@@ -433,6 +433,7 @@ const AddCustodians = ({ history, location }) => {
                       {countriesData && _.map(_.sortBy(_.map(countriesData, (c) => _.pick(c, 'country', 'iso3'))),
                         (value, index) => (
                           <MenuItem
+                            className="notranslate"
                             key={`custodianCountry${index}${value.country}`}
                             value={value.iso3}
                           >
@@ -465,6 +466,7 @@ const AddCustodians = ({ history, location }) => {
                       {countriesData && country.value && _.map(_.sortBy(_.find(countriesData, { iso3: country.value }).states),
                         (value, index) => (
                           <MenuItem
+                            className="notranslate"
                             key={`custodianState${index}${value}`}
                             value={value.state_code}
                           >

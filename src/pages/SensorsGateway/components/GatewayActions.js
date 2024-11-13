@@ -82,6 +82,7 @@ const GatewayActions = ({
         ...row,
         organization_uuid: null,
         custodian_uuid: null,
+        is_new: false,
       }));
       editGatewayMutation(updatedRows);
     }

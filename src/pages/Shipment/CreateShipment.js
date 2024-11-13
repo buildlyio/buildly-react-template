@@ -312,7 +312,7 @@ const CreateShipment = ({ history, location }) => {
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organizationUuid],
-    () => getGatewayQuery(organizationUuid, displayAlert),
+    () => getGatewayQuery(organizationUuid, displayAlert, null),
     { enabled: !_.isEmpty(organizationUuid), refetchOnWindowFocus: false },
   );
 
@@ -1156,7 +1156,7 @@ const CreateShipment = ({ history, location }) => {
                     <TextField
                       variant="outlined"
                       id="origin-custodian-abbreviation"
-                      label="ID"
+                      label="ABBV."
                       disabled
                       value={originAbb}
                     />
@@ -1227,7 +1227,7 @@ const CreateShipment = ({ history, location }) => {
                     <TextField
                       variant="outlined"
                       id="destination-custodian-abbreviation"
-                      label="ID"
+                      label="ABBV."
                       disabled
                       value={destinationAbb}
                     />

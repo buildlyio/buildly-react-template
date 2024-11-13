@@ -290,7 +290,7 @@ const TopBar = ({
               </MenuItem>
             ))}
           </TextField>
-          {(isSuperAdmin || (isAdmin && !_.isEmpty(JSON.parse(localStorage.getItem('adminOrgs'))))) && (
+          {(isSuperAdmin || isAdmin || (isAdmin && !_.isEmpty(JSON.parse(localStorage.getItem('adminOrgs'))))) && (
             <OrganizationSelector
               handleOrganizationChange={handleOrganizationChange}
               selectedOrg={organization}

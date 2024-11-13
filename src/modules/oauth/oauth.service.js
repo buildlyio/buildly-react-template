@@ -131,6 +131,7 @@ const logout = () => {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('alertGrp');
     localStorage.removeItem('pushPreference');
+    localStorage.removeItem('halfwayOrder');
   }
 };
 

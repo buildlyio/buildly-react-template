@@ -58,7 +58,7 @@ const Gateway = ({ history, redirectTo }) => {
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization],
-    () => getGatewayQuery(organization, displayAlert),
+    () => getGatewayQuery(organization, displayAlert, null),
     { refetchOnWindowFocus: false },
   );
 
@@ -265,7 +265,7 @@ const Gateway = ({ history, redirectTo }) => {
                   aria-controls={_.isEqual(custodianName, '-') ? 'unassigned-content' : `${custodianName}-content`}
                   id={_.isEqual(custodianName, '-') ? 'unassigned-header' : `${custodianName}-header`}
                 >
-                  <Typography className="gatewayAccordingHeading">
+                  <Typography className="gatewayAccordingHeading notranslate">
                     {_.isEqual(custodianName, '-') ? 'UNASSIGNED TRACKERS' : custodianName.toUpperCase()}
                   </Typography>
                 </AccordionSummary>
@@ -342,7 +342,7 @@ const Gateway = ({ history, redirectTo }) => {
                   {!_.isEqual(custodianName, '-')
                     ? (
                       <Box className="inventoryContainer">
-                        <Typography className="inventoryTitle">{custodianName.toUpperCase()}</Typography>
+                        <Typography className="inventoryTitle notranslate">{custodianName.toUpperCase()}</Typography>
                         {availableCount > 0 && (
                           <Box className="inventorySubContainer inventoryAvailable">
                             <div className="inventoryCountContainer">

@@ -34,16 +34,17 @@ const AddTrackerOrder = ({ history, location }) => {
 
   const { displayAlert } = useAlert();
   const { data: cartData, setCart } = useCartStore();
+  const halfwayOrder = JSON.parse(localStorage.getItem('halfwayOrder'));
 
   const reOrderPage = location.state && _.isEqual(location.state.type, 're-order');
   const reOrderData = (reOrderPage && location.state.data) || {};
 
   const placeholderType = useInput('', { required: true });
   const placeholderQuantity = useInput(0, { required: true });
-  const order_type = useInput((reOrderData && reOrderData.order_type) || [], { required: true });
-  const order_quantity = useInput((reOrderData && reOrderData.order_quantity) || [], { required: true });
-  const order_recipient = useInput((reOrderData && reOrderData.order_recipient) || '', { required: true });
-  const order_address = useInput((reOrderData && reOrderData.order_address) || '', { required: true });
+  const order_type = useInput((reOrderData && reOrderData.order_type) || (halfwayOrder && halfwayOrder.order_type) || [], { required: true });
+  const order_quantity = useInput((reOrderData && reOrderData.order_quantity) || (halfwayOrder && halfwayOrder.order_quantity) || [], { required: true });
+  const order_recipient = useInput((reOrderData && reOrderData.order_recipient) || (halfwayOrder && halfwayOrder.order_recipient) || '', { required: true });
+  const order_address = useInput((reOrderData && reOrderData.order_address) || (halfwayOrder && halfwayOrder.order_address) || '', { required: true });
   const [formError, setFormError] = useState({});
 
   const { data: recipientAddressData, isLoading: isLoadingRecipientAddresses } = useQuery(
@@ -53,11 +54,16 @@ const AddTrackerOrder = ({ history, location }) => {
   );
 
   const closeFormModal = () => {
+    localStorage.removeItem('halfwayOrder');
     if (
       order_type.hasChanged()
       || order_quantity.hasChanged()
       || order_recipient.hasChanged()
       || order_address.hasChanged()
+      || !_.isEmpty(order_type.value)
+      || !_.isEmpty(order_quantity.value)
+      || order_recipient.value
+      || order_address.value
     ) {
       setConfirmModal(true);
     } else {
@@ -134,6 +140,16 @@ const AddTrackerOrder = ({ history, location }) => {
   };
 
   const onAddRecipient = () => {
+    if (!_.isEmpty(order_type.value) || !_.isEmpty(order_quantity.value) || order_recipient.value || order_address.value) {
+      const newHalfwayOrder = {
+        order_type: order_type.value,
+        order_quantity: order_quantity.value,
+        order_recipient: order_recipient.value,
+        order_address: order_address.value,
+      };
+      localStorage.setItem('halfwayOrder', JSON.stringify(newHalfwayOrder));
+    }
+
     const addPath = `${routes.CONFIGURATION}/recipient-address/add`;
     history.push(`${addPath}`, {
       from: `${routes.TRACKERORDER}/add`,
@@ -343,15 +359,17 @@ const AddTrackerOrder = ({ history, location }) => {
                       label="Order Recipient"
                       value={_.find(recipientAddressData, { name: order_recipient.value, address: order_address.value })}
                       onChange={(e) => {
-                        const formattedAddress = `${e.target.value.address1
-                          && `${e.target.value.address1},`} ${e.target.value.address2
-                          && `${e.target.value.address2},`} ${e.target.value.city
-                          && `${e.target.value.city},`} ${e.target.value.state
-                          && `${e.target.value.state},`} ${e.target.value.country
-                          && `${e.target.value.country},`} ${e.target.value.postal_code
-                          && `${e.target.value.postal_code}`}`;
-                        order_recipient.setValue(e.target.value.name);
-                        order_address.setValue(formattedAddress);
+                        if (e.target.value) {
+                          const formattedAddress = `${e.target.value.address1
+                            && `${e.target.value.address1},`} ${e.target.value.address2
+                            && `${e.target.value.address2},`} ${e.target.value.city
+                            && `${e.target.value.city},`} ${e.target.value.state
+                            && `${e.target.value.state},`} ${e.target.value.country
+                            && `${e.target.value.country},`} ${e.target.value.postal_code
+                            && `${e.target.value.postal_code}`}`;
+                          order_recipient.setValue(e.target.value.name);
+                          order_address.setValue(formattedAddress);
+                        }
                       }}
                     >
                       {_.map(recipientAddressData, (ra, index) => (
@@ -359,6 +377,13 @@ const AddTrackerOrder = ({ history, location }) => {
                           {ra.name}
                         </MenuItem>
                       ))}
+                      <MenuItem
+                        value={null}
+                        className="addOrderNewRecipient"
+                        onClick={onAddRecipient}
+                      >
+                        Add Recipient +
+                      </MenuItem>
                     </TextField>
                   </Grid>
 
@@ -378,7 +403,7 @@ const AddTrackerOrder = ({ history, location }) => {
                 </Grid>
               </Grid>
 
-              <Grid item xs={5.8}>
+              <Grid item xs={12}>
                 {(_.size(_.without(ORDER_TYPES, ..._.filter(ORDER_TYPES, (o) => _.includes(order_type.value, o.value)))) > 0) && (
                   <Typography
                     className="addOrderMoreTracker"
@@ -391,15 +416,6 @@ const AddTrackerOrder = ({ history, location }) => {
                     Add Tracker +
                   </Typography>
                 )}
-              </Grid>
-
-              <Grid item xs={5.8} textAlign="end">
-                <Typography
-                  className="addOrderNewRecipient"
-                  onClick={onAddRecipient}
-                >
-                  Add Recipient +
-                </Typography>
               </Grid>
 
               <Grid container spacing={2} justifyContent="center" className="addOrderActions">

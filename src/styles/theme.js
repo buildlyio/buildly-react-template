@@ -10,7 +10,7 @@ const theme = extendTheme({
           default: '#FFFFFF',
           light: '#BEBEBA',
           light2: '#D3D4D5',
-          light3: '#E5E4E2',
+          light3: '#797979',
           light4: '#0000000A',
           light5: '#E7E9EC',
           light6: '#FFD8D8D8',

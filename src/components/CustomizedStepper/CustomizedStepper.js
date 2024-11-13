@@ -50,7 +50,7 @@ const CustomizedSteppers = ({ steps }) => {
           <Step className={index === 0 ? 'customizedStepperNoLine' : ''}>
             <StepIcon icon={getIcon(step)} />
             <StepLabel>{step.label}</StepLabel>
-            <Typography textAlign="center" fontSize={14} style={{ width: 'max-content', margin: 'auto' }}>{step.content}</Typography>
+            <Typography className="notranslate" textAlign="center" fontSize={14} style={{ width: 'max-content', margin: 'auto' }}>{step.content}</Typography>
             <Typography textAlign="center" fontSize={14}>{step.caption}</Typography>
           </Step>
         </Stack>

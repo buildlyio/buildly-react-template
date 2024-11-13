@@ -701,13 +701,14 @@ const OrganizationSettings = () => {
         <Grid container spacing={isDesktop2() ? 2 : 0}>
           <Grid item xs={12} md={6}>
             <TextField
+              className="notranslate"
               variant="outlined"
               margin="normal"
               fullWidth
               select
               id="country"
               name="country"
-              label="Default Country"
+              label={<span className="translate">Default Country</span>}
               autoComplete="country"
               value={country.value}
               onChange={(e) => {
@@ -723,6 +724,7 @@ const OrganizationSettings = () => {
               <MenuItem value="">Select</MenuItem>
               {countryList && _.map(countryList, (cntry, index) => (
                 <MenuItem
+                  className="notranslate"
                   key={`country-${index}-${cntry}`}
                   value={cntry}
                 >
@@ -733,19 +735,21 @@ const OrganizationSettings = () => {
           </Grid>
           <Grid item xs={12} md={6}>
             <TextField
+              className="notranslate"
               variant="outlined"
               margin="normal"
               fullWidth
               select
               id="currency"
               name="currency"
-              label="Default Currency"
+              label={<span className="translate">Default Currency</span>}
               autoComplete="currency"
               {...currency.bind}
             >
               <MenuItem value="">Select</MenuItem>
               {currencyList && _.map(currencyList, (curr, index) => (
                 <MenuItem
+                  className="notranslate"
                   key={`currency-${index}-${curr}`}
                   value={curr}
                 >

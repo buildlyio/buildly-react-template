@@ -30,7 +30,7 @@ const Devices = ({ isNewDevices }) => {
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization],
-    () => getGatewayQuery(null, displayAlert),
+    () => getGatewayQuery(null, displayAlert, false),
     { refetchOnWindowFocus: false, enabled: buttonClick },
   );
 
@@ -42,6 +42,7 @@ const Devices = ({ isNewDevices }) => {
     if (isNewDevices) {
       const newGatewayData = {
         platform_type: 'Tive',
+        is_new: true,
       };
       fetchNewGatewayMutation(newGatewayData);
     } else {
@@ -82,6 +83,7 @@ const Devices = ({ isNewDevices }) => {
     const updatedRows = selectedRows.map((row) => ({
       ...row,
       organization_uuid: org_uuid,
+      is_new: false,
     }));
     editGatewayMutation(updatedRows);
     const filteredRows = rows.filter((row) => !selectedRows.some((selected) => selected.id === row.id));

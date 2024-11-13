@@ -41,42 +41,55 @@
 
 .invoiceDetailsContainer {
   margin-top: 50px;
-  border: 2px solid var(--color-palette-background-black);
-  border-radius: 16px;
+  border: 1.5px solid var(--color-palette-background-light);
+  border-radius: 10px;
+  position: relative;
+  justify-content: center;
+}
+
+.invoiceDetailsHeader {
+  position: absolute;
+  top: -10px;
+  padding: 0 10px;
+  background: var(--color-palette-background-default);
+  font-size: 12px;
+  color: var(--color-palette-background-dark);
 }
 
 .invoiceChargesContainer {
-  background-color: var(--color-palette-background-light3);
-  border-radius: 16px;
   padding: 20px;
   padding-bottom: 0;
 }
 
+.invoiceChargesTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-palette-background-light3);
+}
+
 .invoiceMsgText {
-  color: var(--color-palette-primary-main);
+  color: var(--color-palette-background-light3);
   font-size: 13px;
 }
 
 .invoiceOrderListContainer {
-  padding-right: 10px;
-  overflow-y: auto;
   width: 100%;
-  padding-bottom: 20px;
+  padding: 20px 0;
 }
 
 .invoiceOrderListItemContainer {
   margin-top: 8px;
-  border-bottom: 1px solid gray;
+  border-bottom: 1.5px solid var(--color-palette-background-light);
+}
+
+.invoiceOrderListItemContainer:last-child {
+  border-bottom: 0;
 }
 
 .invoiceOrderListItemSubContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
-}
-
-.invoiceOrderListItemContainer:last-child {
-  border-bottom: 0;
 }
 
 .invoiceTextInput {
@@ -100,26 +113,18 @@
   color: var(--color-palette-primary-main);
 }
 
+.invoiceDivider {
+  width: 1.5px;
+  background: var(--color-palette-background-light);
+  margin: 20px 0;
+}
+
 .invoiceShipmentsContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
   height: 100%;
-}
-
-.invoiceShipmentListContainer {
-  width: 100%;
-  height: 100%;
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.invoiceShipmentListScroll {
-  overflow-y: auto;
-  margin-bottom: 20px;
 }
 
 .invoiceDataEmptyText {
@@ -129,13 +134,15 @@
   text-align: center;
 }
 
+.invoiceTotalChargesTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-palette-background-black);
+}
+
 @media screen and (max-width: 600px) {
   .invoiceContainer2 {
     justify-content: center;
     margin-top: 20px;
-  }
-
-  .gatewayActions {
-    width: 250px;
   }
 }

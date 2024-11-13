@@ -51,7 +51,7 @@ const OrganizationSelector = ({
   };
 
   useEffect(() => {
-    if (!_.isEmpty(orgData) && isAdmin && user.organization.is_reseller) {
+    if (!_.isEmpty(orgData) && isAdmin) {
       localStorage.setItem('adminOrgs', JSON.stringify(orgData));
     }
     if (isSuperAdmin) {

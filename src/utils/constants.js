@@ -329,6 +329,9 @@ export const custodianColumns = [
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -349,6 +352,7 @@ export const custodianColumns = [
       filter: true,
       setCellProps: () => ({
         style: { maxWidth: '300px', wordWrap: 'break-word' },
+        className: 'notranslate',
       }),
     },
   },
@@ -543,6 +547,9 @@ export const itemColumns = (currUnit) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1881,7 +1888,10 @@ export const gatewayColumns = (timezone, dateFormat, theme) => ([
       customBodyRender: (value) => (
         value && value !== '-' ? _.join(value, ', ') : value
       ),
-      setCellProps: () => ({ style: { maxWidth: '200px', wordWrap: 'break-word' } }),
+      setCellProps: () => ({
+        style: { maxWidth: '200px', wordWrap: 'break-word' },
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1894,6 +1904,9 @@ export const gatewayColumns = (timezone, dateFormat, theme) => ([
       customBodyRender: (value) => (
         value && value !== '-' ? _.join(value, ', ') : value
       ),
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1908,6 +1921,9 @@ export const gatewayColumns = (timezone, dateFormat, theme) => ([
           ? moment(value).tz(timezone).format(`${dateFormat}`)
           : value
       ),
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -1929,7 +1945,15 @@ export const gatewayColumns = (timezone, dateFormat, theme) => ([
           document.body.removeChild(link);
         };
         return (value && (
-          <LaunchIcon onClick={onPress} style={{ fill: theme.palette.primary.main, width: '100%', margin: 'auto' }} />
+          <LaunchIcon
+            onClick={onPress}
+            style={{
+              fill: theme.palette.primary.main,
+              width: '100%',
+              margin: 'auto',
+              cursor: 'pointer',
+            }}
+          />
         ));
       },
     },
@@ -2054,6 +2078,9 @@ export const shipmentColumns = (timezone, dateFormat, language, muiTheme) => ([
           ) : value
         );
       },
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -2081,6 +2108,9 @@ export const shipmentColumns = (timezone, dateFormat, language, muiTheme) => ([
             .format(`${dateFormat}`)
           : value
       ),
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -2414,6 +2444,9 @@ export const userColumns = () => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
