@@ -105,41 +105,27 @@ const Login = ({ history }) => {
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth="xs"
-      className="loginContainer"
-    >
+    <Container component="main" maxWidth="xs" className="loginContainer">
       {(isPasswordCheck || islogin) && <Loader open={isPasswordCheck || islogin} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
           <div className="loginPaper">
-            <img
-              src={logo}
-              className="loginLogo"
-              alt="Company logo"
-            />
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            <form
-              className="loginForm"
-              noValidate
-              onSubmit={handleSubmit}
-            >
+            <img src={logo} className="loginLogo" alt="Company logo" />
+            <Typography component="h1" variant="h5">Sign in</Typography>
+            <form className="loginForm" noValidate onSubmit={handleSubmit}>
               <TextField
+                className="loginTextField notranslate"
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
                 id="email"
-                label="Email"
+                label={<span className="translate">Email</span>}
                 name="email"
                 autoComplete="email"
                 error={isLoginError || (error.email && error.email.error)}
                 helperText={error && error.email ? error.email.message : ''}
-                className="loginTextField"
                 onBlur={(e) => handleBlur(e, 'required', email)}
                 {...email.bind}
               />
@@ -154,11 +140,7 @@ const Login = ({ history }) => {
                 id="password"
                 autoComplete="current-password"
                 error={isLoginError || (error.password && error.password.error)}
-                helperText={
-                  error && error.password
-                    ? error.password.message
-                    : ''
-                }
+                helperText={error && error.password ? error.password.message : ''}
                 className="loginTextField"
                 onBlur={(e) => handleBlur(e, 'required', password)}
                 {...password.bind}

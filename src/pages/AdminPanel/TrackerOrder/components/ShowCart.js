@@ -162,7 +162,7 @@ const ShowCart = ({ history, location }) => {
                                 Type:
                               </span>
                               {' '}
-                              {cdot}
+                              <span className="notranslate">{cdot}</span>
                             </Typography>
 
                             <Grid item className="cartQuantityDisplay">
@@ -230,14 +230,14 @@ const ShowCart = ({ history, location }) => {
                           Recipient:
                         </span>
                         {' '}
-                        {cd.order_recipient}
+                        <span className="notranslate">{cd.order_recipient}</span>
                       </Typography>
                       <Typography>
                         <span className="trackerOrderBold">
                           Customer:
                         </span>
                         {' '}
-                        {name}
+                        <span className="notranslate">{name}</span>
                       </Typography>
 
                       <Typography className="cartMarginTop16">
@@ -245,7 +245,7 @@ const ShowCart = ({ history, location }) => {
                           Recipient Address:
                         </span>
                         {' '}
-                        {cd.order_address}
+                        <span>{cd.order_address}</span>
                       </Typography>
                     </Grid>
                   </Grid>

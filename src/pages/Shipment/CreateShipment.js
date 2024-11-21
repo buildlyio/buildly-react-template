@@ -1008,12 +1008,13 @@ const CreateShipment = ({ history, location }) => {
         </Grid>
         <Grid item xs={4}>
           <TextField
+            className="notranslate"
             variant="outlined"
             id="template"
             select
             fullWidth
             placeholder="Select..."
-            label="Templates"
+            label={<span className="translate">Templates</span>}
             value={template}
             onChange={(e) => handleTemplateChange(e.target.value)}
             InputLabelProps={{ shrink: true }}
@@ -1022,7 +1023,7 @@ const CreateShipment = ({ history, location }) => {
           >
             <MenuItem value="">Select</MenuItem>
             {!_.isEmpty(shipmentTemplateData) && _.map(shipmentTemplateData, (tmp) => (
-              <MenuItem key={tmp.template_uuid} value={tmp}>
+              <MenuItem key={tmp.template_uuid} value={tmp} className="notranslate">
                 {tmp.name}
               </MenuItem>
             ))}
@@ -2297,7 +2298,10 @@ const CreateShipment = ({ history, location }) => {
                     sort: true,
                     sortThirdClickReset: true,
                     filter: true,
-                    setCellProps: () => ({ style: { textDecoration: !saveAsName && 'underline', textDecoractionColor: !saveAsName && theme.palette.background.light } }),
+                    setCellProps: () => ({
+                      style: { textDecoration: !saveAsName && 'underline', textDecoractionColor: !saveAsName && theme.palette.background.light },
+                      className: 'notranslate',
+                    }),
                   },
                 },
                 ...templateColumns(

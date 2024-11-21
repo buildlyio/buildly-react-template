@@ -368,12 +368,13 @@ const AddGateway = ({
                   </Grid>
                   <Grid className="gatewayInputWithTooltip" item xs={12}>
                     <TextField
+                      className="notranslate"
                       variant="outlined"
                       margin="normal"
                       id="shipper_uuid"
                       select
                       fullWidth
-                      label="Shipper"
+                      label={<span className="translate">Shipper</span>}
                       disabled={viewOnly}
                       error={formError.shipper_uuid && formError.shipper_uuid.error}
                       helperText={formError.shipper_uuid ? formError.shipper_uuid.message : ''}
@@ -393,6 +394,7 @@ const AddGateway = ({
                             <MenuItem
                               key={`custodian${index}:${item.id}`}
                               value={item.custodian_uuid}
+                              className="notranslate"
                             >
                               {item.name}
                             </MenuItem>

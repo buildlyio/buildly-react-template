@@ -2409,6 +2409,9 @@ export const templateColumns = (timezone, dateFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
 ]);
@@ -2599,6 +2602,9 @@ export const getRecipientAddressColumns = (timezone, dateFormat, timeFormat) => 
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -2608,6 +2614,9 @@ export const getRecipientAddressColumns = (timezone, dateFormat, timeFormat) => 
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -2661,6 +2670,9 @@ export const getTrackerOrderColumns = (timezone, dateFormat, timeFormat) => ([
       sortThirdClickReset: true,
       filter: true,
       customBodyRender: (value) => _.map(value, (v) => <div>{v}</div>),
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
   {
@@ -2670,6 +2682,9 @@ export const getTrackerOrderColumns = (timezone, dateFormat, timeFormat) => ([
       sort: true,
       sortThirdClickReset: true,
       filter: true,
+      setCellProps: () => ({
+        className: 'notranslate',
+      }),
     },
   },
 ]);

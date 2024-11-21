@@ -941,7 +941,7 @@ const Shipment = ({ history }) => {
                                 <Typography fontWeight={700}>
                                   Order ID:
                                 </Typography>
-                                <Typography>
+                                <Typography className="notranslate">
                                   {ship.order_number}
                                 </Typography>
                               </Grid>
@@ -1006,8 +1006,9 @@ const Shipment = ({ history }) => {
                                   <Typography fontWeight={700}>
                                     Last Reading:
                                   </Typography>
-                                  <Typography>
-                                    {`Recorded at: ${markers[0].date} ${markers[0].time}`}
+                                  <Typography component="span" className="translate">
+                                    Recorded at:
+                                    <span className="notranslate">{` ${markers[0].date} ${markers[0].time}`}</span>
                                   </Typography>
                                   {renderSensorData(markers[0])}
                                 </Grid>

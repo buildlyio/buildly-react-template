@@ -6,14 +6,10 @@ const Copyright = () => {
   const { title } = useContext(AppContext);
 
   return (
-    <Typography
-      variant="body2"
-      align="center"
-      mt={8}
-      mb={1}
-    >
+    <Typography variant="body2" align="center" mt={8} mb={1}>
       {'Copyright © '}
       <Link
+        className="notranslate"
         color="primary"
         href="https://xparent.io/"
         target="_blank"

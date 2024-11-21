@@ -205,13 +205,14 @@ const AddRecipientAddress = ({ history, location }) => {
 
               <Grid item xs={12} md={6}>
                 <TextField
+                  className="notranslate"
                   variant="outlined"
                   margin="normal"
                   fullWidth
                   id="country"
                   select
                   required
-                  label="Country"
+                  label={<span className="translate">Country</span>}
                   error={formError.country && formError.country.error}
                   helperText={
                     formError.country ? formError.country.message : ''
@@ -231,6 +232,7 @@ const AddRecipientAddress = ({ history, location }) => {
                   {countriesData && _.map(_.sortBy(_.map(countriesData, (c) => _.pick(c, 'country', 'iso3'))),
                     (value, index) => (
                       <MenuItem
+                        className="notranslate"
                         key={`custodianCountry${index}${value.country}`}
                         value={value.iso3}
                       >

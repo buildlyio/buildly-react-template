@@ -199,7 +199,7 @@ const TrackerOrder = ({ redirectTo, history }) => {
                 <Typography className="trackerOrderBold">
                   Type:
                   {'  '}
-                  <span className="trackerOrderNormalFont">{sot}</span>
+                  <span className="trackerOrderNormalFont notranslate">{sot}</span>
                 </Typography>
               </Grid>
             ))}
@@ -208,7 +208,7 @@ const TrackerOrder = ({ redirectTo, history }) => {
               <Typography className="trackerOrderBold">
                 Recipient:
                 {'  '}
-                <span className="trackerOrderNormalFont">{selectedOrder && selectedOrder.order_recipient}</span>
+                <span className="trackerOrderNormalFont notranslate">{selectedOrder && selectedOrder.order_recipient}</span>
               </Typography>
             </Grid>
 
@@ -216,7 +216,7 @@ const TrackerOrder = ({ redirectTo, history }) => {
               <Typography className="trackerOrderBold">
                 Customer:
                 {'  '}
-                <span className="trackerOrderNormalFont">{name}</span>
+                <span className="trackerOrderNormalFont notranslate">{name}</span>
               </Typography>
             </Grid>
 
@@ -224,7 +224,7 @@ const TrackerOrder = ({ redirectTo, history }) => {
               <Typography className="trackerOrderBold">
                 Recipient Address:
                 {'  '}
-                <span className="trackerOrderNormalFont">{selectedOrder && selectedOrder.order_address}</span>
+                <span className="trackerOrderNormalFont notranslate">{selectedOrder && selectedOrder.order_address}</span>
               </Typography>
             </Grid>
           </Grid>

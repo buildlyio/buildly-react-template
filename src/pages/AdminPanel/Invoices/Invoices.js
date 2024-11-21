@@ -56,8 +56,6 @@ const Invoices = () => {
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [formData, setFormData] = useState({
     shippingCost: '',
-    additionalCost: '',
-    notes: '',
   });
   const [selectYear, setSelectYear] = useState(moment().year() || '');
   const [selectMonth, setSelectMonth] = useState(moment().format('MMMM') || '');
@@ -138,10 +136,10 @@ const Invoices = () => {
     }
     if (!_.isEmpty(ordersData)) {
       ordersData.forEach((item) => {
-        cost += item.shipping_cost + item.additional_cost;
+        cost += item.shipping_cost;
       });
     }
-    setTotalCost(cost);
+    setTotalCost(cost.toFixed(2));
   }, [whatsappChargesData, ordersData]);
 
   const handleOrganizationChange = (e) => {
@@ -222,17 +220,11 @@ const Invoices = () => {
       };
       if (isEditing.field === 'shippingCost') {
         updatedData.shipping_cost = formData[field] ? parseInt(formData[field], 10) : 0;
-      } else if (isEditing.field === 'additionalCost') {
-        updatedData.additional_cost = formData[field] ? parseInt(formData[field], 10) : 0;
-      } else if (isEditing.field === 'notes') {
-        updatedData.notes = formData[field];
       }
       editTrackerOrderMutation(updatedData);
       setIsEditing({ field: null, index: null });
       setFormData({
         shippingCost: '',
-        additionalCost: '',
-        notes: '',
       });
     } else {
       setIsEditing({ field, index });
@@ -372,55 +364,8 @@ const Invoices = () => {
                         )}
                       </IconButton>
                     </div>
-                    <div className="invoiceOrderListItemSubContainer">
-                      <Typography className="invoiceMsgText">Notes:</Typography>
-                      {isEditing.field === 'notes' && isEditing.index === index ? (
-                        <TextField
-                          className="invoiceTextInput"
-                          value={formData.notes}
-                          name="notes"
-                          onChange={handleInputChange}
-                          size="small"
-                          variant="outlined"
-                        />
-                      ) : (
-                        <Typography ml={1} className="invoiceMsgText">{`${item.notes ? item.notes : 'N/A'}`}</Typography>
-                      )}
-                      <IconButton onClick={() => handleEditClick('notes', index, item.id)}>
-                        {isEditing.field === 'notes' && isEditing.index === index ? (
-                          <CheckIcon className="invoiceEditIcon" />
-                        ) : (
-                          <EditIcon className="invoiceEditIcon" />
-                        )}
-                      </IconButton>
-                    </div>
-                    <div className="invoiceOrderListItemSubContainer">
-                      <Typography className="invoiceMsgText">Extra Charges:</Typography>
-                      {isEditing.field === 'additionalCost' && isEditing.index === index ? (
-                        <TextField
-                          className="invoiceTextInput"
-                          value={formData.additionalCost}
-                          name="additionalCost"
-                          onChange={handleInputChange}
-                          size="small"
-                          variant="outlined"
-                          InputProps={{
-                            startAdornment: <InputAdornment position="start"><DollarIcon style={{ width: '15px', height: '15px' }} /></InputAdornment>,
-                          }}
-                        />
-                      ) : (
-                        <Typography ml={1} className="invoiceMsgText">{`$${item.additional_cost}`}</Typography>
-                      )}
-                      <IconButton onClick={() => handleEditClick('additionalCost', index, item.id)}>
-                        {isEditing.field === 'additionalCost' && isEditing.index === index ? (
-                          <CheckIcon className="invoiceEditIcon" />
-                        ) : (
-                          <EditIcon className="invoiceEditIcon" />
-                        )}
-                      </IconButton>
-                    </div>
                   </div>
-                )) : <Typography className="invoiceDataEmptyText">No orders are available</Typography>}
+                )) : <Typography className="invoiceOrderDataEmptyText">No orders are available</Typography>}
               </div>
               <Grid container mb={2}>
                 <Grid item xs={7} />
@@ -437,18 +382,18 @@ const Invoices = () => {
                 ? (
                   <Grid container>
                     {whatsappChargesData.shipments.map((item, index) => (
-                      <>
+                      <React.Fragment key={`${item.name}-${index}`}>
                         <Grid item xs={7}>
                           <Typography variant="body2">{item.name}</Typography>
                         </Grid>
                         <Grid item xs={5}>
                           <Typography variant="body2">{`Tracker: ${item.tracker[0]}`}</Typography>
                         </Grid>
-                      </>
+                      </React.Fragment>
                     ))}
                   </Grid>
                 )
-                : <Typography className="invoiceDataEmptyText">No shipments are available</Typography>}
+                : <Typography className="invoiceShipmentDataEmptyText">No shipments are available</Typography>}
             </Grid>
           </Grid>
         ) : <Typography className="invoiceEmptyText">No data to display</Typography>}

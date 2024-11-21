@@ -14,7 +14,7 @@ import {
   Box,
   Tooltip,
 } from '@mui/material';
-import { ExpandMore as ExpandMoreIcon, Add as AddIcon, CloudSync as CloudSyncIcon } from '@mui/icons-material';
+import { ExpandMore as ExpandMoreIcon, Add as AddIcon, Sync as SyncIcon } from '@mui/icons-material';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import GatewayActions from './components/GatewayActions';
 import { getUser } from '@context/User.context';
@@ -214,7 +214,7 @@ const Gateway = ({ history, redirectTo }) => {
           <div className="gatewayHeader">
             <Typography variant="h4" mr={2}>Trackers</Typography>
             <Tooltip placement="bottom" title="Sync Trackers">
-              <CloudSyncIcon className="gatewaySyncIcon" onClick={handleSyncGateways} />
+              <SyncIcon className="gatewaySyncIcon" onClick={handleSyncGateways} />
             </Tooltip>
           </div>
           {(isSuperAdmin || isAdmin) && (

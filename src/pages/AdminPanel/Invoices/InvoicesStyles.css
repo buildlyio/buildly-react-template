@@ -127,7 +127,13 @@
   height: 100%;
 }
 
-.invoiceDataEmptyText {
+.invoiceOrderDataEmptyText {
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.invoiceShipmentDataEmptyText {
   font-size: 16px;
   font-weight: 700;
   margin-top: 50px;

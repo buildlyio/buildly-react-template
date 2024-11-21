@@ -226,7 +226,7 @@ const GenerateReport = ({
                 Generate PDF Report
               </Button>
             </Grid>
-            {!_.isEmpty(selectedShipment) && !_.isEmpty(selectedShipment.report_download_url) && (
+            {!_.isEmpty(selectedShipment) && (
               <Grid item xs={12} sm={3}>
                 <Button
                   type="submit"

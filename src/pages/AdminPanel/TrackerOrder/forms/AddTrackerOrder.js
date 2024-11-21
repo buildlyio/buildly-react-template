@@ -180,11 +180,12 @@ const AddTrackerOrder = ({ history, location }) => {
                       <Grid item xs={12} className={idx > 0 ? 'addOrderTypeContainer' : ''} />
                       <Grid item xs={10} className="addOrderTextFieldWithClose">
                         <TextField
+                          className="notranslate"
                           variant="outlined"
                           fullWidth
                           id={`order-type-${idx}`}
                           select
-                          label="Tracker Type"
+                          label={<span className="translate">Tracker Type</span>}
                           value={orty}
                           onChange={(e) => {
                             const newList = _.map(
@@ -196,7 +197,7 @@ const AddTrackerOrder = ({ history, location }) => {
                         >
                           <MenuItem value="">Select</MenuItem>
                           {_.map(ORDER_TYPES, (ot, index) => (
-                            <MenuItem key={`${ot.value}-${index}`} value={ot.value}>
+                            <MenuItem className="notranslate" key={`${ot.value}-${index}`} value={ot.value}>
                               <Typography component="div" className="addOrderTypeWithIcon">
                                 {ot.label}
                                 <span>{_.includes(ot.label, 'Non') ? <FlightSafeIcon /> : <FlightUnsafeIcon />}</span>
@@ -269,16 +270,17 @@ const AddTrackerOrder = ({ history, location }) => {
                       <Grid item xs={12} className={!_.isEmpty(order_type.value) ? 'addOrderTypeContainer' : ''} />
                       <Grid item xs={!_.isEmpty(order_type.value) ? 10 : 12} className={!_.isEmpty(order_type.value) ? 'addOrderTextFieldWithClose' : 'addOrderTextField'}>
                         <TextField
+                          className="notranslate"
                           variant="outlined"
                           fullWidth
                           id="placeholder-order-type"
                           select
-                          label="Tracker Type"
+                          label={<span className="translate">Tracker Type</span>}
                           {...placeholderType.bind}
                         >
                           <MenuItem value="">Select</MenuItem>
                           {_.map(_.without(ORDER_TYPES, ..._.filter(ORDER_TYPES, (o) => _.includes(order_type.value, o.value))), (ot, index) => (
-                            <MenuItem key={`${ot.value}-${index}`} value={ot.value}>
+                            <MenuItem className="notranslate" key={`${ot.value}-${index}`} value={ot.value}>
                               <Typography component="div" className="addOrderTypeWithIcon">
                                 {ot.label}
                                 <span>{_.includes(ot.label, 'Non') ? <FlightSafeIcon /> : <FlightUnsafeIcon />}</span>
@@ -351,12 +353,13 @@ const AddTrackerOrder = ({ history, location }) => {
 
                   <Grid item xs={12} className="addOrderTextField">
                     <TextField
+                      className="notranslate"
                       variant="outlined"
                       fullWidth
                       select
                       required
                       id="order-recipient"
-                      label="Order Recipient"
+                      label={<span className="translate">Order Recipient</span>}
                       value={_.find(recipientAddressData, { name: order_recipient.value, address: order_address.value })}
                       onChange={(e) => {
                         if (e.target.value) {
@@ -373,7 +376,7 @@ const AddTrackerOrder = ({ history, location }) => {
                       }}
                     >
                       {_.map(recipientAddressData, (ra, index) => (
-                        <MenuItem key={`${ra.name}-${index}`} value={ra}>
+                        <MenuItem className="notranslate" key={`${ra.name}-${index}`} value={ra}>
                           {ra.name}
                         </MenuItem>
                       ))}

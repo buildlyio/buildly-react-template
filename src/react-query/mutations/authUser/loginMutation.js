@@ -26,6 +26,14 @@ export const useLoginMutation = (
   {
     onSuccess: async (data) => {
       await timezone(data.data.user_timezone);
+      httpService.makeRequest(
+        'post',
+        `${window.env.API_URL}sensors/sync_trackers/`,
+        {
+          organization_uuid: data.data.organization.organization_uuid,
+          platform_type: 'Tive',
+        },
+      );
       history.push(redirectTo);
     },
   },

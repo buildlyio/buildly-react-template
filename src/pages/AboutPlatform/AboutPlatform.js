@@ -27,7 +27,7 @@ const AboutPlatform = () => (
     </Grid>
     <Grid container spacing={2} className="aboutPlatformAgreementContainer">
       <Grid item xs={12} textAlign="center">
-        <Typography variant="h5">
+        <Typography variant="h5" className="notranslate">
           Transparent Path spc
         </Typography>
       </Grid>

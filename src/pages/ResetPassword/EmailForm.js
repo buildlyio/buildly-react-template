@@ -70,45 +70,27 @@ const EmailForm = ({ history }) => {
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth="xs"
-      className="resetPasswordContainer"
-    >
+    <Container component="main" maxWidth="xs" className="resetPasswordContainer">
       {isResetPassword && <Loader open={isResetPassword} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
           <div className="resetPasswordPaper">
-            <img
-              src={logo}
-              className="resetPasswordLogo"
-              alt="Company logo"
-            />
-            <Typography component="h1" variant="h5" gutterBottom>
-              Enter your registered Email
-            </Typography>
-            <form
-              className="resetPasswordForm"
-              noValidate
-              onSubmit={handleSubmit}
-            >
+            <img src={logo} className="resetPasswordLogo" alt="Company logo" />
+            <Typography component="h1" variant="h5" gutterBottom>Enter your registered Email</Typography>
+            <form className="resetPasswordForm" noValidate onSubmit={handleSubmit}>
               <TextField
+                className="resetPasswordTextField notranslate"
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
                 id="email"
-                label="Registered email"
+                label={<span className="translate">Registered email</span>}
                 name="email"
                 autoComplete="email"
-                className="resetPasswordTextField"
                 error={error.email && error.email.error}
-                helperText={
-                  error && error.email
-                    ? error.email.message
-                    : ''
-                }
+                helperText={error && error.email ? error.email.message : ''}
                 onBlur={(e) => handleBlur(e, 'email', email)}
                 {...email.bind}
               />

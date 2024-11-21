@@ -65,21 +65,13 @@ const Verification = ({ location }) => {
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth="xs"
-      className="verificationContainer"
-    >
+    <Container component="main" maxWidth="xs" className="verificationContainer">
       {isResetPassword && <Loader open={isResetPassword} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
           <div className="verificationPaper">
-            <img
-              src={logo}
-              className="resetPasswordLogo"
-              alt="Company logo"
-            />
+            <img src={logo} className="resetPasswordLogo" alt="Company logo" />
             <Typography component="h1" variant="h5" gutterBottom textAlign="center">
               Email Sent Successfully
             </Typography>

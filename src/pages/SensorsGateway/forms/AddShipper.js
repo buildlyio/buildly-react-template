@@ -362,13 +362,14 @@ const AddShipper = ({
               <Grid container spacing={isDesktop() ? 2 : 0}>
                 <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
                   <TextField
+                    className="notranslate"
                     variant="outlined"
                     margin="normal"
                     fullWidth
                     id="country"
                     select
                     required
-                    label="Country"
+                    label={<span className="translate">Country</span>}
                     error={formError.country && formError.country.error}
                     helperText={formError.country ? formError.country.message : ''}
                     onBlur={(e) => handleBlur(e, 'required', country, 'country')}

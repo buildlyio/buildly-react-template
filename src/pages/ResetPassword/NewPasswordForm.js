@@ -115,29 +115,15 @@ const NewPassword = ({ history, location }) => {
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth="xs"
-      className="resetPasswordContainer"
-    >
+    <Container component="main" maxWidth="xs" className="resetPasswordContainer">
       {isResetPasswordConfirm && <Loader open={isResetPasswordConfirm} />}
       <CssBaseline />
       <Card variant="outlined">
         <CardContent>
           <div className="resetPasswordPaper">
-            <img
-              src={logo}
-              className="resetPasswordLogo"
-              alt="Company logo"
-            />
-            <Typography component="h1" variant="h5">
-              Reset your Password
-            </Typography>
-            <form
-              className="resetPasswordForm"
-              noValidate
-              onSubmit={handleSubmit}
-            >
+            <img src={logo} className="resetPasswordLogo" alt="Company logo" />
+            <Typography component="h1" variant="h5"> Reset your Password</Typography>
+            <form className="resetPasswordForm" noValidate onSubmit={handleSubmit}>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -212,15 +198,8 @@ const NewPassword = ({ history, location }) => {
                 type={showConfirmPassword ? 'text' : 'password'}
                 autoComplete="re_password"
                 className="resetPasswordTextField"
-                error={
-                  formError.re_password
-                  && formError.re_password.error
-                }
-                helperText={
-                  formError.re_password
-                    ? formError.re_password.message
-                    : ''
-                }
+                error={formError.re_password && formError.re_password.error}
+                helperText={formError.re_password ? formError.re_password.message : ''}
                 onBlur={(e) => handleBlur(e, 'confirm', re_password)}
                 {...re_password.bind}
                 InputProps={{
