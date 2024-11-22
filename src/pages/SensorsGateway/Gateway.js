@@ -210,12 +210,21 @@ const Gateway = ({ history, redirectTo }) => {
           />
         )}
       <Grid container spacing={1} mt={4.3} className="gatewayContainer">
-        <Grid item xs={12} sm={6} className="gatewayHeaderContainer">
+        <Grid item xs={12} className="gatewayHeaderContainer">
           <div className="gatewayHeader">
             <Typography variant="h4" mr={2}>Trackers</Typography>
             <Tooltip placement="bottom" title="Sync Trackers">
               <SyncIcon className="gatewaySyncIcon" onClick={handleSyncGateways} />
             </Tooltip>
+            {isSuperAdmin && !_.isEmpty(selectedRows) && !_.isEqual(_.size(selectedRows), 0) && (
+              <GatewayActions
+                selectedRows={selectedRows}
+                custodianData={custodianData}
+                contactInfo={contactInfo}
+                editGatewayMutation={editGatewayMutation}
+                isEditingGateway={isEditingGateway}
+              />
+            )}
           </div>
           {(isSuperAdmin || isAdmin) && (
             <Button
@@ -230,16 +239,6 @@ const Gateway = ({ history, redirectTo }) => {
             </Button>
           )}
         </Grid>
-
-        {isSuperAdmin && (
-          <GatewayActions
-            selectedRows={selectedRows}
-            custodianData={custodianData}
-            contactInfo={contactInfo}
-            editGatewayMutation={editGatewayMutation}
-            isEditingGateway={isEditingGateway}
-          />
-        )}
       </Grid>
 
       <AddShipper

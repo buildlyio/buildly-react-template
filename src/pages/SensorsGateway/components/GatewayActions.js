@@ -65,13 +65,13 @@ const GatewayActions = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (_.isEqual(gateway_action.value, 'Edit Status')) {
+    if (_.isEqual(gateway_action.value, 'Change Status')) {
       const updatedRows = selectedRows.map((row) => ({
         ...row,
         gateway_status: change_status.value,
       }));
       editGatewayMutation(updatedRows);
-    } else if (_.isEqual(gateway_action.value, 'Edit Shipper')) {
+    } else if (_.isEqual(gateway_action.value, 'Assign Shipper')) {
       const updatedRows = selectedRows.map((row) => ({
         ...row,
         custodian_uuid: assignShipper,
@@ -116,12 +116,12 @@ const GatewayActions = ({
   const submitDisabled = () => {
     const errorKeys = Object.keys(formError);
     if (!_.isEmpty(selectedRows)) {
-      if (_.isEqual(gateway_action.value, 'Edit Status')) {
+      if (_.isEqual(gateway_action.value, 'Change Status')) {
         if (!change_status.value) {
           return true;
         }
       }
-      if (_.isEqual(gateway_action.value, 'Edit Shipper')) {
+      if (_.isEqual(gateway_action.value, 'Assign Shipper')) {
         if (_.isEmpty(assignShipper)) {
           return true;
         }
@@ -159,7 +159,7 @@ const GatewayActions = ({
     <>
       <Grid item xs={12} sm={6} className="gatewayHeaderActionContainer">
         <TextField
-          className="gatewayActions"
+          className={_.isEmpty(gateway_action.value) ? 'gatewayActions' : 'gatewayActionsValue'}
           variant="outlined"
           id="gateway_actions"
           select
@@ -167,14 +167,19 @@ const GatewayActions = ({
           {...gateway_action.bind}
         >
           <MenuItem value="">Select</MenuItem>
-          {_.map(GATEWAY_ACTIONS, (item, index) => (
-            <MenuItem
-              key={`gatewayAction${index}:${item.id}`}
-              value={item.value}
-            >
-              {item.label}
-            </MenuItem>
-          ))}
+          {_.map(GATEWAY_ACTIONS, (item, index) => {
+            if (_.isEqual(_.size(selectedRows), 1) && !_.isEqual(item.value, 'Remove Tracker')) {
+              return null;
+            }
+            return (
+              <MenuItem
+                key={`gatewayAction${index}:${item.id}`}
+                value={item.value}
+              >
+                {item.label}
+              </MenuItem>
+            );
+          })}
         </TextField>
         <Button
           type="button"
@@ -215,7 +220,7 @@ const GatewayActions = ({
                 onBlur={(e) => handleBlur(e, 'required', { value: selectedRows, required: true })}
               />
             </Grid>
-            {_.isEqual(gateway_action.value, 'Edit Status')
+            {_.isEqual(gateway_action.value, 'Change Status')
               && (
                 <Grid className="gatewayInputWithTooltip" item xs={12} md={6} sm={6}>
                   <TextField
@@ -247,7 +252,7 @@ const GatewayActions = ({
                   </TextField>
                 </Grid>
               )}
-            {_.isEqual(gateway_action.value, 'Edit Shipper')
+            {_.isEqual(gateway_action.value, 'Assign Shipper')
               && (
                 <Grid className="gatewayInputWithTooltip" item xs={12} md={6} sm={6}>
                   <TextField

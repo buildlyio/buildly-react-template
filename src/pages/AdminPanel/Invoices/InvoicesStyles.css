@@ -32,6 +32,24 @@
   padding: 8px 28px 8px 16px;
 }
 
+.invoiceMonths .MuiFormLabel-root {
+  margin-top: -8px;
+}
+
+.invoiceMonths .Mui-focused {
+  margin-top: 0 !important;
+}
+
+.invoiceMonthsValue {
+  width: 192px;
+  margin-top: 8px;
+  margin-left: 20px;
+}
+
+.invoiceMonthsValue .MuiOutlinedInput-input {
+  padding: 8px 28px 8px 16px;
+}
+
 .invoiceEmptyText {
   font-size: 20px;
   font-weight: 700;

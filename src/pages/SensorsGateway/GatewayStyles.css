@@ -16,13 +16,10 @@
 .gatewayHeaderActionContainer {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  padding-right: 20px;
-  padding-bottom: 8px;
 }
 
 .gatewayActions {
-  width: 192px;
+  width: 250px;
 }
 
 .gatewayActions .MuiOutlinedInput-input {
@@ -37,6 +34,14 @@
   margin-top: 0 !important;
 }
 
+.gatewayActionsValue {
+  width: 250px;
+}
+
+.gatewayActionsValue .MuiOutlinedInput-input {
+  padding: 8px 28px 8px 16px;
+}
+
 .gatewaySyncIcon {
   fill: var(--color-palette-primary-main);
   width: 40px;
@@ -44,6 +49,7 @@
   cursor: pointer;
   transform: scaleX(-1);
   rotate: 90deg;
+  margin-right: 16px;
 }
 
 .gatewayCardItems {
@@ -261,15 +267,6 @@
 }
 
 @media screen and (max-width: 600px) {
-  .gatewayHeaderActionContainer {
-    justify-content: flex-start;
-    padding-right: 0;
-  }
-
-  .gatewayActions {
-    width: 250px;
-  }
-
   .gatewaySubmit2 {
     margin-top: -30px;
   }

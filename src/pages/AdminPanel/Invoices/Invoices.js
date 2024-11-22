@@ -57,8 +57,8 @@ const Invoices = () => {
   const [formData, setFormData] = useState({
     shippingCost: '',
   });
-  const [selectYear, setSelectYear] = useState(moment().year() || '');
-  const [selectMonth, setSelectMonth] = useState(moment().format('MMMM') || '');
+  const [selectYear, setSelectYear] = useState('');
+  const [selectMonth, setSelectMonth] = useState('');
   const [availableYears, setAvailableYears] = useState([]);
   const [availableMonths, setAvailableMonths] = useState([]);
   const [totalCost, setTotalCost] = useState(0);
@@ -98,9 +98,10 @@ const Invoices = () => {
       const creationDate = moment(user.organization.create_date);
       const currentYear = moment().year();
       const currentMonth = moment().month();
-      const isCreationYear = selectYear === creationDate.year();
-      const isCurrentYear = selectYear === currentYear;
+      const isCreationYear = parseInt(selectYear, 10) === creationDate.year();
+      const isCurrentYear = parseInt(selectYear, 10) === currentYear;
       const months = [];
+      console.log(isCreationYear, isCurrentYear);
 
       MONTHS.forEach((mth, index) => {
         if (isCreationYear && index >= creationDate.month() && index <= currentMonth) {
@@ -152,7 +153,7 @@ const Invoices = () => {
   };
 
   const handleYearChange = (event) => {
-    setSelectYear(parseInt(event.target.value, 10));
+    setSelectYear(event.target.value ? (parseInt(event.target.value, 10).toString()) : '');
     setSelectMonth('');
   };
 
@@ -270,7 +271,7 @@ const Invoices = () => {
             setSubmenuAnchorEl={setSubmenuAnchorEl}
           />
           <TextField
-            className="invoiceMonths"
+            className={_.isEmpty(selectYear) ? 'invoiceMonths' : 'invoiceMonthsValue'}
             variant="outlined"
             id="year"
             select
@@ -285,7 +286,7 @@ const Invoices = () => {
             ))}
           </TextField>
           <TextField
-            className="invoiceMonths"
+            className={_.isEmpty(selectMonth) ? 'invoiceMonths' : 'invoiceMonthsValue'}
             variant="outlined"
             id="month"
             select

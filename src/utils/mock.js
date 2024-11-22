@@ -67,9 +67,9 @@ export const LANGUAGES = [
 ];
 
 export const GATEWAY_ACTIONS = [
-  { value: 'Edit Status', label: 'Edit Status' },
+  { value: 'Change Status', label: 'Change Status' },
   { value: 'Remove Tracker', label: 'Remove Tracker' },
-  { value: 'Edit Shipper', label: 'Edit Shipper' },
+  { value: 'Assign Shipper', label: 'Assign Shipper' },
 ];
 
 export const ORDER_TYPES = [

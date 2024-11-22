@@ -972,6 +972,11 @@ const Reporting = () => {
               sx={{
                 marginRight: isDesktop2() ? 0 : 1,
               }}
+              SelectProps={{
+                MenuProps: {
+                  sx: { maxHeight: '350px' },
+                },
+              }}
               onChange={(e) => {
                 const selected = _.find(shipmentOverview, { id: e.target.value });
                 handleShipmentSelection(selected);
