@@ -10,16 +10,24 @@ export const getCountriesQuery = async (displayAlert) => {
     if (response && response.data && response.data.data) {
       let countries = [];
       _.forEach(response.data.data, (country) => {
+        let countryName = country.name;
+        const countryNameMapping = {
+          'Bahamas The': 'Bahamas',
+          'Gambia The': 'Gambia',
+        };
+        if (countryNameMapping[countryName]) {
+          countryName = countryNameMapping[countryName];
+        }
         if (
           !_.includes(
             ['cuba', 'iran', 'north korea', 'russia', 'syria', 'venezuela'],
-            _.toLower(country.name),
+            _.toLower(countryName),
           )
         ) {
           countries = [
             ...countries,
             {
-              country: country.name,
+              country: countryName,
               iso3: country.iso3,
               states: _.sortBy(_.without(_.uniq(country.states), [''])),
             },
