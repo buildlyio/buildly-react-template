@@ -84,18 +84,18 @@ const Invoices = () => {
   const { mutate: editTrackerOrderMutation, isLoading: isTrackerOrderEditing } = useEditTrackerOrderMutation(org_uuid, displayAlert);
 
   useEffect(() => {
-    const creationDate = moment(user.organization.create_date);
+    const creationDate = moment(_.find(orgData, { name: organization })?.create_date);
     const currentYear = moment().year();
     const years = [];
     for (let year = creationDate.year(); year <= currentYear; year++) {
       years.push(year);
     }
     setAvailableYears(years);
-  }, [user.organization.create_date]);
+  }, [organization, orgData]);
 
   useEffect(() => {
     if (selectYear) {
-      const creationDate = moment(user.organization.create_date);
+      const creationDate = moment(_.find(orgData, { name: organization })?.create_date);
       const currentYear = moment().year();
       const currentMonth = moment().month();
       const isCreationYear = parseInt(selectYear, 10) === creationDate.year();
@@ -104,9 +104,11 @@ const Invoices = () => {
       console.log(isCreationYear, isCurrentYear);
 
       MONTHS.forEach((mth, index) => {
-        if (isCreationYear && index >= creationDate.month() && index <= currentMonth) {
+        if (isCreationYear && !isCurrentYear && index >= creationDate.month()) {
           months.push(mth);
-        } else if (isCurrentYear && !isCreationYear && index <= currentMonth) {
+        } else if (isCreationYear && isCurrentYear && index >= creationDate.month() && index <= currentMonth) {
+          months.push(mth);
+        } else if (!isCreationYear && isCurrentYear && index <= currentMonth) {
           months.push(mth);
         } else if (!isCreationYear && !isCurrentYear) {
           months.push(mth);
@@ -116,7 +118,7 @@ const Invoices = () => {
     } else {
       setAvailableMonths([]);
     }
-  }, [selectYear, user.organization.create_date]);
+  }, [selectYear, organization, orgData]);
 
   useEffect(() => {
     if (!_.isEmpty(trackerOrderData) && !_.isEmpty(selectedMonthFirstDate) && !_.isEmpty(nextMonthFirstDate)) {

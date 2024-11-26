@@ -103,6 +103,15 @@
     "webpack-dev-server": "^3.1.14",
     "workbox-webpack-plugin": "^6.5.1"
   },
+  "resolutions": {
+    "@babel/core": "7.19.6",
+    "@babel/generator": "7.19.6",
+    "@babel/compat-data": "7.19.4",
+    "@babel/helper-compilation-targets": "7.19.3",
+    "@babel/helper-create-class-features-plugin": "7.19.0",
+    "@babel/helper-module-transforms": "7.19.6",
+    "babel-loader": "8.2.5"
+  },
   "scripts": {
     "build": "webpack --mode development",
     "start:local": "webpack-dev-server --mode development --env.build=local",
