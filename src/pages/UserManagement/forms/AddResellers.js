@@ -302,16 +302,19 @@ const AddResellers = ({ open, setOpen }) => {
                       }}
                     >
                       <MenuItem value="">Select</MenuItem>
-                      {!_.isEmpty(orgData) && _.map(_.filter(orgData, (o) => !o.is_reseller && !_.includes(alreadyCustomerOrgs.value, o.organization_uuid)),
+                      {!_.isEmpty(orgData) && _.map(
+                        _.filter(orgData, (o) => (
+                          !o.is_reseller
+                          && _.isEqual(o.organization_type, 2)
+                          && !_.includes(alreadyCustomerOrgs.value, o.organization_uuid)
+                          && !_.includes(_.map(resellerCustomerOrganization.value, 'organization_uuid'), o.organization_uuid)
+                        )),
                         (org) => (
-                          <MenuItem
-                            key={`organization-${org.id}`}
-                            value={org.name || ''}
-                            className="notranslate"
-                          >
+                          <MenuItem key={`organization-${org.id}`} value={org.name || ''} className="notranslate">
                             {org.name}
                           </MenuItem>
-                        ))}
+                        ),
+                      )}
                     </TextField>
                   </Grid>
                   <Grid item xs={1}>
@@ -324,7 +327,12 @@ const AddResellers = ({ open, setOpen }) => {
                   </Grid>
                 </Grid>
               )}
-              {!isAddResellerCustomerOpen && (
+              {!isAddResellerCustomerOpen && _.size(_.filter(orgData, (o) => (
+                !o.is_reseller
+                && _.isEqual(o.organization_type, 2)
+                && !_.includes(alreadyCustomerOrgs.value, o.organization_uuid)
+                && !_.includes(_.map(resellerCustomerOrganization.value, 'organization_uuid'), o.organization_uuid)
+              ))) > 0 && (
                 <Button
                   type="button"
                   variant="contained"
