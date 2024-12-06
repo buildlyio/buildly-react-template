@@ -18,6 +18,9 @@ export const useInviteMutation = (discardFormData, displayAlert) => {
         await queryClient.invalidateQueries({
           queryKey: ['organizations'],
         });
+        await queryClient.invalidateQueries({
+          queryKey: ['coregroup'],
+        });
         displayAlert('success', 'Invitations sent and organization created successfully');
         discardFormData();
       },

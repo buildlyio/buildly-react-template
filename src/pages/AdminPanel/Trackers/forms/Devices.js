@@ -25,6 +25,8 @@ const Devices = ({ isNewDevices }) => {
   const [selectedRowsIndex, setSelectedRowsIndex] = useState([]);
   const [organization, setOrganization] = useState(user.organization.name);
   const [buttonClick, setButtonClick] = useState(false);
+  const [mainMenuOpen, setMainMenuOpen] = useState(false);
+  const [submenuAnchorEl, setSubmenuAnchorEl] = useState(null);
 
   const { displayAlert } = useAlert();
 
@@ -77,6 +79,8 @@ const Devices = ({ isNewDevices }) => {
   const handleOrganizationChange = (e) => {
     const organization_name = e.target ? e.target.value : e;
     setOrganization(!_.isEmpty(organization_name) ? organization_name : org);
+    setMainMenuOpen(false);
+    setSubmenuAnchorEl(null);
   };
 
   const handleSubmit = () => {
@@ -134,6 +138,10 @@ const Devices = ({ isNewDevices }) => {
             <OrganizationSelector
               handleOrganizationChange={handleOrganizationChange}
               selectedOrg={organization}
+              mainMenuOpen={mainMenuOpen}
+              setMainMenuOpen={setMainMenuOpen}
+              submenuAnchorEl={submenuAnchorEl}
+              setSubmenuAnchorEl={setSubmenuAnchorEl}
             />
             <Button
               type="button"
