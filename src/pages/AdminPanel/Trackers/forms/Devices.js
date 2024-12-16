@@ -10,6 +10,7 @@ import Loader from '@components/Loader/Loader';
 import FormModal from '@components/Modal/FormModal';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import OrganizationSelector from '@components/OrganizationSelector/OrganizationSelector';
+import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrganizationQuery';
 import { getGatewayQuery } from '@react-query/queries/sensorGateways/getGatewayQuery';
 import { useFetchNewGatewayMutation } from 'react-query/mutations/sensorGateways/fetchNewGatewayMutation';
 import { useEditGatewayMutation } from '@react-query/mutations/sensorGateways/editGatewayMutation';
@@ -29,6 +30,12 @@ const Devices = ({ isNewDevices }) => {
   const [submenuAnchorEl, setSubmenuAnchorEl] = useState(null);
 
   const { displayAlert } = useAlert();
+
+  const { data: orgData, isLoading: isLoadingOrgs } = useQuery(
+    ['organizations'],
+    () => getAllOrganizationQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization],
@@ -84,9 +91,10 @@ const Devices = ({ isNewDevices }) => {
   };
 
   const handleSubmit = () => {
+    const { organization_uuid } = _.filter(orgData, (o) => _.isEqual(o.name, organization))[0];
     const updatedRows = selectedRows.map((row) => ({
       ...row,
-      organization_uuid: org_uuid,
+      organization_uuid,
       is_new: false,
     }));
     editGatewayMutation(updatedRows);
@@ -100,7 +108,7 @@ const Devices = ({ isNewDevices }) => {
 
   return (
     <div>
-      {(isFetchingNewGateway || isEditingGateway || isLoadingGateways) && <Loader open={isFetchingNewGateway || isEditingGateway || isLoadingGateways} />}
+      {(isLoadingOrgs || isFetchingNewGateway || isEditingGateway || isLoadingGateways) && <Loader open={isLoadingOrgs || isFetchingNewGateway || isEditingGateway || isLoadingGateways} />}
       <Grid container>
         <Grid item xs={6} sm={3}>
           <Button
