@@ -16,6 +16,14 @@
   order: 99;
 }
 
+.dataTable .reportingSensorDataTable {
+  margin-top: -40px !important;
+}
+
+.dataTable .reportingAlertDataTable {
+  margin-top: -40px !important;
+}
+
 .dataTable .reportingSensorDataTable>.MuiToolbar-root {
   padding-bottom: 30px;
 }

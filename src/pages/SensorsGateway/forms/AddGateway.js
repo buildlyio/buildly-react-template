@@ -77,7 +77,10 @@ const AddGateway = ({
   const buttonText = editPage ? 'Save' : 'Add Tracker';
   const formTitle = editPage ? 'Edit Tracker' : 'Add Tracker';
 
-  const organization = getUser().organization.organization_uuid;
+  const user = getUser();
+  const organization = user.organization.organization_uuid;
+  const mapLanguage = user.map_language;
+  const mapRegion = user.map_region;
 
   useEffect(() => {
     if (!_.isEmpty(custodianData) && contactInfo) {
@@ -438,6 +441,8 @@ const AddGateway = ({
                           draggable: true,
                         },
                       ]}
+                      mapLanguage={mapLanguage}
+                      mapRegion={mapRegion}
                     />
                   </Grid>
                 </Grid>

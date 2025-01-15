@@ -11,7 +11,6 @@
 .custodianRow {
   align-items: flex-start !important;
   flex-direction: column;
-  margin-top: 10px;
 }
 
 .custodianAddressContainer {
@@ -67,6 +66,25 @@
   width: 48px !important;
 }
 
+.custodianAddressPredictions {
+  background: var(--color-palette-background-default);
+  width: 100%;
+  margin-left: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 6px 0px var(--color-palette-background-light2);
+}
+
+.custodianAddressPredictionsItem {
+  text-wrap: auto;
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--color-palette-background-light);
+}
+
+.custodianAddressPredictionsItem:last-child {
+  border-bottom: 0px;
+}
+
 .custodianSubmit {
   margin: 24px 0px 16px;
   border-radius: 18px;
@@ -77,24 +95,10 @@
     width: 70% !important;
     margin: auto;
   }
-
-  .custodianInputWithTooltip3 {
-    margin-top: -14px;
-  }
-}
-
-@media screen and (min-width: 600px) and (max-width: 960px) {
-  .custodianInputWithTooltip2 {
-    margin-top: -14px;
-  }
 }
 
 @media screen and (max-width: 600px) {
   .custodianSubmit2 {
     margin-top: -30px;
-  }
-
-  .custodianInputWithTooltip4 {
-    margin-top: 12px;
   }
 }

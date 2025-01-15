@@ -101,7 +101,6 @@ const Invoices = () => {
       const isCreationYear = parseInt(selectYear, 10) === creationDate.year();
       const isCurrentYear = parseInt(selectYear, 10) === currentYear;
       const months = [];
-      console.log(isCreationYear, isCurrentYear);
 
       MONTHS.forEach((mth, index) => {
         if (isCreationYear && !isCurrentYear && index >= creationDate.month()) {

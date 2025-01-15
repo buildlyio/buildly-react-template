@@ -327,6 +327,11 @@ const ReportingDetailTable = forwardRef((props, ref) => {
     </Typography>
   );
 
+  const displayThresholdData = (array, unit) => {
+    const sortedArray = _.orderBy(array, ['set_at'], ['desc']);
+    return sortedArray.map((item) => `${item.value} ${unit}`).join(', ');
+  };
+
   return (
     <div ref={ref}>
       {!_.isEmpty(selectedShipment) && (
@@ -421,7 +426,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
           </Grid>
           <Grid container className="reportingDetailTableBody">
             <Grid item xs={6} md={3} id="itemText">
-              {displayItemText('Maximum Temperature Threshold', `${maxTempThreshold}${tempDisplayUnit}`)}
+              {displayItemText('Maximum Temperature Threshold', `${displayThresholdData(selectedShipment.max_excursion_temp, tempDisplayUnit)}`)}
             </Grid>
             <Grid item xs={6} md={3} id="itemText">
               {displayItemText('Transit Time', dateDifference(selectedShipment.actual_time_of_departure, selectedShipment.actual_time_of_arrival))}
@@ -430,7 +435,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
               {displayItemText('Post-Transit/Storage Time', dateDifference(selectedShipment.actual_time_of_arrival, selectedShipment.actual_time_of_completion || selectedShipment.edit_date))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText">
-              {displayItemText('Minimum Temperature Threshold', `${minTempThreshold}${tempDisplayUnit}`)}
+              {displayItemText('Minimum Temperature Threshold', `${displayThresholdData(selectedShipment.min_excursion_temp, tempDisplayUnit)}`)}
             </Grid>
           </Grid>
           <Grid container className="reportingDetailTableBody">
@@ -463,11 +468,11 @@ const ReportingDetailTable = forwardRef((props, ref) => {
           </Grid>
           <Grid container className="reportingDetailTableBody">
             <Grid item xs={6} sm={4} md={3} id="itemText">
-              {displayItemText('Maximum Humidity Threshold', `${maxHumThreshold}%`)}
+              {displayItemText('Maximum Humidity Threshold', `${displayThresholdData(selectedShipment.max_excursion_humidity, '%')}`)}
             </Grid>
             {!isMobileDevice && <Grid item xs={0} sm={4} md={6} />}
             <Grid item xs={6} sm={4} md={3} id="itemText">
-              {displayItemText('Minumum Humidity Threshold', `${minHumThreshold}%`)}
+              {displayItemText('Minumum Humidity Threshold', `${displayThresholdData(selectedShipment.min_excursion_humidity, '%')}`)}
             </Grid>
           </Grid>
           <Grid container className="reportingDetailTableBody">
@@ -500,13 +505,13 @@ const ReportingDetailTable = forwardRef((props, ref) => {
           </Grid>
           <Grid container className="reportingDetailTableBody">
             <Grid item xs={6} md={3} id="itemText">
-              {displayItemText('Transit/Storage Shock Threshold', `${maxShockThreshold.toFixed(2)} G`)}
+              {displayItemText('Transit/Storage Shock Threshold', `${displayThresholdData(selectedShipment.shock_threshold, 'G')}`)}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
               {displayItemText('Transit/Storage Max. Shock', `${maxShockEntry} G`, displayTextColor(maxShockEntry, 'shock'))}
             </Grid>
             <Grid item xs={6} md={3} id="itemText">
-              {displayItemText('Transit/Storage Light Threshold', `${maxLightThreshold.toFixed(2)} LUX`)}
+              {displayItemText('Transit/Storage Light Threshold', `${displayThresholdData(selectedShipment.light_threshold, 'LUX')}`)}
             </Grid>
             <Grid item xs={6} md={3} id="itemText" fontWeight="700">
               {displayItemText('Transit/Storage Max. Light', `${maxLightEntry} LUX`, displayTextColor(maxLightEntry, 'light'))}

@@ -21,12 +21,15 @@ import profile from '@assets/profile.png';
 import Loader from '@components/Loader/Loader';
 import { getUser } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
+import { useQuery } from 'react-query';
 import useAlert from '@hooks/useAlert';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
 import { useUpdateUserMutation } from '@react-query/mutations/authUser/updateUserMutation';
 import { isTablet } from '@utils/mediaQuery';
 import '../TopBarStyles.css';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { MAP_LANGUAGES } from '@utils/mock';
 
 const Transition = forwardRef((props, ref) => <Slide direction="left" ref={ref} {...props} />);
 
@@ -37,8 +40,16 @@ const AccountSettings = ({ open, setOpen }) => {
   const [envOptions, setEnvOptions] = useState(user.env_alert_preferences);
   const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
   const timezone = useInput(user.user_timezone);
+  const mapLanguage = useInput(user.map_language);
+  const mapRegion = useInput(user.map_region);
   const [whatsappNumber, setWhatsappNumber] = useState(user.whatsApp_number || '');
   const [whatsappFocus, setWhatsappFocus] = useState(false);
+
+  const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
+    ['countries'],
+    () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
 
   const { mutate: updateUserMutation, isLoading: isUpdatingUser } = useUpdateUserMutation(null, displayAlert);
 
@@ -46,6 +57,8 @@ const AccountSettings = ({ open, setOpen }) => {
     setGeoOptions(user.geo_alert_preferences);
     setEnvOptions(user.env_alert_preferences);
     timezone.setValue(user.user_timezone);
+    mapLanguage.setValue(user.map_language);
+    mapRegion.setValue(user.map_region);
     setWhatsappNumber(user.whatsApp_number || '');
     setOpen(false);
   };
@@ -59,6 +72,8 @@ const AccountSettings = ({ open, setOpen }) => {
         && _.isEqual(envOptions.sms, user.env_alert_preferences.sms)
         && _.isEqual(envOptions.whatsApp, user.env_alert_preferences.whatsApp)
         && !timezone.hasChanged()
+        && !mapLanguage.hasChanged()
+        && !mapRegion.hasChanged()
         && whatsappNumber === user.whatsApp_number)
       || (geoOptions.whatsApp && !whatsappNumber)
       || (envOptions.whatsApp && !whatsappNumber)
@@ -77,11 +92,17 @@ const AccountSettings = ({ open, setOpen }) => {
       geo_alert_preferences: geoOptions,
       env_alert_preferences: envOptions,
     };
-    if (whatsappNumber) {
+    if (whatsappNumber !== user.whatsApp_number) {
       userData = { ...userData, whatsApp_number: whatsappNumber };
     }
-    if (timezone.value) {
+    if (timezone.hasChanged()) {
       userData = { ...userData, user_timezone: timezone.value };
+    }
+    if (mapLanguage.hasChanged()) {
+      userData = { ...userData, map_language: mapLanguage.value };
+    }
+    if (mapRegion.hasChanged()) {
+      userData = { ...userData, map_region: mapRegion.value };
     }
     updateUserMutation(userData);
   };
@@ -96,7 +117,7 @@ const AccountSettings = ({ open, setOpen }) => {
       TransitionComponent={Transition}
       className="accountSettingsDialog"
     >
-      {isUpdatingUser && <Loader open={isUpdatingUser} />}
+      {(isLoadingCountries || isUpdatingUser) && <Loader open={(isLoadingCountries || isUpdatingUser)} />}
       <DialogTitle className="accountSettingsDialogTitle">
         <IconButton className="accountSettingsCloseIcon" onClick={closeAccountSettings}>
           <CloseIcon fontSize="large" />
@@ -171,6 +192,51 @@ const AccountSettings = ({ open, setOpen }) => {
                   {tzOption.label}
                 </MenuItem>
               ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={6} sm={4} alignSelf="center">
+            <Typography variant="body1" fontWeight={500}>Map Language:</Typography>
+          </Grid>
+          <Grid item xs={6} sm={8}>
+            <TextField
+              className="timezone"
+              variant="outlined"
+              fullWidth
+              id="mapLanguage"
+              select
+              value={mapLanguage.value}
+              onChange={(e) => mapLanguage.setValue(e.target.value)}
+            >
+              {_.map(MAP_LANGUAGES, (item, index) => (
+                <MenuItem key={`${item.value}-${index}`} value={item.value}>
+                  {item.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={6} sm={4} alignSelf="center">
+            <Typography variant="body1" fontWeight={500}>Map Region:</Typography>
+          </Grid>
+          <Grid item xs={6} sm={8}>
+            <TextField
+              className="timezone"
+              variant="outlined"
+              fullWidth
+              id="mapRegion"
+              select
+              value={mapRegion.value}
+              onChange={(e) => mapRegion.setValue(e.target.value)}
+            >
+              {countriesData && _.map(_.sortBy(_.map(countriesData, (c) => _.pick(c, 'country', 'iso3'))),
+                (value, index) => (
+                  <MenuItem
+                    className="notranslate"
+                    key={`mapRegion${index}${value.country}`}
+                    value={value.iso3}
+                  >
+                    {value.country}
+                  </MenuItem>
+                ))}
             </TextField>
           </Grid>
         </Grid>

@@ -49,6 +49,8 @@ const Shipment = ({ history }) => {
   const user = getUser();
   const organization = user.organization.organization_uuid;
   const userLanguage = user.user_language;
+  const mapLanguage = user.map_language;
+  const mapRegion = user.map_region;
 
   const { displayAlert } = useAlert();
   const { data } = useStore();
@@ -754,6 +756,8 @@ const Shipment = ({ history }) => {
             unitOfMeasure={unitData}
             setSelectedCluster={setSelectedCluster}
             selectedCluster={selectedCluster}
+            mapLanguage={mapLanguage}
+            mapRegion={mapRegion}
           />
         </Grid>
         <Grid item xs={12} className="shipmentDataTableHeader">

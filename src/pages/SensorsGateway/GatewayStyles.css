@@ -64,7 +64,6 @@
 .gatewayRow {
   align-items: flex-start !important;
   flex-direction: column;
-  margin-top: 10px;
 }
 
 .gatewayPhoneLabel {
@@ -120,6 +119,25 @@
 .gatewayFlagDropdown .selected-flag {
   padding: 0 12px !important;
   width: 48px !important;
+}
+
+.gatewayAddressPredictions {
+  background: var(--color-palette-background-default);
+  width: 100%;
+  margin-left: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 6px 0px var(--color-palette-background-light2);
+}
+
+.gatewayAddressPredictionsItem {
+  text-wrap: auto;
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--color-palette-background-light);
+}
+
+.gatewayAddressPredictionsItem:last-child {
+  border-bottom: 0px;
 }
 
 .gatewayAccordion {
@@ -251,27 +269,13 @@
     margin: auto;
   }
 
-  .gatewayInputWithTooltip3 {
-    margin-top: -14px;
-  }
-
   .gatewayInventoryContainer {
     margin-left: 20px;
-  }
-}
-
-@media screen and (min-width: 600px) and (max-width: 960px) {
-  .gatewayInputWithTooltip2 {
-    margin-top: -14px;
   }
 }
 
 @media screen and (max-width: 600px) {
   .gatewaySubmit2 {
     margin-top: -30px;
-  }
-
-  .gatewayInputWithTooltip4 {
-    margin-top: 12px;
   }
 }

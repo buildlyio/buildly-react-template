@@ -138,3 +138,23 @@
   margin: 0px 0px 16px;
   border-radius: 8px;
 }
+
+/* Recipient Styles */
+.recipientAddressPredictions {
+  background: var(--color-palette-background-default);
+  width: 100%;
+  margin-left: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 6px 0px var(--color-palette-background-light2);
+}
+
+.recipientAddressPredictionsItem {
+  text-wrap: auto;
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--color-palette-background-light);
+}
+
+.recipientAddressPredictionsItem:last-child {
+  border-bottom: 0px;
+}

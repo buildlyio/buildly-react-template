@@ -1,13 +1,13 @@
+/* eslint-disable no-console */
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
-import moment from 'moment-timezone';
 import {
   Button,
-  TextField,
-  Grid,
-  MenuItem,
   Card,
   CardContent,
+  Grid,
+  MenuItem,
+  TextField,
   Typography,
 } from '@mui/material';
 import Loader from '@components/Loader/Loader';
@@ -15,7 +15,7 @@ import FormModal from '@components/Modal/FormModal';
 import { getUser } from '@context/User.context';
 import { useInput } from '@hooks/useInput';
 import { validators } from '@utils/validators';
-import { isMobile, isDesktop } from '@utils/mediaQuery';
+import { isMobile, isDesktop, isDesktop2 } from '@utils/mediaQuery';
 import { getCustodianFormattedRow, GATEWAY_STATUS } from '@utils/constants';
 import { useAddCustodianMutation } from '@react-query/mutations/custodians/addCustodianMutation';
 import useAlert from '@hooks/useAlert';
@@ -23,12 +23,12 @@ import { useStore } from '@zustand/timezone/timezoneStore';
 import '../GatewayStyles.css';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import usePlacesService from 'react-google-autocomplete/lib/usePlacesAutocompleteService';
+import Geocode from 'react-geocode';
 
 const AddShipper = ({
   open,
   setOpen,
-  unitData,
-  countriesData,
   orgData,
   custodianTypesData,
 }) => {
@@ -38,6 +38,17 @@ const AddShipper = ({
 
   const [openConfirmModal, setConfirmModal] = useState(false);
 
+  Geocode.setApiKey(window.env.GEO_CODE_API);
+  Geocode.setLanguage('en');
+
+  const {
+    placePredictions,
+    getPlacePredictions,
+    isPlacePredictionsLoading,
+  } = usePlacesService({
+    apiKey: window.env.MAP_API_KEY,
+  });
+
   const company = useInput('', { required: true });
   const abbrevation = useInput('');
   const glnNumber = useInput('');
@@ -46,7 +57,7 @@ const AddShipper = ({
   const email = useInput('', { required: true });
   const country = useInput('', { required: true });
   const state = useInput('', { required: true });
-  const address_1 = useInput('', { required: true });
+  const [address1, setAddress1] = useState('');
   const address_2 = useInput('');
   const city = useInput('', { required: true });
   const zip = useInput('', { required: true });
@@ -54,19 +65,6 @@ const AddShipper = ({
   const [number, setNumber] = useState('');
   const [numberFocus, setNumberFocus] = useState(false);
   const [formError, setFormError] = useState({});
-
-  useEffect(() => {
-    const defaultCountry = !_.isEmpty(unitData) && _.find(
-      unitData,
-      (unit) => _.toLower(unit.unit_of_measure_for) === 'country',
-    ).unit_of_measure;
-    if (!country.value && defaultCountry && !_.isEmpty(countriesData)) {
-      const found = _.find(countriesData, { country: defaultCountry });
-      if (found) {
-        country.setValue(found.iso3);
-      }
-    }
-  }, [unitData, countriesData]);
 
   const closeFormModal = () => {
     const dataHasChanged = (
@@ -78,7 +76,7 @@ const AddShipper = ({
       || city.hasChanged()
       || state.hasChanged()
       || zip.hasChanged()
-      || address_1.hasChanged()
+      || !_.isEqual(address1, '')
       || address_2.hasChanged()
     );
     if (dataHasChanged) {
@@ -112,7 +110,7 @@ const AddShipper = ({
     const contactFormValue = {
       country: country.value,
       state: state.value,
-      address1: address_1.value,
+      address1,
       address2: address_2.value,
       city: city.value,
       postal_code: zip.value,
@@ -182,7 +180,7 @@ const AddShipper = ({
       || !email.value
       || _.isEmpty(number)
       || number.length < 11
-      || !address_1.value
+      || _.isEqual(address1, '')
       || !state.value
       || !country.value
       || !city.value
@@ -197,6 +195,27 @@ const AddShipper = ({
       }
     });
     return errorExists;
+  };
+
+  const handleSelectAddress = (address) => {
+    setAddress1(`${address.terms[0].value}, ${address.terms[1].value}`);
+    address_2.setValue(`${address.terms[2].value}`);
+    state.setValue(`${address.terms[address.terms.length - 2].value}`);
+    country.setValue(`${address.terms[address.terms.length - 1].value}`);
+    Geocode.fromAddress(address.description)
+      .then(({ results }) => {
+        const { lat, lng } = results[0].geometry.location;
+        Geocode.fromLatLng(lat, lng)
+          .then((response) => {
+            const addressComponents = response.results[0].address_components;
+            const locality = addressComponents.find((component) => component.types.includes('administrative_area_level_3'))?.long_name;
+            const zipCode = addressComponents.find((component) => component.types.includes('postal_code'))?.long_name;
+            city.setValue(locality);
+            zip.setValue(zipCode);
+          })
+          .catch(console.error);
+      })
+      .catch(console.error);
   };
 
   return (
@@ -238,7 +257,7 @@ const AddShipper = ({
               item
               xs={12}
               md={6}
-              style={{ paddingTop: isDesktop() ? 39 : 10 }}
+              style={{ paddingTop: isDesktop2() ? 39 : 10 }}
             >
               <TextField
                 variant="outlined"
@@ -269,7 +288,7 @@ const AddShipper = ({
                 value="Shipper"
               />
             </Grid>
-            <Grid className="gatewayInputWithTooltip gatewayInputWithTooltip4" item xs={12} md={6}>
+            <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
               <TextField
                 variant="filled"
                 margin="normal"
@@ -324,7 +343,7 @@ const AddShipper = ({
                   />
                 </Grid>
               </Grid>
-              <Grid container spacing={isDesktop() ? 2 : 0}>
+              <Grid container mt={0} spacing={isDesktop() ? 2 : 0}>
                 <Grid className="gatewayInputWithTooltip" item xs={12}>
                   <TextField
                     variant="outlined"
@@ -342,7 +361,7 @@ const AddShipper = ({
                   />
                 </Grid>
               </Grid>
-              <Grid container spacing={isDesktop() ? 2 : 0}>
+              <Grid container mt={0} spacing={isDesktop() ? 2 : 0}>
                 <Grid className="gatewayInputWithTooltip gatewayRow" item xs={12}>
                   <Typography className="gatewayPhoneLabel">Phone Number *</Typography>
                   <PhoneInput
@@ -359,78 +378,7 @@ const AddShipper = ({
                   />
                 </Grid>
               </Grid>
-              <Grid container spacing={isDesktop() ? 2 : 0}>
-                <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
-                  <TextField
-                    className="notranslate"
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="country"
-                    select
-                    required
-                    label={<span className="translate">Country</span>}
-                    error={formError.country && formError.country.error}
-                    helperText={formError.country ? formError.country.message : ''}
-                    onBlur={(e) => handleBlur(e, 'required', country, 'country')}
-                    value={country.value}
-                    onChange={(e) => {
-                      country.setValue(e.target.value);
-                      state.setValue('');
-                      address_1.setValue('');
-                      address_2.setValue('');
-                      city.setValue('');
-                      zip.setValue('');
-                    }}
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {countriesData && _.map(_.sortBy(_.map(countriesData, (c) => _.pick(c, 'country', 'iso3'))),
-                      (value, index) => (
-                        <MenuItem
-                          className="notranslate"
-                          key={`custodianCountry${index}${value.country}`}
-                          value={value.iso3}
-                        >
-                          {value.country}
-                        </MenuItem>
-                      ))}
-                  </TextField>
-                </Grid>
-                <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
-                  <TextField
-                    variant="outlined"
-                    margin="normal"
-                    fullWidth
-                    id="state"
-                    select
-                    required
-                    label="State/Province"
-                    error={formError.state && formError.state.error}
-                    helperText={formError.state ? formError.state.message : ''}
-                    onBlur={(e) => handleBlur(e, 'required', state, 'state')}
-                    {...state.bind}
-                    disabled={countriesData && !country.value}
-                    placeholder={
-                      countriesData && !country.value
-                        ? 'Select country for states options'
-                        : ''
-                    }
-                  >
-                    <MenuItem value="">Select</MenuItem>
-                    {countriesData && country.value && _.map(_.sortBy(_.find(countriesData, { iso3: country.value }).states),
-                      (value, index) => (
-                        <MenuItem
-                          className="notranslate"
-                          key={`custodianState${index}${value}`}
-                          value={value.state_code}
-                        >
-                          {value.name}
-                        </MenuItem>
-                      ))}
-                  </TextField>
-                </Grid>
-              </Grid>
-              <Grid container spacing={isDesktop() ? 2 : 0}>
+              <Grid container mt={0} spacing={isDesktop() ? 2 : 0}>
                 <Grid className="gatewayInputWithTooltip" item xs={12}>
                   <TextField
                     variant="outlined"
@@ -441,14 +389,33 @@ const AddShipper = ({
                     label="Address Line 1"
                     name="address_1"
                     autoComplete="address_1"
-                    disabled={!country.value || !state.value}
-                    error={formError.address_1 && formError.address_1.error}
-                    helperText={formError.address_1 ? formError.address_1.message : ''}
-                    onBlur={(e) => handleBlur(e, 'required', address_1)}
-                    {...address_1.bind}
+                    value={address1}
+                    onChange={(e) => {
+                      getPlacePredictions({
+                        input: e.target.value,
+                      });
+                      setAddress1(e.target.value);
+                    }}
                   />
                 </Grid>
-                <Grid className="gatewayInputWithTooltip gatewayInputWithTooltip3" item xs={12}>
+                <div className={!_.isEmpty(placePredictions) ? 'gatewayAddressPredictions' : ''}>
+                  {placePredictions && _.map(placePredictions, (value, index) => (
+                    <MenuItem
+                      className="gatewayAddressPredictionsItem notranslate"
+                      key={`gatewayState${index}${value}`}
+                      value={value.description}
+                      onClick={() => {
+                        handleSelectAddress(value);
+                        getPlacePredictions({ input: '' });
+                      }}
+                    >
+                      {value.description}
+                    </MenuItem>
+                  ))}
+                </div>
+              </Grid>
+              <Grid container mt={0} spacing={isDesktop() ? 2 : 0}>
+                <Grid className="gatewayInputWithTooltip" item xs={12}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -457,12 +424,12 @@ const AddShipper = ({
                     label="Address Line 2"
                     name="address_2"
                     autoComplete="address_2"
-                    disabled={!country.value || !state.value}
+                    disabled
                     {...address_2.bind}
                   />
                 </Grid>
               </Grid>
-              <Grid container spacing={isDesktop() ? 2 : 0}>
+              <Grid container mt={0} spacing={isDesktop() ? 2 : 0}>
                 <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
                   <TextField
                     variant="outlined"
@@ -472,14 +439,39 @@ const AddShipper = ({
                     label="City"
                     name="city"
                     autoComplete="city"
-                    disabled={!country.value || !state.value}
-                    error={formError.city && formError.city.error}
-                    helperText={formError.city ? formError.city.message : ''}
-                    onBlur={(e) => handleBlur(e, 'required', city)}
+                    disabled
                     {...city.bind}
                   />
                 </Grid>
-                <Grid className="gatewayInputWithTooltip gatewayInputWithTooltip2" item xs={12} md={6}>
+                <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    id="state"
+                    label="State/Province"
+                    name="state"
+                    autoComplete="state"
+                    disabled
+                    {...state.bind}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container mt={0} spacing={isDesktop() ? 2 : 0}>
+                <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    fullWidth
+                    id="country"
+                    label="Country"
+                    name="country"
+                    autoComplete="country"
+                    disabled
+                    {...country.bind}
+                  />
+                </Grid>
+                <Grid className="gatewayInputWithTooltip" item xs={12} md={6}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -488,10 +480,7 @@ const AddShipper = ({
                     label="ZIP/Postal Code"
                     name="zip"
                     autoComplete="zip"
-                    disabled={!country.value || !state.value}
-                    error={formError.zip && formError.zip.error}
-                    helperText={formError.zip ? formError.zip.message : ''}
-                    onBlur={(e) => handleBlur(e, 'required', zip)}
+                    disabled
                     {...zip.bind}
                   />
                 </Grid>

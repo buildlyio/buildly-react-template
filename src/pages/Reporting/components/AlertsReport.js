@@ -142,6 +142,7 @@ const AlertsReport = forwardRef((props, ref) => {
           </Typography>
         </div>
         <DataTableWrapper
+          className="reportingAlertDataTable"
           noSpace
           hideAddButton
           filename="ShipmentAlerts"

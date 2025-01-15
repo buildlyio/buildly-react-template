@@ -100,6 +100,8 @@ const CreateShipment = ({ history, location }) => {
   const organizationUuid = organization && organization.organization_uuid;
   const userLanguage = user.user_language;
   const isAdmin = checkForAdmin(user) || checkForGlobalAdmin(user);
+  const mapLanguage = user.map_language;
+  const mapRegion = user.map_region;
 
   const { displayAlert } = useAlert();
   const { data } = useStore();
@@ -909,7 +911,7 @@ const CreateShipment = ({ history, location }) => {
     };
 
     if (!draft && (
-      (_.isEqual('available', updateGateway.gateway_status) && _.isEqual([], updateGateway.shipment_ids))
+      (_.isEqual('available', updateGateway.gateway_status) && (!updateGateway.shipment_ids || _.isEqual([], updateGateway.shipment_ids)))
       || status.hasChanged()
       || _.includes(_.map(ADMIN_SHIPMENT_STATUS, 'value'), status.value)
     )) {
@@ -1192,6 +1194,8 @@ const CreateShipment = ({ history, location }) => {
                         },
                       ]}
                       unitOfMeasure={unitData}
+                      mapLanguage={mapLanguage}
+                      mapRegion={mapRegion}
                     />
                   </Grid>
                 </Grid>
@@ -1263,6 +1267,8 @@ const CreateShipment = ({ history, location }) => {
                         },
                       ]}
                       unitOfMeasure={unitData}
+                      mapLanguage={mapLanguage}
+                      mapRegion={mapRegion}
                     />
                   </Grid>
                 </Grid>

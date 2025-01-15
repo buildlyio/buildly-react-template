@@ -64,7 +64,10 @@ import './ReportingStyles.css';
 const Reporting = () => {
   const location = useLocation();
   const theme = useTheme();
-  const organization = getUser().organization.organization_uuid;
+  const user = getUser();
+  const organization = user.organization.organization_uuid;
+  const mapLanguage = user.map_language;
+  const mapRegion = user.map_region;
   const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
 
   const [locShipmentID, setLocShipmentID] = useState('');
@@ -370,6 +373,50 @@ const Reporting = () => {
     document.body.removeChild(link);
   };
 
+  const setThresholdsValues = (label, max_data, min_data, padding, unit) => {
+    const timestamps = Array.from(
+      new Set([
+        ...max_data.map((x) => x.set_at),
+        ...(!_.isEmpty(min_data) ? min_data.map((x) => x.set_at) : []),
+      ]),
+    ).sort();
+
+    let previousMax = null;
+    let previousMin = null;
+
+    const richTextResult = [];
+
+    timestamps.forEach((timestamp, index) => {
+      const maxItem = max_data.find((item) => item.set_at === timestamp);
+      const minItem = !_.isEmpty(min_data) && min_data.find((item) => item.set_at === timestamp);
+
+      const currentMax = maxItem ? maxItem.value : previousMax;
+      const currentMin = !_.isEmpty(min_data) ? (minItem ? minItem.value : previousMin) : null;
+
+      if (currentMax !== null) previousMax = currentMax;
+      if (currentMin !== null) previousMin = currentMin;
+
+      if (index === 0) {
+        richTextResult.push({ text: `${label}: ` });
+      } else {
+        richTextResult.push({ text: `\n${padding}` });
+      }
+
+      richTextResult.push({
+        text: `${currentMax}${unit} `,
+        font: { color: { argb: theme.palette.error.main.replace('#', '') } },
+      });
+
+      if (!_.isEmpty(min_data)) {
+        richTextResult.push({
+          text: `${currentMin}${unit}`,
+          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
+        });
+      }
+    });
+    return richTextResult;
+  };
+
   const downloadExcel = async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sensor Report Data');
@@ -457,19 +504,11 @@ const Reporting = () => {
       ],
     };
 
-    descriptionRow1.getCell(9).value = {
-      richText: [
-        { text: 'Temperature:' },
-        {
-          text: ` ${_.orderBy(selectedShipment.max_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))} `,
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: ` ${_.orderBy(selectedShipment.min_excursion_temp, ['set_at'], ['desc'])[0].value}${tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))} `,
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
+    descriptionRow1.getCell(9).value = { richText: setThresholdsValues('Temperature', selectedShipment.max_excursion_temp, selectedShipment.min_excursion_temp, '                         ', tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))) };
+
+    descriptionRow1.eachCell((cell) => {
+      cell.alignment = { wrapText: true, vertical: 'top' };
+    });
 
     const descriptionRow2 = worksheet.addRow([
       '',
@@ -489,19 +528,11 @@ const Reporting = () => {
       ],
     };
 
-    descriptionRow2.getCell(9).value = {
-      richText: [
-        { text: 'Humidity:' },
-        {
-          text: ` ${_.orderBy(selectedShipment.max_excursion_humidity, ['set_at'], ['desc'])[0].value}% `,
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-        {
-          text: ` ${_.orderBy(selectedShipment.min_excursion_humidity, ['set_at'], ['desc'])[0].value}% `,
-          font: { color: { argb: theme.palette.info.main.replace('#', '') } },
-        },
-      ],
-    };
+    descriptionRow2.getCell(9).value = { richText: setThresholdsValues('Humidity', selectedShipment.max_excursion_humidity, selectedShipment.min_excursion_humidity, '                   ', '%') };
+
+    descriptionRow2.eachCell((cell) => {
+      cell.alignment = { wrapText: true, vertical: 'top' };
+    });
 
     const descriptionRow3 = worksheet.addRow([
       'Grey indicates Transit',
@@ -523,15 +554,11 @@ const Reporting = () => {
       }
     });
 
-    descriptionRow3.getCell(9).value = {
-      richText: [
-        { text: 'Shock:' },
-        {
-          text: ` ${_.orderBy(selectedShipment.shock_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} G`,
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-      ],
-    };
+    descriptionRow3.getCell(9).value = { richText: setThresholdsValues('Shock', selectedShipment.shock_threshold, null, '             ', 'G') };
+
+    descriptionRow3.eachCell((cell) => {
+      cell.alignment = { wrapText: true, vertical: 'top' };
+    });
 
     const descriptionRow4 = worksheet.addRow([]);
 
@@ -539,15 +566,11 @@ const Reporting = () => {
     descriptionRow4.getCell(6).value = _.size(sortedCustodiansArray) > 3 ? sortedCustodiansArray[3].custodian_name : '';
     descriptionRow4.getCell(7).value = _.size(sortedCustodiansArray) > 3 ? sortedCustodiansArray[3].custodian_address : '';
 
-    descriptionRow4.getCell(9).value = {
-      richText: [
-        { text: 'Light:' },
-        {
-          text: ` ${_.orderBy(selectedShipment.light_threshold, ['set_at'], ['desc'])[0].value.toFixed(2)} LUX`,
-          font: { color: { argb: theme.palette.error.main.replace('#', '') } },
-        },
-      ],
-    };
+    descriptionRow4.getCell(9).value = { richText: setThresholdsValues('Light', selectedShipment.light_threshold, null, '           ', 'LUX') };
+
+    descriptionRow4.eachCell((cell) => {
+      cell.alignment = { wrapText: true, vertical: 'top' };
+    });
 
     sortedCustodiansArray.forEach((custodian, index) => {
       if (index > 3) {
@@ -830,16 +853,20 @@ const Reporting = () => {
     }
 
     worksheet.columns.forEach((column, index) => {
-      let maxLength = 0;
-      column.eachCell({ includeEmpty: true }, (cell) => {
-        const cellValue = cell.value
-          ? cell.value.richText
-            ? cell.value.richText.map((obj) => obj.text).join('')
-            : cell.value.toString()
-          : '';
-        maxLength = Math.max(maxLength, cellValue.length);
-      });
-      column.width = maxLength + 2;
+      if (index + 1 === 9) {
+        column.width = 25;
+      } else {
+        let maxLength = 0;
+        column.eachCell({ includeEmpty: true }, (cell) => {
+          const cellValue = cell.value
+            ? cell.value.richText
+              ? cell.value.richText.map((obj) => obj.text).join('')
+              : cell.value.toString()
+            : '';
+          maxLength = Math.max(maxLength, cellValue.length);
+        });
+        column.width = maxLength + 2;
+      }
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
@@ -1043,6 +1070,8 @@ const Reporting = () => {
             setSelectedMarker={setSelectedMarker}
             containerStyle={{ height: '625px' }}
             unitOfMeasure={unitData}
+            mapLanguage={mapLanguage}
+            mapRegion={mapRegion}
           />
         </Grid>
       </Grid>

@@ -93,8 +93,6 @@ const Custodian = ({ history, redirectTo }) => {
       data: item,
       contactData: contactObj,
       custodianTypesData,
-      countriesData,
-      unitData,
       orgData,
     });
   };
@@ -115,8 +113,6 @@ const Custodian = ({ history, redirectTo }) => {
     history.push(addCustodianPath, {
       from: redirectTo || routes.CUSTODIANS,
       custodianTypesData,
-      countriesData,
-      unitData,
       orgData,
     });
   };

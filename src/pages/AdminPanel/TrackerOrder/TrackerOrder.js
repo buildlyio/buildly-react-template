@@ -174,16 +174,14 @@ const TrackerOrder = ({ redirectTo, history }) => {
 
             <Grid item xs={12} md={6}>
               <Typography className="trackerOrderBold">
-                Date:
-                {'  '}
+                {'Date: '}
                 <span className="trackerOrderNormalFont">{selectedOrder && moment(selectedOrder.order_date).tz(timeZone).format(`${dateFormat} ${timeFormat}`)}</span>
               </Typography>
             </Grid>
 
             <Grid item xs={12} md={6} className="orderSummaryOrderNumber">
               <Typography className="trackerOrderBold">
-                Order Number:
-                {'  '}
+                {'Order Number: '}
                 <span className="trackerOrderNormalFont">{selectedOrder && selectedOrder.order_number}</span>
               </Typography>
             </Grid>
@@ -191,8 +189,7 @@ const TrackerOrder = ({ redirectTo, history }) => {
             {selectedOrder && _.map(selectedOrder.order_type, (sot, index) => (
               <Grid item xs={12} mt={1} key={`${index}-${sot}`}>
                 <Typography className="trackerOrderBold">
-                  Number of Devices:
-                  {'  '}
+                  {'Number of Devices: '}
                   <span className="trackerOrderNormalFont">{selectedOrder && selectedOrder.order_quantity[index]}</span>
                 </Typography>
 

@@ -78,7 +78,11 @@
 }
 
 .shipmentDataTable {
-  margin-top: -40px;
+  margin-top: -64px;
+}
+
+.shipmentDataTable .MuiGrid-root .MuiPaper-root {
+  border-radius: 0px !important;
 }
 
 .shipmentDataTable .MuiTableCell-root {

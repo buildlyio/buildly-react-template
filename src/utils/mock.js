@@ -66,6 +66,17 @@ export const LANGUAGES = [
   { value: 'it', label: 'Italian' },
 ];
 
+export const MAP_LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'pt', label: 'Portuguese (Brazil)' },
+  { value: 'es', label: 'Spanish' },
+  { value: 'de', label: 'German' },
+  { value: 'fr', label: 'French' },
+  { value: 'ja', label: 'Japanese' },
+  { value: 'it', label: 'Italian' },
+  { value: 'ar', label: 'Arabic' },
+];
+
 export const GATEWAY_ACTIONS = [
   { value: 'Change Status', label: 'Change Status' },
   { value: 'Remove Tracker', label: 'Remove Tracker' },

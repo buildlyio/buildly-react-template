@@ -9,7 +9,7 @@ export const useAddTrackerOrderMutation = (history, redirectTo, displayAlert, se
       const responses = await Promise.all(
         trackerOrderData.map((tod) => httpService.makeRequest(
           'post',
-          `${window.env.API_URL}shipment/tracker_order/`,
+          `${window.env.SHIPMENT_URL}tracker_order/`,
           tod,
         )),
       );

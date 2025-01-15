@@ -41,6 +41,8 @@ export const MapComponent = (props) => {
     containerStyle,
     setSelectedCluster,
     selectedCluster,
+    mapLanguage,
+    mapRegion,
   } = props;
 
   const [center, setCenter] = useState({ lat: 47.606209, lng: -122.332069 });
@@ -53,6 +55,8 @@ export const MapComponent = (props) => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: window.env.MAP_API_KEY,
     libraries,
+    language: mapLanguage || 'en',
+    region: (mapRegion === 'MAR' && 'MA') || 'USA',
   });
 
   useEffect(() => {
@@ -87,7 +91,7 @@ export const MapComponent = (props) => {
         setMapZoom(18);
       } else if (!_.isEmpty(allMarkers)) {
         const allMarkerItems = [].concat(...allMarkers);
-        const countries = allMarkerItems.map((item) => item && item.country);
+        const countries = allMarkerItems.map((item) => item && item.country).filter((item) => item !== null);
         const uniqueCountries = [...new Set(countries)];
         if (uniqueCountries.length === 1) {
           setMapCenter(uniqueCountries[0]);
@@ -126,7 +130,7 @@ export const MapComponent = (props) => {
 
     if (address) {
       Geocode.setApiKey(window.env.GEO_CODE_API);
-      Geocode.setLanguage('en');
+      Geocode.setLanguage(mapLanguage || 'en');
       Geocode.fromAddress(address).then(
         (response) => {
           const { lat, lng } = response.results[0].geometry.location;
