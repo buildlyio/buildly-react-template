@@ -24,6 +24,7 @@ import { useEditGatewayMutation } from '@react-query/mutations/sensorGateways/ed
 import useAlert from '@hooks/useAlert';
 import { useStore } from '@zustand/timezone/timezoneStore';
 import '../GatewayStyles.css';
+import { LANGUAGES } from '@utils/mock';
 
 const AddGateway = ({
   history,
@@ -38,7 +39,7 @@ const AddGateway = ({
 
   const redirectTo = location.state && location.state.from;
   const {
-    gatewayTypesData, unitData, custodianData, contactInfo,
+    gatewayTypesData, unitData, custodianData, contactInfo, countriesData,
   } = location.state || {};
 
   const editPage = location.state && location.state.type === 'edit';
@@ -81,6 +82,15 @@ const AddGateway = ({
   const organization = user.organization.organization_uuid;
   const mapLanguage = user.map_language;
   const mapRegion = user.map_region;
+
+  const country = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
+    : 'United States';
+  const language = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language')).unit_of_measure
+    : 'English';
+  const organizationCountry = _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()) && _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()).iso3;
+  const organizationLanguage = _.find(LANGUAGES, (item) => item.label.toLowerCase() === language.toLowerCase()).value;
 
   useEffect(() => {
     if (!_.isEmpty(custodianData) && contactInfo) {
@@ -441,8 +451,8 @@ const AddGateway = ({
                           draggable: true,
                         },
                       ]}
-                      mapLanguage={mapLanguage}
-                      mapRegion={mapRegion}
+                      mapLanguage={!_.isEmpty(mapLanguage) ? mapLanguage : organizationLanguage}
+                      mapRegion={!_.isEmpty(mapRegion) ? mapRegion : organizationCountry}
                     />
                   </Grid>
                 </Grid>

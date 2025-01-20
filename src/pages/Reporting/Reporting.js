@@ -31,6 +31,7 @@ import MapComponent from '@components/MapComponent/MapComponent';
 import { getUser } from '@context/User.context';
 import useAlert from '@hooks/useAlert';
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
 import { getItemQuery } from '@react-query/queries/items/getItemQuery';
 import { getItemTypeQuery } from '@react-query/queries/items/getItemTypeQuery';
 import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
@@ -60,6 +61,7 @@ import SensorReport from './components/SensorReport';
 import GenerateReport from './components/GenerateReport';
 import ReportGraph from './components/ReportGraph';
 import './ReportingStyles.css';
+import { LANGUAGES } from '@utils/mock';
 
 const Reporting = () => {
   const location = useLocation();
@@ -106,6 +108,12 @@ const Reporting = () => {
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
     () => getUnitQuery(organization, displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
+  const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
+    ['countries'],
+    () => getCountriesQuery(displayAlert),
     { refetchOnWindowFocus: false },
   );
 
@@ -183,6 +191,14 @@ const Reporting = () => {
   const timeFormat = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time'))
     ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'time')).unit_of_measure
     : '';
+  const country = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
+    : 'United States';
+  const language = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language')).unit_of_measure
+    : 'English';
+  const organizationCountry = _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()) && _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()).iso3;
+  const organizationLanguage = _.find(LANGUAGES, (item) => item.label.toLowerCase() === language.toLowerCase()).value;
 
   useEffect(() => {
     if (location.search) {
@@ -879,43 +895,27 @@ const Reporting = () => {
     document.body.removeChild(link);
   };
 
+  const isLoaded = isLoadingShipments
+    || isLoadingUnits
+    || isLoadingCountries
+    || isLoadingItems
+    || isLoadingItemTypes
+    || isLoadingCustodians
+    || isLoadingContact
+    || isLoadingAllGateways
+    || isLoadingCustodies
+    || isLoadingSensorAlerts
+    || isLoadingSensorReports
+    || isLoading
+    || isFetchingShipments
+    || isFetchingAllGateways
+    || isFetchingSensorAlerts
+    || isFetchingSensorReports
+    || isLoadingSensorProcessedData;
+
   return (
     <Box mt={5} mb={5}>
-      {(isLoadingShipments
-        || isLoadingUnits
-        || isLoadingItems
-        || isLoadingItemTypes
-        || isLoadingCustodians
-        || isLoadingContact
-        || isLoadingAllGateways
-        || isLoadingCustodies
-        || isLoadingSensorAlerts
-        || isLoadingSensorReports
-        || isLoading
-        || isFetchingShipments
-        || isFetchingAllGateways
-        || isFetchingSensorAlerts
-        || isFetchingSensorReports
-        || isLoadingSensorProcessedData)
-        && (
-          <Loader open={isLoadingShipments
-            || isLoadingUnits
-            || isLoadingItems
-            || isLoadingItemTypes
-            || isLoadingCustodians
-            || isLoadingContact
-            || isLoadingAllGateways
-            || isLoadingCustodies
-            || isLoadingSensorAlerts
-            || isLoadingSensorReports
-            || isLoading
-            || isFetchingShipments
-            || isFetchingAllGateways
-            || isFetchingSensorAlerts
-            || isFetchingSensorReports
-            || isLoadingSensorProcessedData}
-          />
-        )}
+      {isLoaded && <Loader open={isLoaded} />}
       <Box className="reportingDashboardContainer">
         <Typography className="reportingDashboardHeading" variant="h4">
           Reporting
@@ -1060,19 +1060,21 @@ const Reporting = () => {
               ) : 'Map View'}
             </Typography>
           </div>
-          <MapComponent
-            isMarkerShown={!_.isEmpty(markers)}
-            showPath
-            screenshotMapCenter
-            noInitialInfo
-            markers={markers}
-            zoom={4}
-            setSelectedMarker={setSelectedMarker}
-            containerStyle={{ height: '625px' }}
-            unitOfMeasure={unitData}
-            mapLanguage={mapLanguage}
-            mapRegion={mapRegion}
-          />
+          {!isLoaded && (
+            <MapComponent
+              isMarkerShown={!_.isEmpty(markers)}
+              showPath
+              screenshotMapCenter
+              noInitialInfo
+              markers={markers}
+              zoom={4}
+              setSelectedMarker={setSelectedMarker}
+              containerStyle={{ height: '625px' }}
+              unitOfMeasure={unitData}
+              mapLanguage={!_.isEmpty(mapLanguage) ? mapLanguage : organizationLanguage}
+              mapRegion={!_.isEmpty(mapRegion) ? mapRegion : organizationCountry}
+            />
+          )}
         </Grid>
       </Grid>
       <Grid container className="reportingContainer" sx={{ marginTop: _.isEmpty(selectedShipment) ? 4 : -1 }}>

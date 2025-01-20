@@ -34,6 +34,7 @@ import { getShipmentsQuery } from '@react-query/queries/shipments/getShipmentsQu
 import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQuery';
 import { getItemQuery } from '@react-query/queries/items/getItemQuery';
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
 import { getAllGatewayQuery } from '@react-query/queries/sensorGateways/getAllGatewayQuery';
 import { getCustodyQuery } from '@react-query/queries/custodians/getCustodyQuery';
 import { getSensorReportQuery } from '@react-query/queries/sensorGateways/getSensorReportQuery';
@@ -41,7 +42,7 @@ import { getSensorAlertQuery } from '@react-query/queries/sensorGateways/getSens
 import useAlert from '@hooks/useAlert';
 import { useStore } from '@zustand/timezone/timezoneStore';
 import './ShipmentStyles.css';
-import { TIVE_GATEWAY_TIMES } from '@utils/mock';
+import { TIVE_GATEWAY_TIMES, LANGUAGES } from '@utils/mock';
 import { calculateLatLngBounds } from '@utils/utilMethods';
 
 const Shipment = ({ history }) => {
@@ -95,6 +96,12 @@ const Shipment = ({ history }) => {
     { refetchOnWindowFocus: false },
   );
 
+  const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
+    ['countries'],
+    () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
+  );
+
   const { data: allGatewayData, isLoading: isLoadingAllGateways, isFetching: isFetchingAllGateways } = useQuery(
     ['allGateways'],
     () => getAllGatewayQuery(displayAlert),
@@ -128,6 +135,15 @@ const Shipment = ({ history }) => {
     },
   );
 
+  const country = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
+    : 'United States';
+  const language = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language')).unit_of_measure
+    : 'English';
+  const organizationCountry = _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()) && _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()).iso3;
+  const organizationLanguage = _.find(LANGUAGES, (item) => item.label.toLowerCase() === language.toLowerCase()).value;
+
   const {
     data: reportData2,
     isLoading: isLoadingReports2,
@@ -150,6 +166,7 @@ const Shipment = ({ history }) => {
     || isLoadingCustodians
     || isLoadingItems
     || isLoadingUnits
+    || isLoadingCountries
     || isLoadingAllGateways
     || isLoadingCustodies
     || isLoadingSensorAlerts
@@ -744,22 +761,24 @@ const Shipment = ({ history }) => {
             </Typography>
           </div>
         </Grid>
-        <Grid item xs={12}>
-          <MapComponent
-            allMarkers={allMarkers}
-            isMarkerShown={!_.isEmpty(markers)}
-            showPath
-            markers={markers}
-            zoom={zoom}
-            setSelectedMarker={setSelectedMarker}
-            containerStyle={{ height: '600px' }}
-            unitOfMeasure={unitData}
-            setSelectedCluster={setSelectedCluster}
-            selectedCluster={selectedCluster}
-            mapLanguage={mapLanguage}
-            mapRegion={mapRegion}
-          />
-        </Grid>
+        {!isLoaded && (
+          <Grid item xs={12}>
+            <MapComponent
+              allMarkers={allMarkers}
+              isMarkerShown={!_.isEmpty(markers)}
+              showPath
+              markers={markers}
+              zoom={zoom}
+              setSelectedMarker={setSelectedMarker}
+              containerStyle={{ height: '600px' }}
+              unitOfMeasure={unitData}
+              setSelectedCluster={setSelectedCluster}
+              selectedCluster={selectedCluster}
+              mapLanguage={!_.isEmpty(mapLanguage) ? mapLanguage : organizationLanguage}
+              mapRegion={!_.isEmpty(mapRegion) ? mapRegion : organizationCountry}
+            />
+          </Grid>
+        )}
         <Grid item xs={12} className="shipmentDataTableHeader">
           <ToggleButtonGroup
             color="secondary"

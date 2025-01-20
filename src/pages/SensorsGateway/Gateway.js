@@ -161,6 +161,7 @@ const Gateway = ({ history, redirectTo }) => {
       unitData,
       custodianData,
       contactInfo,
+      countriesData,
     });
   };
 

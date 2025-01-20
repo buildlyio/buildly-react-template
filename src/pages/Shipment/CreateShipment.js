@@ -67,6 +67,7 @@ import {
   TIVE_GATEWAY_TIMES,
   UOM_TEMPERATURE_CHOICES,
   INCOMPLETED_SHIPMENT_STATUS,
+  LANGUAGES,
 } from '@utils/mock';
 import { checkForAdmin, checkForGlobalAdmin } from '@utils/utilMethods';
 import { validators } from '@utils/validators';
@@ -76,6 +77,7 @@ import { getCustodianQuery } from '@react-query/queries/custodians/getCustodianQ
 import { getCustodianTypeQuery } from '@react-query/queries/custodians/getCustodianTypeQuery';
 import { getContactQuery } from '@react-query/queries/custodians/getContactQuery';
 import { getUnitQuery } from '@react-query/queries/items/getUnitQuery';
+import { getCountriesQuery } from '@react-query/queries/shipments/getCountriesQuery';
 import { getItemQuery } from '@react-query/queries/items/getItemQuery';
 import { getItemTypeQuery } from '@react-query/queries/items/getItemTypeQuery';
 import { getGatewayQuery } from '@react-query/queries/sensorGateways/getGatewayQuery';
@@ -298,6 +300,12 @@ const CreateShipment = ({ history, location }) => {
     ['unit', organizationUuid],
     () => getUnitQuery(organizationUuid, displayAlert),
     { enabled: !_.isEmpty(organizationUuid), refetchOnWindowFocus: false },
+  );
+
+  const { data: countriesData, isLoading: isLoadingCountries } = useQuery(
+    ['countries'],
+    () => getCountriesQuery(displayAlert),
+    { refetchOnWindowFocus: false },
   );
 
   const { data: itemData, isLoading: isLoadingItems } = useQuery(
@@ -965,43 +973,36 @@ const CreateShipment = ({ history, location }) => {
     }
   };
 
+  const country = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
+    : 'United States';
+  const language = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language'))
+    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language')).unit_of_measure
+    : 'English';
+  const organizationCountry = _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()) && _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()).iso3;
+  const organizationLanguage = _.find(LANGUAGES, (item) => item.label.toLowerCase() === language.toLowerCase()).value;
+
+  const isLoaded = isLoadingShipmentTemplates
+    || isLoadingCustodians
+    || isLoadingCustodianTypes
+    || isLoadingContact
+    || isLoadingUnits
+    || isLoadingCountries
+    || isLoadingItems
+    || isLoadingItemTypes
+    || isLoadingGateways
+    || isLoadingGatewayTypes
+    || isLoadingCustodies
+    || isAddingShipmentTemplate
+    || isEditingShipmentTemplate
+    || isDeletingShipmentTemplate
+    || isAddingShipment
+    || isEditingShipment
+    || isDeletingCustody;
+
   return (
     <Box mt={5} mb={5} className="createShipmentRoot">
-      {(isLoadingShipmentTemplates
-        || isLoadingCustodians
-        || isLoadingCustodianTypes
-        || isLoadingContact
-        || isLoadingUnits
-        || isLoadingItems
-        || isLoadingItemTypes
-        || isLoadingGateways
-        || isLoadingGatewayTypes
-        || isLoadingCustodies
-        || isAddingShipmentTemplate
-        || isEditingShipmentTemplate
-        || isDeletingShipmentTemplate
-        || isAddingShipment
-        || isEditingShipment
-        || isDeletingCustody)
-        && (
-          <Loader open={isLoadingShipmentTemplates
-            || isLoadingCustodians
-            || isLoadingCustodianTypes
-            || isLoadingContact
-            || isLoadingUnits
-            || isLoadingItems
-            || isLoadingItemTypes
-            || isLoadingGateways
-            || isLoadingGatewayTypes
-            || isLoadingCustodies
-            || isAddingShipmentTemplate
-            || isEditingShipmentTemplate
-            || isDeletingShipmentTemplate
-            || isAddingShipment
-            || isEditingShipment
-            || isDeletingCustody}
-          />
-        )}
+      {isLoaded && <Loader open={isLoaded} />}
       <Grid container spacing={2} alignItems="center" justifyContent="center">
         <Grid item xs={8}>
           <Typography variant="h5">
@@ -1181,23 +1182,25 @@ const CreateShipment = ({ history, location }) => {
                     />
                   </Grid>
                   <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
-                  <Grid item xs={11}>
-                    <MapComponent
-                      isMarkerShown
-                      zoom={10}
-                      containerStyle={{ height: '300px', marginTop: '10px' }}
-                      markers={[
-                        {
-                          lat: startingLocation && _.includes(startingLocation, ',') && parseFloat(startingLocation.split(',')[0]),
-                          lng: startingLocation && _.includes(startingLocation, ',') && parseFloat(startingLocation.split(',')[1]),
-                          radius: (organization && organization.radius) || 0,
-                        },
-                      ]}
-                      unitOfMeasure={unitData}
-                      mapLanguage={mapLanguage}
-                      mapRegion={mapRegion}
-                    />
-                  </Grid>
+                  {!isLoaded && (
+                    <Grid item xs={11}>
+                      <MapComponent
+                        isMarkerShown
+                        zoom={10}
+                        containerStyle={{ height: '300px', marginTop: '10px' }}
+                        markers={[
+                          {
+                            lat: startingLocation && _.includes(startingLocation, ',') && parseFloat(startingLocation.split(',')[0]),
+                            lng: startingLocation && _.includes(startingLocation, ',') && parseFloat(startingLocation.split(',')[1]),
+                            radius: (organization && organization.radius) || 0,
+                          },
+                        ]}
+                        unitOfMeasure={unitData}
+                        mapLanguage={!_.isEmpty(mapLanguage) ? mapLanguage : organizationLanguage}
+                        mapRegion={!_.isEmpty(mapRegion) ? mapRegion : organizationCountry}
+                      />
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -1254,23 +1257,25 @@ const CreateShipment = ({ history, location }) => {
                     />
                   </Grid>
                   <Grid item xs={1} className="createShipmentInnerAsterisk">*</Grid>
-                  <Grid item xs={11}>
-                    <MapComponent
-                      isMarkerShown
-                      zoom={10}
-                      containerStyle={{ height: '300px', marginTop: '10px' }}
-                      markers={[
-                        {
-                          lat: endingLocation && _.includes(endingLocation, ',') && parseFloat(endingLocation.split(',')[0]),
-                          lng: endingLocation && _.includes(endingLocation, ',') && parseFloat(endingLocation.split(',')[1]),
-                          radius: (organization && organization.radius) || 0,
-                        },
-                      ]}
-                      unitOfMeasure={unitData}
-                      mapLanguage={mapLanguage}
-                      mapRegion={mapRegion}
-                    />
-                  </Grid>
+                  {!isLoaded && (
+                    <Grid item xs={11}>
+                      <MapComponent
+                        isMarkerShown
+                        zoom={10}
+                        containerStyle={{ height: '300px', marginTop: '10px' }}
+                        markers={[
+                          {
+                            lat: endingLocation && _.includes(endingLocation, ',') && parseFloat(endingLocation.split(',')[0]),
+                            lng: endingLocation && _.includes(endingLocation, ',') && parseFloat(endingLocation.split(',')[1]),
+                            radius: (organization && organization.radius) || 0,
+                          },
+                        ]}
+                        unitOfMeasure={unitData}
+                        mapLanguage={!_.isEmpty(mapLanguage) ? mapLanguage : organizationLanguage}
+                        mapRegion={!_.isEmpty(mapRegion) ? mapRegion : organizationCountry}
+                      />
+                    </Grid>
+                  )}
                 </Grid>
               </Grid>
               <Grid item xs={11} sm={5.5} mt={isMobile() ? 1.5 : -2.5} className="createShipmentAdjustSpacing">

@@ -148,8 +148,8 @@ const AddRecipientAddress = ({ history, location }) => {
   };
 
   const handleSelectAddress = (address) => {
-    setAddress1(`${address.terms[0].value}, ${address.terms[1].value}`);
-    address_2.setValue(`${address.terms[2].value}`);
+    setAddress1(`${address.terms[0].value}`);
+    address_2.setValue(`${address.terms[1].value}`);
     state.setValue(`${address.terms[address.terms.length - 2].value}`);
     country.setValue(`${address.terms[address.terms.length - 1].value}`);
     Geocode.fromAddress(address.description)
@@ -158,7 +158,10 @@ const AddRecipientAddress = ({ history, location }) => {
         Geocode.fromLatLng(lat, lng)
           .then((response) => {
             const addressComponents = response.results[0].address_components;
-            const locality = addressComponents.find((component) => component.types.includes('administrative_area_level_3'))?.long_name;
+            let locality = addressComponents.find((component) => component.types.includes('administrative_area_level_3'))?.long_name;
+            if (!locality) {
+              locality = addressComponents.find((component) => component.types.includes('locality'))?.long_name;
+            }
             const zipCode = addressComponents.find((component) => component.types.includes('postal_code'))?.long_name;
             city.setValue(locality);
             zip.setValue(zipCode);
