@@ -64,16 +64,6 @@ export const LANGUAGES = [
   { value: 'fr', label: 'French' },
   { value: 'ja', label: 'Japanese' },
   { value: 'it', label: 'Italian' },
-];
-
-export const MAP_LANGUAGES = [
-  { value: 'en', label: 'English' },
-  { value: 'pt', label: 'Portuguese (Brazil)' },
-  { value: 'es', label: 'Spanish' },
-  { value: 'de', label: 'German' },
-  { value: 'fr', label: 'French' },
-  { value: 'ja', label: 'Japanese' },
-  { value: 'it', label: 'Italian' },
   { value: 'ar', label: 'Arabic' },
 ];
 

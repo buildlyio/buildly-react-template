@@ -50,8 +50,6 @@ const Shipment = ({ history }) => {
   const user = getUser();
   const organization = user.organization.organization_uuid;
   const userLanguage = user.user_language;
-  const mapLanguage = user.map_language;
-  const mapRegion = user.map_region;
 
   const { displayAlert } = useAlert();
   const { data } = useStore();
@@ -138,11 +136,8 @@ const Shipment = ({ history }) => {
   const country = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
     ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
     : 'United States';
-  const language = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language'))
-    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language')).unit_of_measure
-    : 'English';
-  const organizationCountry = _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()) && _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()).iso3;
-  const organizationLanguage = _.find(LANGUAGES, (item) => item.label.toLowerCase() === language.toLowerCase()).value;
+  const organizationCountry = _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase())
+    && _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()).iso3;
 
   const {
     data: reportData2,
@@ -717,6 +712,20 @@ const Shipment = ({ history }) => {
     )
   );
 
+  const getTranslatedLanguage = () => {
+    const userLanguageAbbv = _.find(LANGUAGES, (item) => _.isEqual(item.label, userLanguage))?.value;
+    let returnValue = userLanguageAbbv;
+    if (!returnValue) {
+      const match = document.cookie.match(new RegExp('(^| )googtrans=([^;]+)'));
+      if (match) {
+        const value = decodeURIComponent(match[2]);
+        const parts = value.split('/');
+        returnValue = parts[_.size(parts) - 1];
+      }
+    }
+    return returnValue;
+  };
+
   return (
     <Box mt={5} mb={5}>
       {isLoaded && <Loader open={isLoaded} />}
@@ -761,24 +770,22 @@ const Shipment = ({ history }) => {
             </Typography>
           </div>
         </Grid>
-        {!isLoaded && (
-          <Grid item xs={12}>
-            <MapComponent
-              allMarkers={allMarkers}
-              isMarkerShown={!_.isEmpty(markers)}
-              showPath
-              markers={markers}
-              zoom={zoom}
-              setSelectedMarker={setSelectedMarker}
-              containerStyle={{ height: '600px' }}
-              unitOfMeasure={unitData}
-              setSelectedCluster={setSelectedCluster}
-              selectedCluster={selectedCluster}
-              mapLanguage={!_.isEmpty(mapLanguage) ? mapLanguage : organizationLanguage}
-              mapRegion={!_.isEmpty(mapRegion) ? mapRegion : organizationCountry}
-            />
-          </Grid>
-        )}
+        <Grid item xs={12}>
+          <MapComponent
+            allMarkers={allMarkers}
+            isMarkerShown={!_.isEmpty(markers)}
+            showPath
+            markers={markers}
+            zoom={zoom}
+            setSelectedMarker={setSelectedMarker}
+            containerStyle={{ height: '600px' }}
+            unitOfMeasure={unitData}
+            setSelectedCluster={setSelectedCluster}
+            selectedCluster={selectedCluster}
+            mapCountry={organizationCountry}
+            mapLanguage={getTranslatedLanguage()}
+          />
+        </Grid>
         <Grid item xs={12} className="shipmentDataTableHeader">
           <ToggleButtonGroup
             color="secondary"

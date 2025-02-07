@@ -52,7 +52,7 @@ import {
   tempUnit,
 } from '@utils/constants';
 import { isDesktop2 } from '@utils/mediaQuery';
-import { getTimezone } from '@utils/utilMethods';
+import { getTimezone, getTranslatedLanguage } from '@utils/utilMethods';
 import { useStore as useTimezoneStore } from '@zustand/timezone/timezoneStore';
 import ReportingActiveShipmentDetails from './components/ReportingActiveShipmentDetails';
 import ReportingDetailTable from './components/ReportingDetailTable';
@@ -68,8 +68,6 @@ const Reporting = () => {
   const theme = useTheme();
   const user = getUser();
   const organization = user.organization.organization_uuid;
-  const mapLanguage = user.map_language;
-  const mapRegion = user.map_region;
   const { options: tzOptions } = useTimezoneSelect({ labelStyle: 'original', timezones: allTimezones });
 
   const [locShipmentID, setLocShipmentID] = useState('');
@@ -194,11 +192,8 @@ const Reporting = () => {
   const country = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country'))
     ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'country')).unit_of_measure
     : 'United States';
-  const language = _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language'))
-    ? _.find(unitData, (unit) => (_.toLower(unit.unit_of_measure_for) === 'language')).unit_of_measure
-    : 'English';
-  const organizationCountry = _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()) && _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()).iso3;
-  const organizationLanguage = _.find(LANGUAGES, (item) => item.label.toLowerCase() === language.toLowerCase()).value;
+  const organizationCountry = _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase())
+    && _.find(countriesData, (item) => item.country.toLowerCase() === country.toLowerCase()).iso3;
 
   useEffect(() => {
     if (location.search) {
@@ -395,7 +390,7 @@ const Reporting = () => {
         ...max_data.map((x) => x.set_at),
         ...(!_.isEmpty(min_data) ? min_data.map((x) => x.set_at) : []),
       ]),
-    ).sort();
+    ).sort((a, b) => new Date(b) - new Date(a));
 
     let previousMax = null;
     let previousMin = null;
@@ -1060,21 +1055,19 @@ const Reporting = () => {
               ) : 'Map View'}
             </Typography>
           </div>
-          {!isLoaded && (
-            <MapComponent
-              isMarkerShown={!_.isEmpty(markers)}
-              showPath
-              screenshotMapCenter
-              noInitialInfo
-              markers={markers}
-              zoom={4}
-              setSelectedMarker={setSelectedMarker}
-              containerStyle={{ height: '625px' }}
-              unitOfMeasure={unitData}
-              mapLanguage={!_.isEmpty(mapLanguage) ? mapLanguage : organizationLanguage}
-              mapRegion={!_.isEmpty(mapRegion) ? mapRegion : organizationCountry}
-            />
-          )}
+          <MapComponent
+            isMarkerShown={!_.isEmpty(markers)}
+            showPath
+            screenshotMapCenter
+            noInitialInfo
+            markers={markers}
+            zoom={4}
+            setSelectedMarker={setSelectedMarker}
+            containerStyle={{ height: '625px' }}
+            unitOfMeasure={unitData}
+            mapCountry={organizationCountry}
+            mapLanguage={getTranslatedLanguage()}
+          />
         </Grid>
       </Grid>
       <Grid container className="reportingContainer" sx={{ marginTop: _.isEmpty(selectedShipment) ? 4 : -1 }}>

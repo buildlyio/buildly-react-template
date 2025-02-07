@@ -1,4 +1,3 @@
-/* eslint-disable no-alert */
 import { useMutation } from 'react-query';
 import { httpService } from '@modules/http/http.service';
 import { oauthService } from '@modules/oauth/oauth.service';
@@ -32,12 +31,12 @@ export const useUpdateUserMutation = (
   },
   {
     onSuccess: (data) => {
-      if (data.map_language || data.map_region) {
-        alert('Detected map change. So need to reload the website. It might take a little while for this.');
-        window.location.reload();
-        return;
-      }
       if (history) {
+        if (data.user_language) {
+          // eslint-disable-next-line no-alert
+          alert('Detected language change. So need to reload the website. It might take a little while for this.');
+          window.location.reload();
+        }
         const route = window.location.pathname;
         history.push('/');
         history.push(route);

@@ -130,9 +130,6 @@ const TopBar = ({
       if (user && lng && !_.isEqual(user.user_language, lng.label)) {
         const newLng = LANGUAGES.find((item) => _.isEqual(item.label, user.user_language));
         document.cookie = `googtrans=/auto/${newLng.value}; Path=/; Domain=${window.location.hostname}`;
-        // eslint-disable-next-line no-alert
-        alert('Detected language change. So need to reload the website. It might take a little while for this.');
-        window.location.reload();
       }
     } else if (user && user.user_language) {
       const isReloaded = sessionStorage.getItem('isReloaded');
@@ -140,9 +137,6 @@ const TopBar = ({
       document.cookie = `googtrans=/auto/${newLng.value}; Path=/; Domain=${window.location.hostname}`;
       if (!isReloaded && !_.isEqual(user.user_language, 'English')) {
         sessionStorage.setItem('isReloaded', 'true');
-        // eslint-disable-next-line no-alert
-        alert('Detected language change. So need to reload the website. It might take a little while for this.');
-        window.location.reload(true);
       }
     } else {
       document.cookie = `googtrans=/auto/en; Path=/; Domain=${window.location.hostname}`;

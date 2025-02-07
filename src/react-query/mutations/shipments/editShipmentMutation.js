@@ -153,6 +153,9 @@ export const useEditShipmentMutation = (organization, history, redirectTo, displ
             let { battery_alert_level } = updateGateway;
             switch (data.data.status) {
               case 'Completed':
+                gateway_status = updateGateway.gateway_status;
+                shipment_ids = updateGateway.shipment_ids;
+                battery_alert_level = updateGateway.battery_alert_level;
               case 'Cancelled':
               case 'Damaged':
               case 'Battery Depleted':
