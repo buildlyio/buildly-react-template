@@ -16,11 +16,6 @@ export const useEditUnitMutation = (organization, displayAlert) => {
     },
     {
       onSuccess: async (data) => {
-        if (data.unit_of_measure_for === 'Country') {
-          alert('Detected map region change. So need to reload the website. It might take a little while for this.');
-          window.location.reload();
-          return;
-        }
         await queryClient.invalidateQueries({
           queryKey: ['unit', organization],
         });
