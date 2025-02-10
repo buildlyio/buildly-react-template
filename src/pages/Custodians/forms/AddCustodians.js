@@ -238,10 +238,7 @@ const AddCustodians = ({ history, location }) => {
             const zipCode = addressComponents.find((component) => component.types.includes('postal_code'))?.long_name;
             let filteredAddressDesc = addressDesc.slice(0, -2);
             filteredAddressDesc = filteredAddressDesc.filter((item) => item !== locality);
-            const add1 = _.size(filteredAddressDesc) > 1 ? filteredAddressDesc.slice(0, -1).join(', ') : filteredAddressDesc[0] || '';
-            const add2 = filteredAddressDesc.length > 1 ? filteredAddressDesc[filteredAddressDesc.length - 1] : '';
-            setAddress1(add1);
-            address_2.setValue(add2);
+            setAddress1(filteredAddressDesc.join(', '));
             city.setValue(locality);
             state.setValue(addressDesc[_.size(addressDesc) - 2]);
             country.setValue(addressDesc[_.size(addressDesc) - 1]);
@@ -477,7 +474,6 @@ const AddCustodians = ({ history, location }) => {
                       label="Address Line 2"
                       name="address_2"
                       autoComplete="address_2"
-                      disabled
                       {...address_2.bind}
                     />
                   </Grid>

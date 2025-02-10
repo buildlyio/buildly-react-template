@@ -264,14 +264,22 @@ export const MapComponent = (props) => {
                     <Grid
                       container
                       spacing={1}
-                      className="mapComponentInfoWindow"
+                      style={{
+                        maxWidth: '310px',
+                        color: theme.palette.background.dark,
+                        fontSize: '10px',
+                        alignItems: 'center',
+                      }}
                     >
                       {_.map(MARKER_DATA(unitOfMeasure), (item, idx) => (
                         <Grid
                           item
                           xs={6}
                           key={`${item.id}-${idx}`}
-                          className="mapComponentItem"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                          }}
                         >
                           {_.find(mark.allAlerts, { id: item.id })
                             ? getIcon(_.find(mark.allAlerts, { id: item.id }))
@@ -290,17 +298,26 @@ export const MapComponent = (props) => {
                           ) : null}
                         </Grid>
                       ))}
-                      <Grid item xs={12} className="mapComponentInfoWindowBatterySection">
-                        <Grid container spacing={1} className="mapComponentInfoWindowBox">
-                          <Grid item className="mapComponentItem">
+                      <Grid
+                        item
+                        xs={12}
+                        style={{
+                          borderTopWidth: '1px',
+                          borderTopStyle: 'solid',
+                          borderTopColor: theme.palette.background.light,
+                          marginTop: '12px',
+                        }}
+                      >
+                        <Grid container spacing={1} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Grid item style={{ display: 'flex', alignItems: 'center' }}>
                             <CalendarIcon />
                             <div style={{ marginLeft: theme.spacing(0.5) }}>{mark.date}</div>
                           </Grid>
-                          <Grid item className="mapComponentItem">
+                          <Grid item style={{ display: 'flex', alignItems: 'center' }}>
                             <ClockIcon />
                             <div style={{ marginLeft: theme.spacing(0.5) }}>{mark.time}</div>
                           </Grid>
-                          <Grid item className="mapComponentItem">
+                          <Grid item style={{ display: 'flex', alignItems: 'center' }}>
                             {mark.battery && _.gte(_.toNumber(mark.battery), 90) && (
                               <BatteryFullIcon htmlColor={theme.palette.success.main} />
                             )}
