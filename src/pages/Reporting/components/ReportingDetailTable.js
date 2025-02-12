@@ -328,7 +328,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
   );
 
   const displayThresholdData = (array, unit) => {
-    const sortedArray = _.orderBy(array, ['set_at'], ['desc']);
+    const sortedArray = _.orderBy(array, ['set_at'], ['asc']);
     return sortedArray.map((item) => `${item.value} ${unit}`).join(', ');
   };
 
