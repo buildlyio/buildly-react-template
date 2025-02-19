@@ -54,7 +54,7 @@ const AddShipper = ({
   const glnNumber = useInput('');
   const firstName = useInput('', { required: true });
   const lastName = useInput('', { required: true });
-  const email = useInput('', { required: true });
+  const email = useInput('');
   const country = useInput('', { required: true });
   const state = useInput('', { required: true });
   const [address1, setAddress1] = useState('');
@@ -115,10 +115,10 @@ const AddShipper = ({
       city: city.value,
       postal_code: zip.value,
       organization_uuid: organization,
-      phone: `+${number}`,
+      phone: !_.isEmpty(number) ? `+${number}` : null,
       first_name: firstName.value,
       last_name: lastName.value,
-      email_address: email.value.toLowerCase(),
+      email_address: !_.isEmpty(email.value) ? email.value.toLowerCase() : null,
     };
     const orgNames = _.map(orgData, 'name');
     const custodianName = new RegExp(
@@ -178,8 +178,7 @@ const AddShipper = ({
       || !firstName.value
       || !lastName.value
       || !email.value
-      || _.isEmpty(number)
-      || number.length < 11
+      || (!_.isEmpty(number) && number.length < 11)
       || _.isEqual(address1, '')
       || !state.value
       || !country.value
@@ -353,7 +352,6 @@ const AddShipper = ({
                   <TextField
                     variant="outlined"
                     margin="normal"
-                    required
                     fullWidth
                     id="email"
                     label="Email"
@@ -368,7 +366,7 @@ const AddShipper = ({
               </Grid>
               <Grid container mt={0} spacing={isDesktop() ? 2 : 0}>
                 <Grid className="gatewayInputWithTooltip gatewayRow" item xs={12}>
-                  <Typography className="gatewayPhoneLabel">Phone Number *</Typography>
+                  <Typography className="gatewayPhoneLabel">Phone Number</Typography>
                   <PhoneInput
                     value={number}
                     onChange={(value) => setNumber(value)}

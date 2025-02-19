@@ -24,19 +24,14 @@ const EditMapping = ({ history, location }) => {
   const { displayAlert } = useAlert();
 
   const { orgData } = location.state || {};
+  const redirectTo = location.state && location.state.from;
 
   const pageType = location.state && location.state.type;
   const pageData = location.state && location.state.data;
-  const buttonText = pageType === 'edit'
-    ? 'Save'
-    : 'Set Mapping';
-  const formTitle = pageType === 'edit'
-    ? 'Edit Mapping'
-    : 'Set Mapping';
+  const buttonText = _.isEqual(pageType, 'edit') ? 'Save' : 'Set Mapping';
+  const formTitle = _.isEqual(pageType, 'edit') ? 'Edit Mapping' : 'Set Mapping';
 
-  const custodyOrg = useInput((
-    pageData && pageData.custody_org_uuid
-  ) || '');
+  const custodyOrg = useInput((pageData && pageData.custody_org_uuid) || '');
 
   useEffect(() => {
     if (orgData && pageData) {
@@ -53,7 +48,6 @@ const EditMapping = ({ history, location }) => {
         ['order', 'name'],
         ['desc', 'asc'],
       );
-
       setOptions(orderedOpts);
     }
   }, [orgData, pageData]);
@@ -64,7 +58,7 @@ const EditMapping = ({ history, location }) => {
     } else {
       setFormModal(false);
       if (location && location.state) {
-        history.push(location.state.from);
+        history.push(redirectTo);
       }
     }
   };
@@ -73,16 +67,12 @@ const EditMapping = ({ history, location }) => {
     setConfirmModal(false);
     setFormModal(false);
     if (location && location.state) {
-      history.push(location.state.from);
+      history.push(redirectTo);
     }
   };
 
-  const { mutate: editCustodianMutation, isLoading: isEditingCustodian } = useEditCustodianMutation(organization, history, location.state.from, displayAlert);
+  const { mutate: editCustodianMutation, isLoading: isEditingCustodian } = useEditCustodianMutation(organization, history, redirectTo, displayAlert);
 
-  /**
-   * Submit The form and add/edit custodian type
-   * @param {Event} event the default submit event
-   */
   const handleSubmit = (event) => {
     event.preventDefault();
     const editData = {
@@ -91,7 +81,6 @@ const EditMapping = ({ history, location }) => {
       edit_date: new Date(),
     };
     editCustodianMutation([editData, null]);
-    setFormModal(false);
   };
 
   return (
@@ -105,14 +94,8 @@ const EditMapping = ({ history, location }) => {
           setConfirmModal={setConfirmModal}
           handleConfirmModal={discardFormData}
         >
-          {isEditingCustodian && (
-            <Loader open={isEditingCustodian} />
-          )}
-          <form
-            className="adminPanelFormContainer"
-            noValidate
-            onSubmit={handleSubmit}
-          >
+          {isEditingCustodian && <Loader open={isEditingCustodian} />}
+          <form className="adminPanelFormContainer" noValidate onSubmit={handleSubmit}>
             <Grid container spacing={isDesktop() ? 2 : 0}>
               <Grid item xs={12}>
                 <TextField

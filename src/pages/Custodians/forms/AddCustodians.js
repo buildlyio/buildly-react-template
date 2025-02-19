@@ -57,7 +57,7 @@ const AddCustodians = ({ history, location }) => {
   const glnNumber = useInput(editData.custodian_glns || '');
   const firstName = useInput(contactData.first_name || '', { required: true });
   const lastName = useInput(contactData.last_name || '', { required: true });
-  const email = useInput(contactData.email_address || '', { required: true });
+  const email = useInput(contactData.email_address || '');
   const [number, setNumber] = useState(contactData.phone || '');
   const [numberFocus, setNumberFocus] = useState(false);
   const country = useInput(contactData.country || '', { required: true });
@@ -135,10 +135,10 @@ const AddCustodians = ({ history, location }) => {
       ...(editPage && { url: contactData.url }),
       ...(editPage && { id: contactData.id }),
       organization_uuid: organization,
-      phone: `+${number}`,
+      phone: !_.isEmpty(number) ? `+${number}` : null,
       first_name: firstName.value,
       last_name: lastName.value,
-      email_address: email.value.toLowerCase(),
+      email_address: !_.isEmpty(email.value) ? email.value.toLowerCase() : null,
     };
 
     const orgNames = _.map(orgData, 'name');
@@ -203,9 +203,7 @@ const AddCustodians = ({ history, location }) => {
       || !custodianType.value
       || !firstName.value
       || !lastName.value
-      || !email.value
-      || _.isEmpty(number)
-      || number.length < 11
+      || (!_.isEmpty(number) && number.length < 11)
       || _.isEqual(address1, '')
       || !state.value
       || !country.value
@@ -398,7 +396,6 @@ const AddCustodians = ({ history, location }) => {
                       className="notranslate"
                       variant="outlined"
                       margin="normal"
-                      required
                       fullWidth
                       id="email"
                       label={<span className="translate">Email</span>}
@@ -413,7 +410,7 @@ const AddCustodians = ({ history, location }) => {
                 </Grid>
                 <Grid container mt={0} spacing={isDesktop() ? 2 : 0}>
                   <Grid className="custodianInputWithTooltip custodianRow" item xs={12}>
-                    <Typography className="custodianPhoneLabel">Phone Number *</Typography>
+                    <Typography className="custodianPhoneLabel">Phone Number</Typography>
                     <PhoneInput
                       value={number}
                       onChange={(value) => setNumber(value)}

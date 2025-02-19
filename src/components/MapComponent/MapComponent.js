@@ -23,7 +23,7 @@ import {
 import { MARKER_DATA, getIcon } from '@utils/constants';
 import './MapComponentStyles.css';
 
-const libraries = ['places', 'geometry', 'drawing'];
+const libraries = ['places'];
 
 export const MapComponent = (props) => {
   const {
@@ -167,7 +167,7 @@ export const MapComponent = (props) => {
     <LoadScript
       key={`map-${mapLanguage}-${mapCountry}`}
       googleMapsApiKey={window.env.MAP_API_KEY}
-      libraries={['places']}
+      libraries={libraries}
       language={mapLanguage || 'en'}
       region={(mapCountry === 'MAR' ? 'MA' : mapCountry) || 'USA'}
     >
