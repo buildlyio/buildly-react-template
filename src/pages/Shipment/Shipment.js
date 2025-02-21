@@ -68,13 +68,13 @@ const Shipment = ({ history }) => {
   const [selectedCluster, setSelectedCluster] = useState({});
   const [zoom, setZoom] = useState(4);
 
-  const { data: shipmentData, isLoading: isLoadingShipments, isFetching: isFetchingShipments } = useQuery(
+  const { data: shipmentData, isLoading: isLoadingShipments } = useQuery(
     ['shipments', shipmentFilter, organization],
     () => getShipmentsQuery(organization, shipmentFilter === 'Active' ? 'Planned,En route,Arrived' : shipmentFilter, displayAlert),
     { refetchOnWindowFocus: false },
   );
 
-  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments && !isFetchingShipments;
+  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments;
 
   const { data: custodianData, isLoading: isLoadingCustodians } = useQuery(
     ['custodians', organization],
@@ -100,7 +100,7 @@ const Shipment = ({ history }) => {
     { refetchOnWindowFocus: false },
   );
 
-  const { data: allGatewayData, isLoading: isLoadingAllGateways, isFetching: isFetchingAllGateways } = useQuery(
+  const { data: allGatewayData, isLoading: isLoadingAllGateways } = useQuery(
     ['allGateways'],
     () => getAllGatewayQuery(displayAlert),
     { refetchOnWindowFocus: false },
@@ -115,7 +115,7 @@ const Shipment = ({ history }) => {
     },
   );
 
-  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts, isFetching: isFetchingSensorAlerts } = useQuery(
+  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts } = useQuery(
     ['sensorAlerts', shipmentData, shipmentFilter],
     () => getSensorAlertQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), displayAlert),
     {
@@ -124,7 +124,7 @@ const Shipment = ({ history }) => {
     },
   );
 
-  const { data: reportData1, isLoading: isLoadingReports1, isFetching: isFetchingReports1 } = useQuery(
+  const { data: reportData1, isLoading: isLoadingReports1 } = useQuery(
     ['sensorReports', shipmentData, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(_.toString(_.without(_.map(shipmentData, 'partner_shipment_id'), null))), 10, displayAlert),
     {
@@ -142,7 +142,6 @@ const Shipment = ({ history }) => {
   const {
     data: reportData2,
     isLoading: isLoadingReports2,
-    isFetching: isFetchingReports2,
     refetch: refetchReports2,
   } = useQuery(
     ['sensorReports', shipmentData, shipmentFilter],
@@ -155,7 +154,6 @@ const Shipment = ({ history }) => {
 
   const sensorReportData = selectedShipment ? reportData2 : reportData1;
   const isLoadingSensorReports = selectedShipment ? isLoadingReports2 : isLoadingReports1;
-  const isFetchingSensorReports = selectedShipment ? isFetchingReports2 : isFetchingReports1;
 
   const isLoaded = isLoadingShipments
     || isLoadingCustodians
@@ -166,11 +164,7 @@ const Shipment = ({ history }) => {
     || isLoadingCustodies
     || isLoadingSensorAlerts
     || isLoadingSensorReports
-    || isLoading
-    || isFetchingShipments
-    || isFetchingAllGateways
-    || isFetchingSensorAlerts
-    || isFetchingSensorReports;
+    || isLoading;
 
   useEffect(() => {
     const formattedRows = getShipmentFormattedRow(

@@ -95,13 +95,13 @@ const Reporting = () => {
 
   let isShipmentDataAvailable = false;
 
-  const { data: shipmentData, isLoading: isLoadingShipments, isFetching: isFetchingShipments } = useQuery(
+  const { data: shipmentData, isLoading: isLoadingShipments } = useQuery(
     ['shipments', shipmentFilter, locShipmentID, organization],
     () => getShipmentsQuery(organization, (shipmentFilter === 'Active' ? 'Planned,En route,Arrived' : shipmentFilter), displayAlert, locShipmentID),
     { refetchOnWindowFocus: false },
   );
 
-  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments && !isFetchingShipments;
+  isShipmentDataAvailable = !_.isEmpty(shipmentData) && !isLoadingShipments;
 
   const { data: unitData, isLoading: isLoadingUnits } = useQuery(
     ['unit', organization],
@@ -139,7 +139,7 @@ const Reporting = () => {
     { refetchOnWindowFocus: false },
   );
 
-  const { data: allGatewayData, isLoading: isLoadingAllGateways, isFetching: isFetchingAllGateways } = useQuery(
+  const { data: allGatewayData, isLoading: isLoadingAllGateways } = useQuery(
     ['allGateways'],
     () => getAllGatewayQuery(displayAlert),
     { refetchOnWindowFocus: false },
@@ -154,7 +154,7 @@ const Reporting = () => {
     },
   );
 
-  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts, isFetching: isFetchingSensorAlerts } = useQuery(
+  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts } = useQuery(
     ['sensorAlerts', selectedShipment, shipmentFilter],
     () => getSensorAlertQuery(encodeURIComponent(selectedShipment.partner_shipment_id), displayAlert),
     {
@@ -163,7 +163,7 @@ const Reporting = () => {
     },
   );
 
-  const { data: sensorReportData, isLoading: isLoadingSensorReports, isFetching: isFetchingSensorReports } = useQuery(
+  const { data: sensorReportData, isLoading: isLoadingSensorReports } = useQuery(
     ['sensorReports', selectedShipment, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
     {
@@ -384,7 +384,7 @@ const Reporting = () => {
     document.body.removeChild(link);
   };
 
-  const setThresholdsValues = (max_data, min_data, unit) => {
+  const setThresholdsValues = (label, max_data, min_data, unit) => {
     const timestamps = Array.from(
       new Set([
         ...(Array.isArray(max_data) ? max_data.map((x) => x.set_at) : []),
@@ -408,11 +408,10 @@ const Reporting = () => {
       if (currentMax !== null) previousMax = currentMax;
       if (currentMin !== null) previousMin = currentMin;
 
-      if (index === 0) {
-        richTextResult.push({ text: '' });
-      } else {
-        richTextResult.push({ text: '\n' });
-      }
+      richTextResult.push({
+        text: index !== 0 ? `\n${label}: ` : `${label}: `,
+        font: index !== 0 ? { color: { argb: 'FFFFFF' } } : { color: { argb: '000000' } },
+      });
 
       richTextResult.push({
         text: `${currentMax}${unit} `,
@@ -481,14 +480,10 @@ const Reporting = () => {
       'Custodian Name',
       'Custodian Address',
       'Tracker Intervals',
-      '',
       'Max. / Min. Thresholds',
       'Excursions',
       'Shipment Status',
     ]);
-
-    descriptionRow.getCell(9).value = 'Max. / Min. Thresholds';
-    worksheet.mergeCells(descriptionRow.rowNumber, 9, descriptionRow.rowNumber, 10);
 
     descriptionRow.eachCell((cell) => {
       cell.font = {
@@ -506,7 +501,6 @@ const Reporting = () => {
       sortedCustodiansArray[0].custodian_name,
       sortedCustodiansArray[0].custodian_address,
       `Transmission: ${selectedShipment.transmission_time} min.`,
-      'Temperature:',
       '',
       '',
       selectedShipment.status,
@@ -521,13 +515,15 @@ const Reporting = () => {
       ],
     };
 
-    descriptionRow1.getCell(10).value = { richText: setThresholdsValues(selectedShipment.max_excursion_temp, selectedShipment.min_excursion_temp, tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))) };
-
+    descriptionRow1.getCell(9).value = { richText: setThresholdsValues('Temperature', selectedShipment.max_excursion_temp, selectedShipment.min_excursion_temp, tempUnit(_.find(unitData, (unit) => (_.isEqual(_.toLower(unit.unit_of_measure_for), 'temperature'))))) };
     descriptionRow1.eachCell((cell) => {
       cell.alignment = { wrapText: true, vertical: 'top' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: theme.palette.background.default.replace('#', '') },
+      };
     });
-
-    descriptionRow1.getCell(9).alignment = { horizontal: 'right', vertical: 'top' };
 
     const descriptionRow2 = worksheet.addRow([
       '',
@@ -538,7 +534,6 @@ const Reporting = () => {
       sortedCustodiansArray[1].custodian_name,
       sortedCustodiansArray[1].custodian_address,
       `Measurement: ${selectedShipment.measurement_time} min.`,
-      'Humidity:',
     ]);
 
     descriptionRow2.getCell(1).value = {
@@ -548,13 +543,15 @@ const Reporting = () => {
       ],
     };
 
-    descriptionRow2.getCell(10).value = { richText: setThresholdsValues(selectedShipment.max_excursion_humidity, selectedShipment.min_excursion_humidity, '%') };
-
+    descriptionRow2.getCell(9).value = { richText: setThresholdsValues('Humidity', selectedShipment.max_excursion_humidity, selectedShipment.min_excursion_humidity, '%') };
     descriptionRow2.eachCell((cell) => {
       cell.alignment = { wrapText: true, vertical: 'top' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: theme.palette.background.default.replace('#', '') },
+      };
     });
-
-    descriptionRow2.getCell(9).alignment = { horizontal: 'right', vertical: 'top' };
 
     const descriptionRow3 = worksheet.addRow([
       'Grey indicates Transit',
@@ -575,29 +572,33 @@ const Reporting = () => {
         };
       }
     });
-
-    descriptionRow3.getCell(9).value = 'Shock:';
-    descriptionRow3.getCell(10).value = { richText: setThresholdsValues(selectedShipment.shock_threshold, null, 'G') };
+    descriptionRow3.getCell(9).value = { richText: setThresholdsValues('Shock', selectedShipment.shock_threshold, null, 'G') };
 
     descriptionRow3.eachCell((cell) => {
       cell.alignment = { wrapText: true, vertical: 'top' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: theme.palette.background.default.replace('#', '') },
+      };
     });
-
-    descriptionRow3.getCell(9).alignment = { horizontal: 'right', vertical: 'top' };
 
     const descriptionRow4 = worksheet.addRow([]);
 
     descriptionRow4.getCell(5).value = _.size(sortedCustodiansArray) > 3 ? sortedCustodiansArray[3].custodian_type : '';
     descriptionRow4.getCell(6).value = _.size(sortedCustodiansArray) > 3 ? sortedCustodiansArray[3].custodian_name : '';
     descriptionRow4.getCell(7).value = _.size(sortedCustodiansArray) > 3 ? sortedCustodiansArray[3].custodian_address : '';
-    descriptionRow4.getCell(9).value = 'Light:';
-    descriptionRow4.getCell(10).value = { richText: setThresholdsValues(selectedShipment.light_threshold, null, 'LUX') };
+
+    descriptionRow4.getCell(9).value = { richText: setThresholdsValues('Light', selectedShipment.light_threshold, null, 'LUX') };
 
     descriptionRow4.eachCell((cell) => {
       cell.alignment = { wrapText: true, vertical: 'top' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: theme.palette.background.default.replace('#', '') },
+      };
     });
-
-    descriptionRow4.getCell(9).alignment = { horizontal: 'right', vertical: 'top' };
 
     sortedCustodiansArray.forEach((custodian, index) => {
       if (index > 3) {
@@ -741,7 +742,7 @@ const Reporting = () => {
         });
       }
 
-      descriptionRow1.getCell(11).value = {
+      descriptionRow1.getCell(10).value = {
         richText: [
           { text: 'Temperature:' },
           {
@@ -755,7 +756,7 @@ const Reporting = () => {
         ],
       };
 
-      descriptionRow2.getCell(11).value = {
+      descriptionRow2.getCell(10).value = {
         richText: [
           { text: 'Humidity:' },
           {
@@ -769,7 +770,7 @@ const Reporting = () => {
         ],
       };
 
-      descriptionRow3.getCell(11).value = {
+      descriptionRow3.getCell(10).value = {
         richText: [
           { text: 'Shock:' },
           {
@@ -783,7 +784,7 @@ const Reporting = () => {
         ],
       };
 
-      descriptionRow4.getCell(11).value = {
+      descriptionRow4.getCell(10).value = {
         richText: [
           { text: 'Light:' },
           {
@@ -868,39 +869,21 @@ const Reporting = () => {
       lastGreyRow.getCell(1).value = { richText: lastGreyRowRichText };
     }
 
-    const excludeLeftBorderCells = [2, 3, 4, 5].map((row) => ({ row, col: 10 }));
-    const excludeRightBorderCells = [2, 3, 4, 5].map((row) => ({ row, col: 9 }));
     const totalRows = _.size(sortedCustodiansArray) <= 4 ? rows.length + 7 : rows.length + 7 + _.size(sortedCustodiansArray) - 4;
-    const totalCols = columns.length + 2;
+    const totalCols = columns.length + 1;
 
     for (let rowIndex = 1; rowIndex <= totalRows; rowIndex++) {
       for (let colIndex = 1; colIndex <= totalCols; colIndex++) {
         const cell = worksheet.getCell(rowIndex, colIndex);
-        const isExcludedLeft = excludeLeftBorderCells.some((c) => c.row === rowIndex && c.col === colIndex);
-        const isExcludedRight = excludeRightBorderCells.some((c) => c.row === rowIndex && c.col === colIndex);
-        if (isExcludedLeft) {
-          cell.border = {
-            top: borderStyle.top,
-            bottom: borderStyle.bottom,
-            right: borderStyle.right,
-            left: { style: 'thin', color: { argb: 'FFFFFF' } },
-          };
-        } else if (isExcludedRight) {
-          cell.border = {
-            top: borderStyle.top,
-            bottom: borderStyle.bottom,
-            left: borderStyle.left,
-            right: { style: 'thin', color: { argb: 'FFFFFF' } },
-          };
-        } else {
+        if (!cell.border) {
           cell.border = borderStyle;
         }
       }
     }
 
     worksheet.columns.forEach((column, index) => {
-      if (index + 1 === 9 || index + 1 === 10) {
-        column.width = 15;
+      if (index + 1 === 9) {
+        column.width = 25;
       } else {
         let maxLength = 0;
         column.eachCell({ includeEmpty: true }, (cell) => {
@@ -937,10 +920,6 @@ const Reporting = () => {
     || isLoadingSensorAlerts
     || isLoadingSensorReports
     || isLoading
-    || isFetchingShipments
-    || isFetchingAllGateways
-    || isFetchingSensorAlerts
-    || isFetchingSensorReports
     || isLoadingSensorProcessedData;
 
   return (
