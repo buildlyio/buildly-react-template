@@ -80,14 +80,6 @@ jobs:
     - name: Push to Google Container Registry
       run: docker push $IMAGE_NAME:latest
 
-    # Send message on Slack
-    - name: Slack Notification
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        SLACK_MESSAGE: 'Production Docker Image of buildly-ui pushed to Google Container Registry Successfully'
-        MSG_MINIMAL: true
-
     # Send email alert
     - name: Email Alert
       uses: dawidd6/action-send-mail@v3
