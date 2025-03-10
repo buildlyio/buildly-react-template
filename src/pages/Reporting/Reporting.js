@@ -154,7 +154,7 @@ const Reporting = () => {
     },
   );
 
-  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts } = useQuery(
+  const { data: sensorAlertData, isLoading: isLoadingSensorAlerts, isFetching: isFetchingSensorAlerts } = useQuery(
     ['sensorAlerts', selectedShipment, shipmentFilter],
     () => getSensorAlertQuery(encodeURIComponent(selectedShipment.partner_shipment_id), displayAlert),
     {
@@ -163,7 +163,7 @@ const Reporting = () => {
     },
   );
 
-  const { data: sensorReportData, isLoading: isLoadingSensorReports } = useQuery(
+  const { data: sensorReportData, isLoading: isLoadingSensorReports, isFetching: isFetchingSensorReports } = useQuery(
     ['sensorReports', selectedShipment, shipmentFilter],
     () => getSensorReportQuery(encodeURIComponent(selectedShipment.partner_shipment_id), null, displayAlert),
     {
@@ -253,17 +253,6 @@ const Reporting = () => {
       }
     }
   }, [sensorReportData, sensorAlertData, selectedShipment, timeZone]);
-
-  useEffect(() => {
-    if (selectedShipment) {
-      setLoading(true);
-    }
-    if (markers && allGraphs && reports) {
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
-    }
-  }, [selectedShipment, markers, allGraphs, reports]);
 
   const getShipmentValue = (value) => {
     let returnValue = '';
@@ -919,7 +908,8 @@ const Reporting = () => {
     || isLoadingCustodies
     || isLoadingSensorAlerts
     || isLoadingSensorReports
-    || isLoading
+    || isFetchingSensorAlerts
+    || isFetchingSensorReports
     || isLoadingSensorProcessedData;
 
   return (
@@ -997,17 +987,9 @@ const Reporting = () => {
               select
               required
               className="reportingSelectInput notranslate"
-              label={(
-                <span className="translate">Shipment Name</span>
-              )}
-              value={
-                selectedShipment
-                  ? selectedShipment.id
-                  : ''
-              }
-              sx={{
-                marginRight: isDesktop2() ? 0 : 1,
-              }}
+              label={<span className="translate">Shipment Name</span>}
+              value={selectedShipment ? selectedShipment.id : ''}
+              sx={{ marginRight: isDesktop2() ? 0 : 1 }}
               SelectProps={{
                 MenuProps: {
                   sx: { maxHeight: '350px' },

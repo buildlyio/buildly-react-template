@@ -257,7 +257,7 @@ const ReportingDetailTable = forwardRef((props, ref) => {
 
     // Temp check
     if (_.isEqual(limitType, 'temp')) {
-      if (value && _.gt(value, maxLightThreshold)) {
+      if (value && _.gt(value, maxTempThreshold)) {
         returnClass = 'reportingRedText';
       }
       if (value && _.lt(value, minTempThreshold)) {
