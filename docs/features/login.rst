@@ -3,7 +3,7 @@
 Login
 =====
 
-Uses the OAuth library from midgard-core for the OAuth password-flow
+Uses the OAuth module for the OAuth password-flow
 authentication process with Buildly Core.
 
 .. image:: ../_static/images/login.png
