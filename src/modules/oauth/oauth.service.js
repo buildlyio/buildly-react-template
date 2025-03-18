@@ -1,4 +1,4 @@
-import { oauth } from 'midgard-core';
+import authenticateWithCredentials from './main';
 
 /**
  * Returns the current access token.
@@ -44,7 +44,7 @@ function authenticateWithPasswordFlow(credentials) {
     tokenUrl: window.env.OAUTH_TOKEN_URL,
     returnPromise: true,
   };
-  return oauth.authenticateWithCredentials(credentials, oauthOptions);
+  return authenticateWithCredentials(credentials, oauthOptions);
 }
 
 /**
