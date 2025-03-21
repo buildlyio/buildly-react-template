@@ -2204,6 +2204,7 @@ export const getShipmentFormattedRow = (
   sensorReports,
 ) => {
   let shipmentList = [];
+
   let custodyRows = [];
 
   if (!_.isEmpty(custodyData) && !_.isEmpty(custodianData)) {
@@ -2326,7 +2327,6 @@ export const getShipmentFormattedRow = (
         editedShipment.battery_levels = reports[0].report_entry.report_battery;
       }
     }
-
     shipmentList = [...shipmentList, editedShipment];
   });
 

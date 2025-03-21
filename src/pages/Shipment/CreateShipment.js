@@ -320,7 +320,7 @@ const CreateShipment = ({ history, location }) => {
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organizationUuid],
-    () => getGatewayQuery(organizationUuid, displayAlert, null),
+    () => getGatewayQuery(organizationUuid, displayAlert),
     { enabled: !_.isEmpty(organizationUuid), refetchOnWindowFocus: false },
   );
 

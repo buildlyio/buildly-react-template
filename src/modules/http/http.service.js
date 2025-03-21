@@ -1,5 +1,5 @@
-import { http } from 'midgard-core';
 import { oauthService } from '../oauth/oauth.service';
+import request from './main';
 
 /**
  * function to send a Http request to the API
@@ -41,7 +41,7 @@ function makeRequest(method, url, body, useJwt, contentType, responseType, reque
     returnPromise: true,
     responseType: responseType || null,
   };
-  return http.request(url, options);
+  return request(url, options);
 }
 
 function makeOptionsRequest(method, url, useJwt) {
@@ -73,7 +73,7 @@ function makeRequestWithoutHeaders(method, url, body) {
     returnPromise: true,
     responseType: null,
   };
-  return http.request(url, options);
+  return request(url, options);
 }
 
 export const httpService = {

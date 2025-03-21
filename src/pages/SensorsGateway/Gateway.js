@@ -58,7 +58,7 @@ const Gateway = ({ history, redirectTo }) => {
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization],
-    () => getGatewayQuery(organization, displayAlert, null),
+    () => getGatewayQuery(organization, displayAlert),
     { refetchOnWindowFocus: false },
   );
 

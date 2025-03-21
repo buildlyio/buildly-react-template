@@ -1,4 +1,4 @@
-import { oauth } from 'midgard-core';
+import authenticateWithCredentials from './main';
 import _ from 'lodash';
 
 /**
@@ -47,7 +47,7 @@ const authenticateWithPasswordFlow = (credentials) => {
     tokenUrl: window.env.OAUTH_TOKEN_URL,
     returnPromise: true,
   };
-  return oauth.authenticateWithCredentials(
+  return authenticateWithCredentials(
     credentials,
     oauthOptions,
   );

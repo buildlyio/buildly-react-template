@@ -39,7 +39,7 @@ const Devices = ({ isNewDevices }) => {
 
   const { data: gatewayData, isLoading: isLoadingGateways } = useQuery(
     ['gateways', organization],
-    () => getGatewayQuery(null, displayAlert, false),
+    () => getGatewayQuery(null, displayAlert),
     { refetchOnWindowFocus: false, enabled: buttonClick },
   );
 

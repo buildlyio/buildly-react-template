@@ -1,12 +1,11 @@
 import { httpService } from '@modules/http/http.service';
 import _ from 'lodash';
 
-export const getGatewayQuery = async (organization, displayAlert, is_new) => {
+export const getGatewayQuery = async (organization, displayAlert) => {
   try {
     const response = await httpService.makeRequest(
       'get',
       `${window.env.API_URL}sensors/gateway/?organization_uuid=${organization}`,
-      { is_new },
     );
     const data = _.filter(
       response.data,

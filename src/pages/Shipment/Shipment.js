@@ -590,7 +590,6 @@ const Shipment = ({ history }) => {
       setExpandedRows([rowIndex]);
       setSteps(_.orderBy(newSteps, 'id'));
     }
-
     setSelectedShipment(shipment);
     setMarkers(_.orderBy(markersToSet, [(obj) => moment(`${obj.date} ${obj.time}`)], ['desc']));
     setSelectedMarker(markers[0]);
@@ -903,7 +902,11 @@ const Shipment = ({ history }) => {
                       <Grid container>
                         <Grid item className="shipmentGridTimeCenter">
                           <Typography variant="body1">
-                            {ship.battery_levels}
+                            {!_.isEmpty(markers[0])
+                              && markers[0].battery !== null
+                              && markers[0].battery !== undefined
+                              ? markers[0].battery
+                              : ship.battery_levels}
                           </Typography>
                         </Grid>
                         <Grid item flex={1}>
