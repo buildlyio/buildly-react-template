@@ -4,7 +4,6 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const { GenerateSW } = require('workbox-webpack-plugin');
 const packageJSON = require('./package.json');
 
 module.exports = (env, argv) => {
@@ -101,11 +100,13 @@ module.exports = (env, argv) => {
       filename: 'bundle.js',
     },
     devServer: {
-      contentBase: path.join(__dirname, 'public/'),
+      static: {
+        directory: path.join(__dirname, 'public/'),
+      },
       port: 3000,
-      publicPath: 'http://localhost:3000/',
       historyApiFallback: true,
-      hotOnly: true,
+      hot: true,
+      open: false,
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin(),
@@ -119,11 +120,6 @@ module.exports = (env, argv) => {
         hash: true,
       }),
       fileCopy,
-      new GenerateSW({
-        maximumFileSizeToCacheInBytes: 200000000,
-        clientsClaim: true,
-        skipWaiting: true,
-      }),
     ],
   };
 
