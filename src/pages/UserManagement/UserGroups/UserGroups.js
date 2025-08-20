@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import { Switch } from '@mui/material';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import useAlert from '@hooks/useAlert';
 import DataTableWrapper from '@components/DataTableWrapper/DataTableWrapper';
 import { getCoregroupQuery } from '@react-query/queries/coregroup/getCoregroupQuery';

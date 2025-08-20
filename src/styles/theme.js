@@ -3,7 +3,7 @@ import {
 } from '@mui/material';
 
 import {
-  experimental_extendTheme as extendTheme,
+  extendTheme,
 } from '@mui/material/styles';
 
 const theme = extendTheme({

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { hot } from 'react-hot-loader';
 import {
   BrowserRouter as Router,
+  Routes,
   Route,
-  Redirect,
+  Navigate,
 } from 'react-router-dom';
 import {
   CssBaseline,
@@ -22,7 +22,7 @@ import { PrivateRoute } from '@routes/Private.route';
 import { routes } from '@routes/routesConstants';
 import theme from '@styles/theme';
 import {
-  Experimental_CssVarsProvider as CssVarsProvider,
+  CssVarsProvider,
 } from '@mui/material/styles';
 
 const App = () => (
@@ -32,36 +32,25 @@ const App = () => (
         <CssVarsProvider theme={theme} defaultMode="light">
           <div className="app">
             <CssBaseline />
-            <Route
-              exact
-              path="/"
-              render={() => (
-                oauthService.hasValidAccessToken()
-                  ? <Redirect to={routes.SHIPMENT} />
-                  : <Redirect to={routes.LOGIN} />
-              )}
-            />
-            <Route path={routes.LOGIN} component={Login} />
-            <Route
-              path={routes.REGISTER}
-              component={Register}
-            />
-            <Route
-              path={routes.RESET_PASSWORD}
-              component={EmailForm}
-            />
-            <Route
-              path={routes.VERIFICATION}
-              component={Verification}
-            />
-            <Route
-              path={routes.RESET_PASSWORD_CONFIRM}
-              component={NewPasswordForm}
-            />
-            <PrivateRoute
-              path={routes.APP}
-              component={ContainerDashboard}
-            />
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  oauthService.hasValidAccessToken()
+                    ? <Navigate to={routes.DASHBOARD} replace />
+                    : <Navigate to={routes.LOGIN} replace />
+                }
+              />
+              <Route path={routes.LOGIN} element={<Login />} />
+              <Route path={routes.REGISTER} element={<Register />} />
+              <Route path={routes.RESET_PASSWORD} element={<EmailForm />} />
+              <Route path={routes.VERIFICATION} element={<Verification />} />
+              <Route path={routes.RESET_PASSWORD_CONFIRM} element={<NewPasswordForm />} />
+              <Route
+                path={`${routes.APP}/*`}
+                element={<PrivateRoute><ContainerDashboard /></PrivateRoute>}
+              />
+            </Routes>
           </div>
           <Alert />
         </CssVarsProvider>
@@ -70,4 +59,4 @@ const App = () => (
   </Router>
 );
 
-export default hot(module)(App);
+export default App;

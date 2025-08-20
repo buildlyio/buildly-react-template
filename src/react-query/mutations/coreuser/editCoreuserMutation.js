@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { httpService } from '@modules/http/http.service';
 
 export const useEditCoreuserMutation = (displayAlert) => {

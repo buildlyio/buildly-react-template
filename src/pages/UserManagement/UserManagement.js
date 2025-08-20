@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Route, useHistory } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -14,7 +14,8 @@ import UserGroups from './UserGroups/UserGroups';
 import InviteUser from './forms/InviteUser';
 
 const UserManagement = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
   const subNav = [
     { label: 'Current users', value: 'current-users' },
     { label: 'User groups', value: 'groups' },
@@ -30,7 +31,7 @@ const UserManagement = () => {
   let isSuperAdmin = false;
 
   useEffect(() => {
-    history.push(`/app/profile/users/${view || location.state}`);
+    navigate(`/app/profile/users/${view || location.state}`);
   }, [view]);
 
   const viewTabClicked = (event, newView) => {

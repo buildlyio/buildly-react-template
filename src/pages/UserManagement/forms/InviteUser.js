@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import FormModal from '@components/Modal/FormModal';
 import Loader from '@components/Loader/Loader';
 import {
@@ -123,7 +123,7 @@ const InviteUser = ({ open, setOpen }) => {
           onSubmit={handleSubmit}
         >
           <Grid container spacing={isDesktop() ? 2 : 0}>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -144,7 +144,7 @@ const InviteUser = ({ open, setOpen }) => {
             </Grid>
           </Grid>
           <Grid container spacing={2} justifyContent="center">
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <Button
                 type="submit"
                 fullWidth

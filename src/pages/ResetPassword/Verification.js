@@ -99,14 +99,14 @@ const Verification = ({ location }) => {
               Resend Verification Email
             </Button>
             <Grid container>
-              <Grid item xs={11}>
+              <Grid size={11}>
                 <Typography variant="body" fontSize={11} textAlign="left">
                   Total Attempts Remaining:
                   {' '}
                   {attempts}
                 </Typography>
               </Grid>
-              <Grid item xs={1}>
+              <Grid size={1}>
                 {isDisabled && attempts > 0 && (
                   <Typography variant="body" fontSize={11} textAlign="right">
                     {formatTime(countdown)}
@@ -115,7 +115,7 @@ const Verification = ({ location }) => {
               </Grid>
             </Grid>
             <Grid container mt={1}>
-              <Grid item xs>
+              <Grid>
                 <Link
                   to={routes.LOGIN}
                   variant="body2"

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import _ from 'lodash';
 import { Container } from '@mui/material';
 import { UserContext, getUser } from '@context/User.context';
@@ -10,7 +10,9 @@ import { hasAdminRights, hasGlobalAdminRights } from '@utils/permissions';
 import { isMobile } from '@utils/mediaQuery';
 import './ContainerStyles.css';
 
-const ContainerDashboard = ({ location, history }) => {
+const ContainerDashboard = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const userData = getUser();
   const [navHidden, setNavHidden] = useState(false);
   let subNavItems = [];
@@ -34,19 +36,20 @@ const ContainerDashboard = ({ location, history }) => {
         <Container
           className={`containerContent ${!isMobile() && 'containerContentMaxWidth'}`}
         >
-          <Route
-            exact
-            path={routes.APP}
-            render={() => <Redirect to={routes.DASHBOARD} />}
-          />
-          {(hasAdminRights(userData)
-            || hasGlobalAdminRights(userData))
-            && (
-              <Route
-                path={routes.USER_MANAGEMENT}
-                component={UserManagement}
-              />
-            )}
+          <Routes>
+            <Route
+              path="/"
+              element={<Navigate to={routes.DASHBOARD} replace />}
+            />
+            {(hasAdminRights(userData)
+              || hasGlobalAdminRights(userData))
+              && (
+                <Route
+                  path={routes.USER_MANAGEMENT.replace('/app', '')}
+                  element={<UserManagement />}
+                />
+              )}
+          </Routes>
         </Container>
       </UserContext.Provider>
     </div>

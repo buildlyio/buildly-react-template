@@ -183,7 +183,7 @@ const Login = ({ history }) => {
                 Sign in
               </Button>
               <Grid container alignItems="center">
-                <Grid item xs={5} style={{ textAlign: 'start' }}>
+                <Grid size={5} style={{ textAlign: 'start' }}>
                   <Link
                     to={routes.RESET_PASSWORD}
                     variant="body2"
@@ -192,7 +192,7 @@ const Login = ({ history }) => {
                     Forgot Password?
                   </Link>
                 </Grid>
-                <Grid item xs={7} style={{ textAlign: 'end' }}>
+                <Grid size={7} style={{ textAlign: 'end' }}>
                   <Link
                     to={routes.REGISTER}
                     variant="body2"

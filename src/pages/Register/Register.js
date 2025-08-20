@@ -21,7 +21,7 @@ import { useInput } from '@hooks/useInput';
 import { routes } from '@routes/routesConstants';
 import { isTablet } from '@utils/mediaQuery';
 import { validators } from '@utils/validators';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { inviteTokenCheckQuery } from '@react-query/queries/authUser/inviteTokenCheckQuery';
 import { useRegisterMutation } from '@react-query/mutations/authUser/registerMutation';
 import useAlert from '@hooks/useAlert';
@@ -185,7 +185,7 @@ const Register = ({ history }) => {
               onSubmit={handleSubmit}
             >
               <Grid container spacing={isTablet() ? 0 : 3}>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -209,7 +209,7 @@ const Register = ({ history }) => {
                     {...first_name.bind}
                   />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -234,7 +234,7 @@ const Register = ({ history }) => {
                 </Grid>
               </Grid>
               <Grid container spacing={isTablet() ? 0 : 3}>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -245,7 +245,7 @@ const Register = ({ history }) => {
                     {...username.bind}
                   />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -259,7 +259,7 @@ const Register = ({ history }) => {
                 </Grid>
               </Grid>
               <Grid container spacing={isTablet() ? 0 : 3}>
-                <Grid item xs={12}>
+                <Grid size={12}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -272,7 +272,7 @@ const Register = ({ history }) => {
                 </Grid>
               </Grid>
               <Grid container spacing={isTablet() ? 0 : 3}>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -303,7 +303,7 @@ const Register = ({ history }) => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} md={6}>
+                <Grid size={{ xs: 12, md: 6 }}>
                   <TextField
                     variant="outlined"
                     margin="normal"
@@ -388,7 +388,7 @@ const Register = ({ history }) => {
                 Register
               </Button>
               <Grid container>
-                <Grid item>
+                <Grid>
                   <Link
                     to={routes.LOGIN}
                     variant="body2"

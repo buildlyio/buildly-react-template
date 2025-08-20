@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   VerifiedUser as ActivateIcon,
   VerifiedUserOutlined as DeactivateIcon,
@@ -16,7 +16,7 @@ import { getCoregroupQuery } from '@react-query/queries/coregroup/getCoregroupQu
 import { getCoreuserQuery } from '@react-query/queries/coreuser/getCoreuserQuery';
 import { getGroupsFormattedRow, getUserFormattedRows, userColumns } from '@utils/constants';
 import '../UserManagementStyles.css';
-import { useDeleteCoreuserMutation } from 'react-query/mutations/coreuser/deleteCoreuserMutation';
+import { useDeleteCoreuserMutation } from '@react-query/mutations/coreuser/deleteCoreuserMutation';
 
 const Users = () => {
   const user = getUser();

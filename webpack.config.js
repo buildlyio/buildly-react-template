@@ -8,15 +8,19 @@ const { GenerateSW } = require('workbox-webpack-plugin');
 const packageJSON = require('./package.json');
 
 module.exports = (env, argv) => {
-  const fileCopy = env.build === 'local'
-    ? new CopyPlugin([
-      { from: '.env.development.local', to: 'environment.js' },
-    ])
-    : new CopyPlugin([
-      { from: 'window.environment.js', to: 'environment.js' },
-    ]);
+  const fileCopy = env && env.build === 'local'
+    ? new CopyPlugin({
+        patterns: [
+          { from: '.env.development.local', to: 'environment.js' },
+        ],
+      })
+    : new CopyPlugin({
+        patterns: [
+          { from: 'window.environment.js', to: 'environment.js' },
+        ],
+      });
   const webpackConfig = {
-    entry: ['babel-polyfill', './src/index.js'],
+    entry: ['core-js/stable', 'regenerator-runtime/runtime', './src/index.js'],
     module: {
       rules: [
         {
@@ -33,15 +37,10 @@ module.exports = (env, argv) => {
                 '@babel/preset-react',
               ],
               plugins: [
-                '@babel/plugin-proposal-class-properties',
+                '@babel/plugin-transform-class-properties',
               ],
             },
           }],
-        },
-        {
-          test: /\.(js|jsx)$/,
-          use: 'react-hot-loader/webpack',
-          include: /node_modules/,
         },
         {
           test: /\.(css|scss)$/,
