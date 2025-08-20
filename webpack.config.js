@@ -4,18 +4,28 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const fs = require('fs');
 const packageJSON = require('./package.json');
 
 module.exports = (env, argv) => {
+  // Generate version.json file
+  const versionInfo = {
+    version: packageJSON.version,
+    buildTime: new Date().toISOString()
+  };
+  fs.writeFileSync(path.resolve(__dirname, 'public/version.json'), JSON.stringify(versionInfo, null, 2));
+
   const fileCopy = env && env.build === 'local'
     ? new CopyPlugin({
         patterns: [
           { from: '.env.development.local', to: 'environment.js' },
+          { from: 'public/version.json', to: 'version.json' },
         ],
       })
     : new CopyPlugin({
         patterns: [
           { from: 'window.environment.js', to: 'environment.js' },
+          { from: 'public/version.json', to: 'version.json' },
         ],
       });
   const webpackConfig = {

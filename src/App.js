@@ -21,42 +21,55 @@ import NewPasswordForm from '@pages/ResetPassword/NewPasswordForm';
 import { PrivateRoute } from '@routes/Private.route';
 import { routes } from '@routes/routesConstants';
 import theme from '@styles/theme';
+import versionChecker from '@utils/versionChecker';
 import {
   CssVarsProvider,
 } from '@mui/material/styles';
 
-const App = () => (
-  <Router>
-    <AppContext.Provider value={app}>
-      <StyledEngineProvider injectFirst>
-        <CssVarsProvider theme={theme} defaultMode="light">
-          <div className="app">
-            <CssBaseline />
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  oauthService.hasValidAccessToken()
-                    ? <Navigate to={routes.DASHBOARD} replace />
-                    : <Navigate to={routes.LOGIN} replace />
-                }
-              />
-              <Route path={routes.LOGIN} element={<Login />} />
-              <Route path={routes.REGISTER} element={<Register />} />
-              <Route path={routes.RESET_PASSWORD} element={<EmailForm />} />
-              <Route path={routes.VERIFICATION} element={<Verification />} />
-              <Route path={routes.RESET_PASSWORD_CONFIRM} element={<NewPasswordForm />} />
-              <Route
-                path={`${routes.APP}/*`}
-                element={<PrivateRoute><ContainerDashboard /></PrivateRoute>}
-              />
-            </Routes>
-          </div>
-          <Alert />
-        </CssVarsProvider>
-      </StyledEngineProvider>
-    </AppContext.Provider>
-  </Router>
-);
+const App = () => {
+  React.useEffect(() => {
+    // Start version checking when app mounts
+    versionChecker.start();
+    
+    // Cleanup on unmount
+    return () => {
+      versionChecker.stop();
+    };
+  }, []);
+
+  return (
+    <Router>
+      <AppContext.Provider value={app}>
+        <StyledEngineProvider injectFirst>
+          <CssVarsProvider theme={theme} defaultMode="light">
+            <div className="app">
+              <CssBaseline />
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    oauthService.hasValidAccessToken()
+                      ? <Navigate to={routes.DASHBOARD} replace />
+                      : <Navigate to={routes.LOGIN} replace />
+                  }
+                />
+                <Route path={routes.LOGIN} element={<Login />} />
+                <Route path={routes.REGISTER} element={<Register />} />
+                <Route path={routes.RESET_PASSWORD} element={<EmailForm />} />
+                <Route path={routes.VERIFICATION} element={<Verification />} />
+                <Route path={routes.RESET_PASSWORD_CONFIRM} element={<NewPasswordForm />} />
+                <Route
+                  path={`${routes.APP}/*`}
+                  element={<PrivateRoute><ContainerDashboard /></PrivateRoute>}
+                />
+              </Routes>
+            </div>
+            <Alert />
+          </CssVarsProvider>
+        </StyledEngineProvider>
+      </AppContext.Provider>
+    </Router>
+  );
+};
 
 export default App;
