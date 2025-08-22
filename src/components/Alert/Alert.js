@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useStore } from '@zustand/alert/alertStore';
 import './AlertStyles.css';
 
-const Alert = () => {
+function Alert() {
   const { data, hideAlert } = useStore();
 
   const handleClose = (event, reason) => {
@@ -32,21 +32,19 @@ const Alert = () => {
             root: `${data.type}`,
           }}
           action={(
-            <>
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                sx={{ p: 0.5 }}
-                onClick={handleClose}
-              >
-                <CloseIcon />
-              </IconButton>
-            </>
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              sx={{ p: 0.5 }}
+              onClick={handleClose}
+            >
+              <CloseIcon />
+            </IconButton>
           )}
         />
       )}
     </div>
   );
-};
+}
 
 export default Alert;

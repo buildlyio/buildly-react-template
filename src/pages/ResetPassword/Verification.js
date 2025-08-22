@@ -17,7 +17,7 @@ import useAlert from '@hooks/useAlert';
 import { useResetPasswordMutation } from '@react-query/mutations/authUser/resetPasswordMutation';
 import { routes } from '@routes/routesConstants';
 
-const Verification = ({ location }) => {
+function Verification({ location }) {
   const [isDisabled, setIsDisabled] = useState(true);
   const [countdown, setCountdown] = useState(300);
   const [attempts, setAttempts] = useState(3);
@@ -131,6 +131,6 @@ const Verification = ({ location }) => {
       <Copyright />
     </Container>
   );
-};
+}
 
 export default Verification;

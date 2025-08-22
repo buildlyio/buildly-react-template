@@ -12,19 +12,14 @@ import request from './main';
  * @returns response of the request or error
  */
 function makeRequest(method, url, body, useJwt, contentType, responseType) {
-  let token;
-  let tokenType;
-  if (useJwt) {
-    tokenType = 'JWT';
-    token = oauthService.getJwtToken();
-  } else {
-    tokenType = 'Bearer';
-    token = oauthService.getAccessToken();
-  }
+  const tokenType = 'Bearer';
+  const token = oauthService.getAccessToken();
+
   const headers = {
     Authorization: `${tokenType} ${token}`,
     'Content-Type': contentType || 'application/json',
   };
+
   const options = {
     method,
     data: body,
@@ -32,6 +27,7 @@ function makeRequest(method, url, body, useJwt, contentType, responseType) {
     returnPromise: true,
     responseType: responseType || null,
   };
+
   return request(url, options);
 }
 

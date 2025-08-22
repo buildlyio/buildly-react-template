@@ -6,11 +6,11 @@ import {
 } from '@mui/material';
 import './TopBarStyles.css';
 
-const AdminMenu = ({
+function AdminMenu({
   settingEl,
   setSettingEl,
   handleUserManagementClick,
-}) => {
+}) {
   const handleClose = () => {
     setSettingEl(null);
   };
@@ -38,6 +38,6 @@ const AdminMenu = ({
       </MenuItem>
     </Menu>
   );
-};
+}
 
 export default AdminMenu;

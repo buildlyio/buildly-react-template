@@ -26,11 +26,11 @@ import {
   CssVarsProvider,
 } from '@mui/material/styles';
 
-const App = () => {
+function App() {
   React.useEffect(() => {
     // Start version checking when app mounts
     versionChecker.start();
-    
+
     // Cleanup on unmount
     return () => {
       versionChecker.stop();
@@ -70,6 +70,6 @@ const App = () => {
       </AppContext.Provider>
     </Router>
   );
-};
+}
 
 export default App;

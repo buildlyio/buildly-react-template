@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
@@ -23,7 +23,9 @@ import { validators } from '@utils/validators';
 import { useResetPasswordConfirmMutation } from '@react-query/mutations/authUser/resetPasswordConfirmMutation';
 import './ResetPasswordStyles.css';
 
-const NewPassword = ({ history, location }) => {
+function NewPassword() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [password, setPassword] = useState('');
   const re_password = useInput('', {
     required: true,
@@ -42,7 +44,7 @@ const NewPassword = ({ history, location }) => {
 
   const { displayAlert } = useAlert();
 
-  const { mutate: resetPasswordConfirmMutation, isLoading: isResetPasswordConfirm } = useResetPasswordConfirmMutation(history, routes.LOGIN, displayAlert);
+  const { mutate: resetPasswordConfirmMutation, isLoading: isResetPasswordConfirm } = useResetPasswordConfirmMutation(navigate, routes.LOGIN, displayAlert);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -264,6 +266,6 @@ const NewPassword = ({ history, location }) => {
       <Copyright />
     </Container>
   );
-};
+}
 
 export default NewPassword;

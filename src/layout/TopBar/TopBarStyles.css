@@ -10,8 +10,10 @@
 }
 
 .topbarLogo {
-  max-height: 64px !important;
-  background-size: contain;
+  height: 40px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  margin-left: 16px;
 }
 
 .topbarMenuRight {

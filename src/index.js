@@ -14,6 +14,5 @@ root.render(
   <QueryClientProvider client={queryClient}>
     <App />
     {!window.env.production && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
-  </QueryClientProvider>
+  </QueryClientProvider>,
 );
-

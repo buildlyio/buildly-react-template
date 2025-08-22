@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import _ from 'lodash';
 import {
   Button,
@@ -27,7 +27,8 @@ import { useRegisterMutation } from '@react-query/mutations/authUser/registerMut
 import useAlert from '@hooks/useAlert';
 import './RegisterStyles.css';
 
-const Register = ({ history }) => {
+function Register() {
+  const navigate = useNavigate();
   const { displayAlert } = useAlert();
   const [inviteToken, setInviteToken] = useState('');
 
@@ -53,11 +54,12 @@ const Register = ({ history }) => {
   const organization_name = useInput('', { required: true });
   const [formError, setFormError] = useState({});
 
-  const { data: inviteTokenCheckData, isLoading: isLoadingInviteTokenCheck } = useQuery(
-    ['inviteTokenCheck'],
-    () => inviteTokenCheckQuery(inviteToken, displayAlert),
-    { refetchOnWindowFocus: false, enabled: !_.isEmpty(inviteToken) },
-  );
+  const { data: inviteTokenCheckData, isLoading: isLoadingInviteTokenCheck } = useQuery({
+    queryKey: ['inviteTokenCheck'],
+    queryFn: () => inviteTokenCheckQuery(inviteToken, displayAlert),
+    refetchOnWindowFocus: false,
+    enabled: !_.isEmpty(inviteToken),
+  });
 
   useEffect(() => {
     const urlObject = new URL(window.location);
@@ -74,7 +76,7 @@ const Register = ({ history }) => {
     }
   }, [inviteTokenCheckData]);
 
-  const { mutate: registerMutation, isLoading: isRegister } = useRegisterMutation(history, routes.LOGIN, displayAlert);
+  const { mutate: registerMutation, isLoading: isRegister } = useRegisterMutation(navigate, routes.LOGIN, displayAlert);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -405,6 +407,6 @@ const Register = ({ history }) => {
       <Copyright />
     </Container>
   );
-};
+}
 
 export default Register;

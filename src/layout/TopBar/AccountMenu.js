@@ -9,13 +9,13 @@ import {
 } from '@mui/material';
 import './TopBarStyles.css';
 
-const AccountMenu = ({
+function AccountMenu({
   anchorEl,
   setAnchorEl,
   user,
   handleLogoutClick,
   organizationName,
-}) => {
+}) {
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -62,6 +62,6 @@ const AccountMenu = ({
       </MenuItem>
     </Menu>
   );
-};
+}
 
 export default AccountMenu;

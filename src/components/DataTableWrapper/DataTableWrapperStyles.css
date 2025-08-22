@@ -31,3 +31,18 @@
 .dataTable .MuiTableFooter-root {
   background-color: var(--color-palette-primary-light);
 }
+
+.dataTable .MuiPaper-root {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.dataTable .MuiTableContainer-root {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.dataTable table {
+  width: 100% !important;
+  max-width: none !important;
+}

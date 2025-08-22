@@ -18,7 +18,7 @@ import { getUser } from '@context/User.context';
 import { hasAdminRights, hasGlobalAdminRights } from '@utils/permissions';
 import './DataTableWrapperStyles.css';
 
-const DataTableWrapper = ({
+function DataTableWrapper({
   loading,
   rows,
   columns,
@@ -43,7 +43,7 @@ const DataTableWrapper = ({
   noOptionsIcon,
   centerLabel,
   extraOptions,
-}) => {
+}) {
   const user = getUser();
   const isAdmin = hasAdminRights(user) || hasGlobalAdminRights(user);
 
@@ -58,6 +58,7 @@ const DataTableWrapper = ({
           sort: false,
           empty: true,
           setCellHeaderProps: () => ({ style: { textAlign: centerLabel ? 'center' : 'start' } }),
+          // eslint-disable-next-line react/no-unstable-nested-components
           customBodyRenderLite: (dataIndex) => (
             <IconButton
               className="dataTableIconButton"
@@ -79,6 +80,7 @@ const DataTableWrapper = ({
           filter: false,
           sort: false,
           empty: true,
+          // eslint-disable-next-line react/no-unstable-nested-components
           customBodyRenderLite: (dataIndex) => (
             <IconButton
               className="dataTableIconButton"
@@ -178,8 +180,9 @@ const DataTableWrapper = ({
           className={`${!customTheme && 'dataTable'}`}
           container
           spacing={2}
+          sx={{ width: '100%', maxWidth: 'none' }}
         >
-          <Grid size={12}>
+          <Grid size={12} sx={{ width: '100%', maxWidth: 'none' }}>
             <MUIDataTable
               data={rows}
               columns={finalColumns}
@@ -200,6 +203,6 @@ const DataTableWrapper = ({
       )}
     </Box>
   );
-};
+}
 
 export default DataTableWrapper;

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import {
+  Routes, Route, useNavigate, useLocation,
+} from 'react-router-dom';
 import {
   Box,
   Button,
@@ -13,7 +15,7 @@ import Users from './Users/Users';
 import UserGroups from './UserGroups/UserGroups';
 import InviteUser from './forms/InviteUser';
 
-const UserManagement = () => {
+function UserManagement() {
   const navigate = useNavigate();
   const location = useLocation();
   const subNav = [
@@ -43,7 +45,16 @@ const UserManagement = () => {
   }
 
   return (
-    <Box mt={5} mb={3}>
+    <Box
+      mt={5}
+      mb={3}
+      sx={{
+        width: '100vw',
+        marginLeft: 'calc(-50vw + 50%)',
+        paddingLeft: '4rem',
+        paddingRight: '2rem',
+      }}
+    >
       <Button
         type="button"
         variant="contained"
@@ -60,11 +71,13 @@ const UserManagement = () => {
           ))}
         </Tabs>
       </Box>
-      <Route path={routes.CURRENT_USERS} component={Users} />
-      <Route path={routes.USER_GROUPS} component={UserGroups} />
+      <Routes>
+        <Route path="current-users" element={<Users />} />
+        <Route path="groups" element={<UserGroups />} />
+      </Routes>
       <InviteUser open={showAddUser} setOpen={setShowAddUser} />
     </Box>
   );
-};
+}
 
 export default UserManagement;

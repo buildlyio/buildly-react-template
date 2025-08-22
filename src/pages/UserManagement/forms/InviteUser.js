@@ -13,7 +13,7 @@ import '../UserManagementStyles.css';
 import { getCoreuserQuery } from '@react-query/queries/coreuser/getCoreuserQuery';
 import { useInviteMutation } from '@react-query/mutations/authUser/inviteMutation';
 
-const InviteUser = ({ open, setOpen }) => {
+function InviteUser({ open, setOpen }) {
   const { displayAlert } = useAlert();
 
   const [openConfirmModal, setConfirmModal] = useState(false);
@@ -21,11 +21,11 @@ const InviteUser = ({ open, setOpen }) => {
   const [userEmails, setUserEmails] = useState([]);
   const [formError, setFormError] = useState({});
 
-  const { data: coreuserData, isLoading: isLoadingCoreuser } = useQuery(
-    ['users'],
-    () => getCoreuserQuery(displayAlert),
-    { refetchOnWindowFocus: false },
-  );
+  const { data: coreuserData, isLoading: isLoadingCoreuser } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => getCoreuserQuery(displayAlert),
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     if (coreuserData) {
@@ -161,6 +161,6 @@ const InviteUser = ({ open, setOpen }) => {
       </FormModal>
     </div>
   );
-};
+}
 
 export default InviteUser;

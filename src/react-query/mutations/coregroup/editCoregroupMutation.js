@@ -4,8 +4,8 @@ import { httpService } from '@modules/http/http.service';
 export const useEditCoregroupMutation = (displayAlert) => {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    async (coregroupData) => {
+  return useMutation({
+    mutationFn: async (coregroupData) => {
       const response = await httpService.makeRequest(
         'patch',
         `${window.env.API_URL}coregroups/${coregroupData.id}/`,
@@ -13,16 +13,14 @@ export const useEditCoregroupMutation = (displayAlert) => {
       );
       return response.data;
     },
-    {
-      onSuccess: async () => {
-        await queryClient.invalidateQueries({
-          queryKey: ['coregroups'],
-        });
-        displayAlert('success', 'User group successfully edited!');
-      },
-      onError: () => {
-        displayAlert('error', "Couldn't edit user group!");
-      },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['coregroups'],
+      });
+      displayAlert('success', 'User group successfully edited!');
     },
-  );
+    onError: () => {
+      displayAlert('error', "Couldn't edit user group!");
+    },
+  });
 };

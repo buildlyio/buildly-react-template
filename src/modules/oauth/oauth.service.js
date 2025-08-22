@@ -6,18 +6,7 @@ import authenticateWithCredentials from './main';
 function getAccessToken() {
   const tokenObj = JSON.parse(localStorage.getItem('token'));
   if (tokenObj) {
-    return tokenObj.access_token;
-  }
-  return null;
-}
-
-/**
- * Returns the current JWT token.
- */
-function getJwtToken() {
-  const tokenObj = JSON.parse(localStorage.getItem('token'));
-  if (tokenObj) {
-    return tokenObj.access_token_jwt;
+    return tokenObj.access;
   }
   return null;
 }
@@ -118,7 +107,6 @@ export const oauthService = {
   hasValidAccessToken,
   getAccessToken,
   setAccessToken,
-  getJwtToken,
   logout,
   setCurrentCoreUser,
 };

@@ -9,21 +9,21 @@ import { getAllOrganizationQuery } from '@react-query/queries/authUser/getAllOrg
 import { getGroupsFormattedRow } from '@utils/constants';
 import { useEditCoregroupMutation } from '@react-query/mutations/coregroup/editCoregroupMutation';
 
-const UserGroups = () => {
+function UserGroups() {
   const { displayAlert } = useAlert();
   const [rows, setRows] = useState([]);
 
-  const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery(
-    ['coregroups'],
-    () => getCoregroupQuery(displayAlert),
-    { refetchOnWindowFocus: false },
-  );
+  const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery({
+    queryKey: ['coregroups'],
+    queryFn: () => getCoregroupQuery(displayAlert),
+    refetchOnWindowFocus: false,
+  });
 
-  const { data: organizations, isLoading: isLoadingOrganizations } = useQuery(
-    ['organizations'],
-    () => getAllOrganizationQuery(displayAlert),
-    { refetchOnWindowFocus: false },
-  );
+  const { data: organizations, isLoading: isLoadingOrganizations } = useQuery({
+    queryKey: ['organizations'],
+    queryFn: () => getAllOrganizationQuery(displayAlert),
+    refetchOnWindowFocus: false,
+  });
 
   const { mutate: editGroupMutation, isLoading: isEditingGroup } = useEditCoregroupMutation(displayAlert);
 
@@ -129,6 +129,6 @@ const UserGroups = () => {
       />
     </div>
   );
-};
+}
 
 export default UserGroups;

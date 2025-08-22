@@ -5,10 +5,10 @@ import { oauthService } from '@modules/oauth/oauth.service';
 /**
  * Generic component for a protected route
  */
-export const PrivateRoute = ({ children }) => {
+export function PrivateRoute({ children }) {
   const location = useLocation();
-  
+
   return oauthService.hasValidAccessToken()
     ? children
     : <Navigate to="/login" state={{ from: location }} replace />;
-};
+}

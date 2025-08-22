@@ -52,6 +52,7 @@ class VersionChecker {
         }
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log('Version check failed:', error.message);
     } finally {
       this.isChecking = false;
@@ -60,21 +61,28 @@ class VersionChecker {
 
   handleVersionUpdate(newVersion) {
     this.stop();
-    
+
     const message = `A new version (${newVersion}) is available. The application will refresh automatically to load the latest version.`;
-    
-    // Show alert and refresh
-    if (window.confirm(`${message}\n\nClick OK to refresh now, or Cancel to continue (refresh will happen automatically in 10 seconds).`)) {
+
+    // Auto-refresh with notification
+    // Create a temporary notification div instead of using alert/confirm
+    const notification = document.createElement('div');
+    notification.innerHTML = `
+      <div style="position: fixed; top: 20px; right: 20px; background: #2196F3; color: white; padding: 15px; border-radius: 4px; z-index: 10000; max-width: 400px;">
+        <strong>New Version Available</strong><br/>
+        ${message}<br/>
+        <small>Refreshing in 10 seconds...</small>
+      </div>
+    `;
+    document.body.appendChild(notification);
+
+    // Auto-refresh after 10 seconds
+    setTimeout(() => {
       window.location.reload(true);
-    } else {
-      // Auto-refresh after 10 seconds if user cancels
-      setTimeout(() => {
-        window.location.reload(true);
-      }, 10000);
-    }
+    }, 10000);
   }
 
-  getCurrentVersion() {
+  static getCurrentVersion() {
     return CURRENT_VERSION;
   }
 }

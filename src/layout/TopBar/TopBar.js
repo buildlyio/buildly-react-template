@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
 import {
   AppBar,
@@ -19,11 +20,11 @@ import AdminMenu from './AdminMenu';
 import AccountMenu from './AccountMenu';
 import './TopBarStyles.css';
 
-const TopBar = ({
+function TopBar({
   navHidden,
   setNavHidden,
-  history,
-}) => {
+}) {
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
   const [settingEl, setSettingEl] = useState(null);
   const [organization, setOrganization] = useState(null);
@@ -50,7 +51,7 @@ const TopBar = ({
   };
 
   const handleUserManagementClick = () => {
-    history.push(`${routes.USER_MANAGEMENT}/current-users`);
+    navigate(`${routes.USER_MANAGEMENT}/current-users`);
     setSettingEl(null);
   };
 
@@ -60,7 +61,7 @@ const TopBar = ({
 
   const handleLogoutClick = () => {
     oauthService.logout();
-    history.push('/');
+    navigate('/');
   };
 
   return (
@@ -81,11 +82,23 @@ const TopBar = ({
         >
           <MenuIcon />
         </IconButton>
-        <img
-          src={logo}
-          className="topbarLogo"
-          alt="Company text logo"
-        />
+        <button
+          type="button"
+          onClick={() => navigate(routes.DASHBOARD)}
+          style={{ 
+            border: 'none', 
+            background: 'transparent', 
+            padding: 0, 
+            cursor: 'pointer' 
+          }}
+          aria-label="Go to dashboard"
+        >
+          <img
+            src={logo}
+            className="topbarLogo"
+            alt="Company text logo"
+          />
+        </button>
         <div className="topbarMenuRight">
           {isAdmin && (
             <IconButton
@@ -123,6 +136,6 @@ const TopBar = ({
       </Toolbar>
     </AppBar>
   );
-};
+}
 
 export default TopBar;

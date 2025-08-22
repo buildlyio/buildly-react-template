@@ -2,11 +2,11 @@ import { useMutation } from '@tanstack/react-query';
 import { httpService } from '@modules/http/http.service';
 
 export const useResetPasswordConfirmMutation = (
-  history,
+  navigate,
   redirectTo,
   displayAlert,
-) => useMutation(
-  async (resetConfirmData) => {
+) => useMutation({
+  mutationFn: async (resetConfirmData) => {
     const response = await httpService.makeRequest(
       'post',
       `${window.env.API_URL}coreuser/reset_password_confirm/`,
@@ -14,13 +14,11 @@ export const useResetPasswordConfirmMutation = (
     );
     return response.data;
   },
-  {
-    onSuccess: async (data) => {
-      displayAlert('success', data.detail);
-      history.push(redirectTo);
-    },
-    onError: () => {
-      displayAlert('error', 'Password reset failed');
-    },
+  onSuccess: async (data) => {
+    displayAlert('success', data.detail);
+    navigate(redirectTo);
   },
-);
+  onError: () => {
+    displayAlert('error', 'Password reset failed');
+  },
+});

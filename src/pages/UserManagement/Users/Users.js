@@ -18,30 +18,30 @@ import { getGroupsFormattedRow, getUserFormattedRows, userColumns } from '@utils
 import '../UserManagementStyles.css';
 import { useDeleteCoreuserMutation } from '@react-query/mutations/coreuser/deleteCoreuserMutation';
 
-const Users = () => {
+function Users() {
   const user = getUser();
 
   const { displayAlert } = useAlert();
   const [rows, setRows] = useState([]);
   const [groups, setGroups] = useState([]);
 
-  const { data: coreuserData, isLoading: isLoadingCoreuser } = useQuery(
-    ['users'],
-    () => getCoreuserQuery(displayAlert),
-    { refetchOnWindowFocus: false },
-  );
+  const { data: coreuserData, isLoading: isLoadingCoreuser } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => getCoreuserQuery(displayAlert),
+    refetchOnWindowFocus: false,
+  });
 
-  const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery(
-    ['coregroup'],
-    () => getCoregroupQuery(displayAlert),
-    { refetchOnWindowFocus: false },
-  );
+  const { data: coregroupData, isLoading: isLoadingCoregroup } = useQuery({
+    queryKey: ['coregroup'],
+    queryFn: () => getCoregroupQuery(displayAlert),
+    refetchOnWindowFocus: false,
+  });
 
-  const { data: organizations, isLoading: isLoadingOrganizations } = useQuery(
-    ['organizations'],
-    () => getAllOrganizationQuery(displayAlert),
-    { refetchOnWindowFocus: false },
-  );
+  const { data: organizations, isLoading: isLoadingOrganizations } = useQuery({
+    queryKey: ['organizations'],
+    queryFn: () => getAllOrganizationQuery(displayAlert),
+    refetchOnWindowFocus: false,
+  });
 
   const { mutate: editUserMutation, isLoading: isEditingUser } = useEditCoreuserMutation(displayAlert);
 
@@ -177,6 +177,6 @@ const Users = () => {
       />
     </div>
   );
-};
+}
 
 export default Users;

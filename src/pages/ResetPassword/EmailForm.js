@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
@@ -20,13 +20,14 @@ import { validators } from '@utils/validators';
 import { useResetPasswordMutation } from '@react-query/mutations/authUser/resetPasswordMutation';
 import './ResetPasswordStyles.css';
 
-const EmailForm = ({ history }) => {
+function EmailForm() {
+  const navigate = useNavigate();
   const email = useInput('', { required: true });
   const [error, setError] = useState({});
 
   const { displayAlert } = useAlert();
 
-  const { mutate: resetPasswordMutation, isLoading: isResetPassword } = useResetPasswordMutation(displayAlert, setError, history);
+  const { mutate: resetPasswordMutation, isLoading: isResetPassword } = useResetPasswordMutation(displayAlert, setError, navigate);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -140,6 +141,6 @@ const EmailForm = ({ history }) => {
       <Copyright />
     </Container>
   );
-};
+}
 
 export default EmailForm;

@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 
-const ConfirmModal = ({
+function ConfirmModal({
   open,
   setOpen,
   submitAction,
@@ -16,7 +16,7 @@ const ConfirmModal = ({
   submitText,
   msg1,
   msg2,
-}) => {
+}) {
   const handleClose = () => {
     setOpen(false);
   };
@@ -52,6 +52,6 @@ const ConfirmModal = ({
       </Dialog>
     </div>
   );
-};
+}
 
 export default ConfirmModal;

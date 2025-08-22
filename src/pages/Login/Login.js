@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Button,
   CssBaseline,
@@ -26,18 +26,19 @@ import { useResetPasswordCheckMutation } from '@react-query/mutations/authUser/r
 import { useLoginMutation } from '@react-query/mutations/authUser/loginMutation';
 import './LoginStyles.css';
 
-const Login = ({ history }) => {
+function Login() {
   const username = useInput('', { required: true });
   const password = useInput('', { required: true });
   const [error, setError] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { displayAlert } = useAlert();
 
-  const { mutate: resetPasswordCheckMutation, isLoading: isPasswordCheck } = useResetPasswordCheckMutation(history, routes.RESET_PASSWORD_CONFIRM, routes.LOGIN, displayAlert);
+  const { mutate: resetPasswordCheckMutation, isLoading: isPasswordCheck } = useResetPasswordCheckMutation(navigate, routes.RESET_PASSWORD_CONFIRM, routes.LOGIN, displayAlert);
 
-  const { mutate: loginMutation, isLoading: islogin, isError: isLoginError } = useLoginMutation(history, (location.state && location.state.from) || routes.DASHBOARD, displayAlert);
+  const { mutate: loginMutation, isLoading: islogin, isError: isLoginError } = useLoginMutation(navigate, (location.state && location.state.from) || routes.DASHBOARD, displayAlert);
 
   useEffect(() => {
     if (location.pathname.includes(routes.RESET_PASSWORD_CONFIRM)) {
@@ -182,8 +183,8 @@ const Login = ({ history }) => {
               >
                 Sign in
               </Button>
-              <Grid container alignItems="center">
-                <Grid size={5} style={{ textAlign: 'start' }}>
+              <Grid container justifyContent="space-between" alignItems="center">
+                <Grid>
                   <Link
                     to={routes.RESET_PASSWORD}
                     variant="body2"
@@ -192,7 +193,7 @@ const Login = ({ history }) => {
                     Forgot Password?
                   </Link>
                 </Grid>
-                <Grid size={7} style={{ textAlign: 'end' }}>
+                <Grid>
                   <Link
                     to={routes.REGISTER}
                     variant="body2"
@@ -209,6 +210,6 @@ const Login = ({ history }) => {
       <Copyright />
     </Container>
   );
-};
+}
 
 export default Login;
