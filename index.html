@@ -2,10 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>React App</title>
-    <script src="/env-config.js"></script>
+    <script>
+      // Only load env-config.js in Docker, skip in development
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        document.write('<script src="/env-config.js"><\/script>');
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

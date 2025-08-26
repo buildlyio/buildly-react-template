@@ -2,12 +2,12 @@
 // Supports both Docker runtime injection and Vite build-time variables
 
 interface EnvConfig {
-  REACT_APP_API_URL: string;
-  REACT_APP_APP_NAME: string;
-  REACT_APP_ENV: string;
-  REACT_APP_VERSION: string;
-  REACT_APP_OAUTH_TOKEN_URL: string;
-  REACT_APP_OAUTH_CLIENT_ID: string;
+  VITE_API_URL: string;
+  VITE_APP_NAME: string;
+  VITE_ENV: string;
+  VITE_VERSION: string;
+  VITE_OAUTH_TOKEN_URL: string;
+  VITE_OAUTH_CLIENT_ID: string;
 }
 
 // Docker runtime environment (injected via docker-entrypoint.sh)
@@ -17,37 +17,36 @@ declare global {
   }
 }
 
-// Fallback to Vite environment variables for local development
+// Get environment variable from Docker runtime or Vite build-time
 const getEnvVar = (key: keyof EnvConfig): string => {
   // Try Docker runtime environment first
   if (window._env_ && window._env_[key]) {
     return window._env_[key];
   }
   
-  // Fallback to Vite build-time variables
-  const viteKey = `VITE_${key.replace('REACT_APP_', '')}`;
-  const envValue = import.meta.env[viteKey] || import.meta.env[key];
+  // Get from Vite environment variables
+  const envValue = import.meta.env[key];
   
   // Default values if nothing is set
   const defaults: EnvConfig = {
-    REACT_APP_API_URL: 'http://localhost:3001/api',
-    REACT_APP_APP_NAME: 'React App',
-    REACT_APP_ENV: 'development',
-    REACT_APP_VERSION: '1.0.0',
-    REACT_APP_OAUTH_TOKEN_URL: 'http://localhost:3001/oauth/token/',
-    REACT_APP_OAUTH_CLIENT_ID: 'your-client-id',
+    VITE_API_URL: 'http://localhost:3001/api',
+    VITE_APP_NAME: 'React App',
+    VITE_ENV: 'development',
+    VITE_VERSION: '1.0.0',
+    VITE_OAUTH_TOKEN_URL: 'http://localhost:3001/oauth/token/',
+    VITE_OAUTH_CLIENT_ID: 'your-client-id',
   };
   
   return envValue || defaults[key];
 };
 
 export const env = {
-  API_URL: getEnvVar('REACT_APP_API_URL'),
-  APP_NAME: getEnvVar('REACT_APP_APP_NAME'),
-  ENV: getEnvVar('REACT_APP_ENV'),
-  VERSION: getEnvVar('REACT_APP_VERSION'),
-  OAUTH_TOKEN_URL: getEnvVar('REACT_APP_OAUTH_TOKEN_URL'),
-  OAUTH_CLIENT_ID: getEnvVar('REACT_APP_OAUTH_CLIENT_ID'),
-  IS_PRODUCTION: getEnvVar('REACT_APP_ENV') === 'production',
-  IS_DEVELOPMENT: getEnvVar('REACT_APP_ENV') === 'development',
+  API_URL: getEnvVar('VITE_API_URL'),
+  APP_NAME: getEnvVar('VITE_APP_NAME'),
+  ENV: getEnvVar('VITE_ENV'),
+  VERSION: getEnvVar('VITE_VERSION'),
+  OAUTH_TOKEN_URL: getEnvVar('VITE_OAUTH_TOKEN_URL'),
+  OAUTH_CLIENT_ID: getEnvVar('VITE_OAUTH_CLIENT_ID'),
+  IS_PRODUCTION: getEnvVar('VITE_ENV') === 'production',
+  IS_DEVELOPMENT: getEnvVar('VITE_ENV') === 'development',
 };

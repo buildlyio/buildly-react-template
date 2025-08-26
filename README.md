@@ -85,31 +85,31 @@ Vite automatically loads environment files in this priority order:
 
 **Base development config (`.env.development`):**
 ```env
-REACT_APP_API_URL=http://dev-api.example.com/
-REACT_APP_APP_NAME=React App
-REACT_APP_ENV=development
-REACT_APP_VERSION=1.0.0
-REACT_APP_OAUTH_TOKEN_URL=http://dev-api.example.com/token/
-REACT_APP_OAUTH_CLIENT_ID=your-client-id
+VITE_API_URL=http://dev-api.example.com/
+VITE_APP_NAME=React App
+VITE_ENV=development
+VITE_VERSION=1.0.0
+VITE_OAUTH_TOKEN_URL=http://dev-api.example.com/token/
+VITE_OAUTH_CLIENT_ID=your-client-id
 ```
 
 **Local overrides (`.env.development.local`) - Optional:**
 ```env
 # Create this file locally if you need to override any values
 # This file is not committed to git
-REACT_APP_API_URL=http://localhost:8000/api
-REACT_APP_OAUTH_TOKEN_URL=http://localhost:8000/oauth/token/
-REACT_APP_OAUTH_CLIENT_ID=your-local-client-id
-REACT_APP_APP_NAME=My Local React App
+VITE_API_URL=http://localhost:8000/api
+VITE_OAUTH_TOKEN_URL=http://localhost:8000/oauth/token/
+VITE_OAUTH_CLIENT_ID=your-local-client-id
+VITE_APP_NAME=My Local React App
 ```
 
 ### Docker Runtime (Injected via environment)
-When running in Docker, environment variables are injected at runtime:
+When running in Docker, environment variables are injected at runtime using VITE_ prefix:
 ```bash
-docker run -e REACT_APP_API_URL=https://api.example.com \
-           -e REACT_APP_APP_NAME="Production App" \
-           -e REACT_APP_OAUTH_TOKEN_URL=https://api.example.com/oauth/token/ \
-           -e REACT_APP_OAUTH_CLIENT_ID=prod-client-id \
+docker run -e VITE_API_URL=https://api.example.com \
+           -e VITE_APP_NAME="Production App" \
+           -e VITE_OAUTH_TOKEN_URL=https://api.example.com/oauth/token/ \
+           -e VITE_OAUTH_CLIENT_ID=prod-client-id \
            -p 80:80 react-app
 ```
 
@@ -128,9 +128,10 @@ docker run -p 80:80 react-app
 
 # Run with custom environment variables
 docker run -p 80:80 \
-  -e REACT_APP_API_URL=https://api.example.com \
-  -e REACT_APP_APP_NAME="My Production App" \
-  -e REACT_APP_ENV=production \
+  -e VITE_API_URL=https://api.example.com \
+  -e VITE_APP_NAME="My Production App" \
+  -e VITE_ENV=production \
+  -e VITE_OAUTH_CLIENT_ID=your-prod-client-id \
   react-app
 ```
 
@@ -144,10 +145,12 @@ services:
     ports:
       - "80:80"
     environment:
-      - REACT_APP_API_URL=https://api.example.com
-      - REACT_APP_APP_NAME=Production App
-      - REACT_APP_ENV=production
-      - REACT_APP_VERSION=1.0.0
+      - VITE_API_URL=https://api.example.com
+      - VITE_APP_NAME=Production App
+      - VITE_ENV=production
+      - VITE_VERSION=1.0.0
+      - VITE_OAUTH_TOKEN_URL=https://api.example.com/oauth/token/
+      - VITE_OAUTH_CLIENT_ID=your-production-client-id
 ```
 
 ## 📁 Project Structure
@@ -220,7 +223,7 @@ npm run test:e2e:ui         # Run with Playwright UI
 
 ### Docker Deployment
 1. Build image: `docker build -t react-app .`
-2. Run with environment variables: `docker run -p 80:80 -e REACT_APP_API_URL=... react-app`
+2. Run with environment variables: `docker run -p 80:80 -e VITE_API_URL=... react-app`
 3. Deploy to your container platform (AWS ECS, Google Cloud Run, etc.)
 
 ## 📚 Learn More

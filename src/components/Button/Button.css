@@ -1,8 +1,8 @@
 .button {
-  font-family: 'Nunito Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-weight: 700;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
   border: 0;
-  border-radius: 3em;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   display: inline-block;
   line-height: 1;
@@ -10,14 +10,22 @@
 }
 
 .button--primary {
-  color: white;
-  background-color: #1ea7fd;
+  color: var(--color-text-inverse);
+  background-color: var(--color-primary);
+}
+
+.button--primary:hover {
+  background-color: var(--color-primary-hover);
 }
 
 .button--secondary {
-  color: #333;
+  color: var(--color-text-primary);
   background-color: transparent;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px 1px inset;
+  border: 1px solid var(--color-surface-border);
+}
+
+.button--secondary:hover {
+  background-color: var(--color-surface-hover);
 }
 
 .button--small {
@@ -37,10 +45,21 @@
 
 .button:hover {
   transform: translateY(-1px);
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 12px;
+  box-shadow: var(--shadow-md);
 }
 
 .button:active {
   transform: translateY(0);
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button:disabled:hover {
+  transform: none;
+  box-shadow: none;
 }

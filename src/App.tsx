@@ -1,49 +1,62 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import { Button } from './components/Button/Button'
-import { env } from './utils/env'
+import { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { useAuthStore } from './stores/authStore'
+import { useThemeStore } from './stores/themeStore'
+import { RootRedirect } from './components/RootRedirect/RootRedirect'
+import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute'
+import { Login } from './pages/Login/Login'
+import { Dashboard } from './pages/Dashboard/Dashboard'
+import './styles/theme.css'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
+function App() {
+  const { cleanupExpiredAuth } = useAuthStore()
+  const { initializeTheme } = useThemeStore()
+  
+  // Initialize theme and auth on app start
   useEffect(() => {
-    document.title = env.APP_NAME
-  }, [])
+    cleanupExpiredAuth()
+    const cleanupTheme = initializeTheme()
+    
+    // Return cleanup function
+    return cleanupTheme
+  }, [cleanupExpiredAuth, initializeTheme])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>{env.APP_NAME}</h1>
-      <div className="card">
-        <Button 
-          primary
-          label={`Count is ${count}`}
-          onClick={() => setCount((count) => count + 1)}
-        />
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-        <div style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
-          <p>Environment: {env.ENV}</p>
-          <p>Version: {env.VERSION}</p>
-          <p>API URL: {env.API_URL}</p>
-          <p>OAuth Token URL: {env.OAUTH_TOKEN_URL}</p>
-          <p>OAuth Client ID: {env.OAUTH_CLIENT_ID}</p>
-        </div>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Routes>
+          {/* Root route - redirects based on auth status */}
+          <Route path="/" element={<RootRedirect />} />
+          
+          {/* Login route - accessible to unauthenticated users */}
+          <Route path="/login" element={<Login />} />
+          
+          {/* Protected app routes - requires authentication */}
+          <Route 
+            path="/app" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Catch all route - redirect to root for handling */}
+          <Route path="*" element={<RootRedirect />} />
+        </Routes>
+      </Router>
+    </QueryClientProvider>
   )
 }
 
