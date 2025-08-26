@@ -4,167 +4,106 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Buildly React Template is a React frontend application that connects to Buildly Core. It implements authentication, user management, and provides a foundation for building data management interfaces using Material-UI components. The application includes automatic version checking with forced refresh capabilities.
+A modern React 19 template built with TypeScript, Vite, and comprehensive tooling. This is a production-ready template featuring dual environment variable support for both local development and Docker containerization, with integrated testing, linting, and component development workflows.
 
 ## Development Commands
 
 ### Setup and Installation
 ```bash
-yarn install                    # Install dependencies
+npm install                    # Install dependencies
+cp .env.example .env.development  # Set up environment variables
 ```
 
-### Development
+### Development Server
 ```bash
-yarn run start:local          # Start dev server for local development (port 3000)
-yarn run https:local          # Start HTTPS dev server for local development  
-yarn run start:dev            # Start dev server pointing to dev API
-yarn run start:prod           # Start dev server pointing to prod API
+npm run dev                    # Start dev server on port 3000
+npm run preview                # Preview production build locally
 ```
 
-### Building
+**Important**: Always stop the dev server before making configuration changes to avoid cached issues.
+
+### Building and Deployment
 ```bash
-yarn run build                # Build for development
-yarn run build:dev            # Build for dev environment
-yarn run build:prod           # Build for production
+npm run build                  # TypeScript compilation + Vite build
+npm run docker:build           # Build Docker image
+npm run docker:run             # Run Docker container on port 80
 ```
 
 ### Testing and Quality
 ```bash
-yarn run test                 # Run Jest tests in watch mode
-yarn run test:prod           # Run Jest tests once
-yarn run test-coverage       # Run tests with coverage report
-yarn run lint                # Run ESLint on src/**/*.js files
+# Unit Testing (Vitest + React Testing Library)
+npm run test                   # Run in watch mode
+npm run test:coverage          # Run with coverage report
+vitest run src/path/to/test.test.tsx  # Run single test file
+
+# End-to-End Testing (Playwright)
+npm run test:e2e               # Run all E2E tests
+npm run test:e2e:ui            # Run with Playwright UI
+npx playwright test --debug    # Debug E2E tests
+
+# Code Quality
+npm run lint                   # Run ESLint
+npm run lint:fix               # Auto-fix ESLint issues
+
+# Component Development
+npm run storybook              # Start Storybook on port 6006
+npm run build-storybook        # Build static Storybook
 ```
 
-### Deployment
-```bash
-yarn run serve               # Serve built files from dist/ directory
+## Architecture and Key Patterns
+
+### Environment Variable System
+The app uses a dual environment system supporting both local development and Docker runtime injection:
+
+- **Local Development**: Vite loads `.env.development.local` → `.env.development` → `.env.local` → `.env`
+- **Docker Runtime**: Variables injected via `docker-entrypoint.sh` into `window._env_`
+- **Environment Utility**: `src/utils/env.ts` provides unified access with fallback hierarchy
+
+All environment variables must be prefixed with `REACT_APP_` and defined in the `EnvConfig` interface in `src/utils/env.ts`.
+
+### Testing Architecture
+**Dual Testing Setup** via Vite configuration:
+- **Unit Tests**: Vitest project targeting `src/**/*.test.{ts,tsx}` with jsdom environment
+- **Storybook Tests**: Separate Vitest project using Playwright browser for component story testing
+- **E2E Tests**: Playwright targeting `e2e/` directory with automatic dev server startup
+
+### Component Structure
+Components follow co-location pattern: each component has its own directory with:
+- `ComponentName.tsx` - Main component
+- `ComponentName.test.tsx` - Unit tests
+- `ComponentName.stories.tsx` - Storybook stories
+- `ComponentName.css` - Component-specific styles (if needed)
+
+### Docker Multi-Stage Build
+- **Build Stage**: Node.js container compiles TypeScript and builds with Vite
+- **Runtime Stage**: Nginx Alpine serves static files
+- **Environment Injection**: `docker-entrypoint.sh` creates runtime environment configuration
+
+### Build and Bundle Configuration
+- **Vite**: Development server on port 3000, optimized production builds
+- **TypeScript**: Strict mode enabled, ES2022 target, React JSX transform
+- **ESLint**: TypeScript + React rules with Storybook integration
+- **Vitest**: Two-project setup (unit + storybook) with jsdom and Playwright browser environments
+
+## Important Implementation Details
+
+### Dynamic Document Title
+The app sets `document.title` dynamically using `useEffect` in the main App component, pulling from environment variables rather than static HTML.
+
+### Environment Variable Access Pattern
+```typescript
+import { env } from '@/utils/env'
+
+// Available environment variables:
+env.API_URL           // REACT_APP_API_URL
+env.APP_NAME          // REACT_APP_APP_NAME
+env.OAUTH_TOKEN_URL   // REACT_APP_OAUTH_TOKEN_URL
+env.OAUTH_CLIENT_ID   // REACT_APP_OAUTH_CLIENT_ID
+env.IS_DEVELOPMENT    // boolean derived from REACT_APP_ENV
 ```
 
-## Architecture
+### Docker Environment Override
+When running in Docker, environment variables are injected at container startup and override any build-time values, enabling the same image to run in different environments.
 
-### Technology Stack
-- **React 18** with hooks and functional components
-- **Material-UI v6** for UI components and theming
-- **React Router v6** for client-side routing
-- **TanStack Query v5** (formerly React Query) for server state management
-- **Zustand v4** for client state management
-- **i18next** for internationalization
-- **Webpack 5** for bundling
-- **Jest + React Testing Library** for testing
-
-### Key Architectural Patterns
-
-**State Management:**
-- Zustand stores in `src/zustand/` for global client state (alerts, etc.)
-- TanStack Query v5 in `src/react-query/` for server state management
-- React Context for user authentication state
-
-**Authentication Flow:**
-- OAuth2 Bearer token flow implemented in `src/modules/oauth/`
-- Token storage in localStorage with expiration checking
-- Private routes protected by `PrivateRoute` component
-- Authentication state managed via `oauthService`
-
-**API Communication:**
-- Centralized HTTP service in `src/modules/http/http.service.js`
-- Automatic Bearer token injection for authenticated requests
-- TanStack Query for caching and synchronization
-- All API queries use new v5 syntax: `useQuery({ queryKey: [...], queryFn: ... })`
-
-**Routing Structure:**
-- Public routes: login, register, password reset, verification
-- Private routes: dashboard, user management (admin/global admin only)
-- Route protection based on token validity and user permissions
-- React Router v6 with nested routing structure using wildcards (`/*`) for UserManagement
-
-**Version Management:**
-- Automatic version checking system that polls `/version.json` every 30 seconds
-- Forces browser refresh when new versions are deployed
-- Version info generated during webpack build process
-
-### Directory Structure
-
-```
-src/
-├── components/          # Reusable UI components
-├── context/            # React contexts (App, User)
-├── hooks/              # Custom React hooks
-├── layout/             # Layout components (TopBar, Container)
-├── modules/            # Business logic modules (http, oauth)
-├── pages/              # Route-level page components
-├── react-query/        # API queries and mutations
-├── routes/             # Route definitions and guards
-├── styles/             # Theme and styling
-├── utils/              # Utility functions
-└── zustand/            # Global state stores
-```
-
-### Environment Configuration
-
-The app requires environment configuration via `.env.development.local` file:
-```javascript
-window.env = {
-    API_URL: "https://dev.example.com/",
-    OAUTH_TOKEN_URL: "https://dev.example.com/oauth/token/",
-    OAUTH_CLIENT_ID: "your-client-id",
-    PRODUCTION: "false"
-}
-```
-
-### Webpack Aliases
-
-The following path aliases are configured for cleaner imports:
-- `@assets` → `./src/assets`
-- `@components` → `./src/components`
-- `@context` → `./src/context`
-- `@hooks` → `./src/hooks`
-- `@layout` → `./src/layout`
-- `@modules` → `./src/modules`
-- `@pages` → `./src/pages`
-- `@react-query` → `./src/react-query`
-- `@routes` → `./src/routes`
-- `@styles` → `./src/styles`
-- `@utils` → `./src/utils`
-- `@zustand` → `./src/zustand`
-
-## Development Guidelines
-
-### Adding New Features
-1. Use functional components with hooks
-2. Follow the established directory structure
-3. Implement server state with TanStack Query v5
-4. Use Zustand for global client state
-5. Add proper TypeScript types where applicable
-6. Follow Material-UI v6 theming patterns
-
-### React Query Migration (TanStack Query v5)
-- **CRITICAL**: All useQuery calls must use object syntax: `useQuery({ queryKey: [...], queryFn: ... })`
-- **CRITICAL**: All useMutation calls must use object syntax: `useMutation({ mutationFn: ... })`
-- Old v3 array syntax will cause "Bad argument type" errors
-- When adding new queries/mutations, always use the v5 syntax
-
-### Permission System
-- User management routes are protected by `hasAdminRights()` or `hasGlobalAdminRights()`
-- Admin rights: `!group.is_global && group.is_org_level` with full permissions
-- Global admin rights: `group.is_global` with full permissions
-- Always check user permissions before rendering admin-only components
-
-### Styling and Layout
-- DataTableWrapper component supports full-width tables via CSS overrides
-- UserManagement component uses viewport-width styling to break out of container constraints
-- TopBar logo uses `object-fit: contain` to prevent compression
-- Material-UI v6 uses `sx` prop for inline styling
-
-### Testing
-- Tests should be placed alongside components
-- Use Jest and React Testing Library for component testing
-- Run `yarn run test-coverage` before submitting changes
-- Enzyme has been replaced with React Testing Library
-
-### API Integration
-- Use `httpService.makeRequest()` for authenticated API calls
-- Organize queries in `src/react-query/queries/`
-- Organize mutations in `src/react-query/mutations/`
-- Handle errors gracefully with user-friendly alerts
-- Bearer tokens are automatically injected (JWT support removed)
+### Testing Setup Requirements
+Unit tests require `src/test/setup.ts` which provides Jest DOM matchers and mocks the global `window._env_` object with test values.

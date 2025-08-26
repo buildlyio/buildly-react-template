@@ -1,125 +1,247 @@
-# Buildly React Template
-[![Build Status](https://travis-ci.org/buildlyio/buildly-react-template.svg?branch=master)](https://travis-ci.org/buildlyio/buildly-react-template) [![Documentation Status](https://readthedocs.org/projects/buildly-react-template/badge/?version=latest)](https://buildly-react-template.readthedocs.io/en/latest/?badge=latest) [![Gitter](https://badges.gitter.im/Buildlyio/community.svg)](https://gitter.im/Buildlyio/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+# React TypeScript App Template
 
-Buildly React Template is a [React](https://reactjs.org/) web application that implements the core features of the UI core, pre-configure to connect to [Buildly Core](https://github.com/buildlyio/buildly-core).
+A modern React web application template built with the latest technologies and best practices. This template includes TypeScript, Vite, ESLint, Storybook, end-to-end testing, and Docker support with flexible environment variable handling.
 
-## Getting Started
+## 🚀 Features
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+- **React 19** with TypeScript
+- **Vite** for fast development and building
+- **ESLint** with TypeScript and React rules
+- **Storybook** for component development and documentation
+- **Vitest** for unit testing with React Testing Library
+- **Playwright** for end-to-end testing
+- **Docker** support with multi-stage builds
+- **Environment variable handling** for both Docker and local development
+- **Modern CSS** with responsive design
+- **Hot Module Replacement (HMR)** for fast development
+
+## 📦 Quick Start
 
 ### Prerequisites
 
-The web application was tested and built with the following versions:
+- Node.js 18+ and npm
+- Docker (optional, for containerization)
 
-- node v16.14.2
-- yarn v1.17.3
+### Local Development
 
-- You need to create .env.development.local file with the env variables (something as below).
-buildly-react-template
-|--.env.development.local
+1. **Clone and install dependencies:**
+   ```bash
+   git clone <your-repo-url>
+   cd react-app-template
+   npm install
+   ```
 
+2. **Set up environment variables:**
+   ```bash
+   # Copy base development environment
+   cp .env.example .env.development
+   
+   # Optionally create local overrides (not committed to git)
+   # Edit .env.development.local with your local values if needed
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to view the app.
+
+## 🛠️ Available Scripts
+
+### Development
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+
+### Code Quality
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint issues automatically
+
+### Testing
+- `npm run test` - Run unit tests with Vitest
+- `npm run test:ui` - Run unit tests with UI
+- `npm run test:coverage` - Run tests with coverage report
+- `npm run test:e2e` - Run end-to-end tests with Playwright
+- `npm run test:e2e:ui` - Run E2E tests with UI
+
+### Storybook
+- `npm run storybook` - Start Storybook development server
+- `npm run build-storybook` - Build Storybook for production
+
+### Docker
+- `npm run docker:build` - Build Docker image
+- `npm run docker:run` - Run Docker container
+
+## 🌍 Environment Variables
+
+The application supports environment variables through multiple methods with automatic loading priority:
+
+### Local Development (.env files)
+Vite automatically loads environment files in this priority order:
+1. `.env.development.local` - Local overrides (not committed to git)
+2. `.env.development` - Development environment defaults
+3. `.env.local` - Local overrides for all environments (not committed)
+4. `.env` - Global defaults
+
+**Base development config (`.env.development`):**
+```env
+REACT_APP_API_URL=http://dev-api.example.com/
+REACT_APP_APP_NAME=React App
+REACT_APP_ENV=development
+REACT_APP_VERSION=1.0.0
+REACT_APP_OAUTH_TOKEN_URL=http://dev-api.example.com/token/
+REACT_APP_OAUTH_CLIENT_ID=your-client-id
 ```
-window.env={
-    API_URL: "https://dev.example.com/",
-    OAUTH_TOKEN_URL: "https://dev.example.com/oauth/token/",
-    OAUTH_CLIENT_ID: "sjkghwty982092u1tjfwjit0348y82092utwgio",
-    PRODUCTION: "false",
-}
+
+**Local overrides (`.env.development.local`) - Optional:**
+```env
+# Create this file locally if you need to override any values
+# This file is not committed to git
+REACT_APP_API_URL=http://localhost:8000/api
+REACT_APP_OAUTH_TOKEN_URL=http://localhost:8000/oauth/token/
+REACT_APP_OAUTH_CLIENT_ID=your-local-client-id
+REACT_APP_APP_NAME=My Local React App
 ```
 
-- In case you want to run https we app version on your local, you need to have a certificate created for your localhost already. Modify package.json file to indicate the path to you certififcate and key in the scripts --> https:local
-
-### Installing
-
-First of all, you need to have a Buildly Core instance up and running locally.
-Further detail about how to deploy Buildly Core locally, check its [documentation](https://buildly-core.readthedocs.io/en/latest/).
-
-To install the application you need to download and install its dependencies, so you have to navigate to the project folder and run the following command:
-
-```
-$ yarn install
+### Docker Runtime (Injected via environment)
+When running in Docker, environment variables are injected at runtime:
+```bash
+docker run -e REACT_APP_API_URL=https://api.example.com \
+           -e REACT_APP_APP_NAME="Production App" \
+           -e REACT_APP_OAUTH_TOKEN_URL=https://api.example.com/oauth/token/ \
+           -e REACT_APP_OAUTH_CLIENT_ID=prod-client-id \
+           -p 80:80 react-app
 ```
 
-Now, initialize and build the project
+The environment utility (`src/utils/env.ts`) automatically handles both scenarios.
 
-```
-$ yarn run build:local
-```
+## 🐳 Docker Usage
 
-To run the web app:
-
-```
-$ yarn run start:local
-```
-
-To run the https web app:
-
-```
-$ yarn run https:local
-```
-
-Your Buildly React Template will be running locally and listening to the port 3000, so you can access it via your browser typing this address: 127.0.0.1:3000
-
-## Running the tests
-
-To **run tests** using [Jest](https://jestjs.io/):
-
-```
-$ yarn run test
-```
-
-## Deployment
-
-To deploy Buildly React Template on live, you can either use our [Buildly React Template Docker image](https://hub.docker.com/r/buildly/buildly-react-template) from Docker Hub or build your own image and host it somewhere, so it can be used with your deployment platform and/or tool.
-
-### Build Docker image
-
-First you need to have the web app dependencies installed and the app initialized locally.
-And then you need to build it as a production application executing the following command:
-
-```
-$ yarn run build:prod
-```
-
-Now, you just need to build a Docker image and host it somewhere. Further info about how to build images, check Docker's [documentation](https://docs.docker.com/).
-
-### Configuration
-
-The following table lists the configurable parameters of Buildly React Template and their default values.  They can be updated in the
-Docker container via flags as below or configured as environment variables in Travis.
-
-|             Parameter               |            Description             |                    Default                |
-|-------------------------------------|------------------------------------|-------------------------------------------|
-| `API_URL`                           | Buildly Core URL                   | ``      |
-| `OAUTH_CLIENT_ID`                   | The client identifier issued to the client during Buildly Core deployment  | `` |
-| `OAUTH_TOKEN_URL`                   | Buildly Core URL used to authenticate users | `` |
-
-Specify each parameter using `-e`, `--env`, and `--env-file` flags to set simple (non-array) environment variables to `docker run`. For example,
+### Build and run with Docker:
 
 ```bash
-$ docker run -e MYVAR1 --env MYVAR2=foo \
-    --env-file ./env.list \
-    buildly/buildly-react-template
+# Build the image
+docker build -t react-app .
+
+# Run with default environment
+docker run -p 80:80 react-app
+
+# Run with custom environment variables
+docker run -p 80:80 \
+  -e REACT_APP_API_URL=https://api.example.com \
+  -e REACT_APP_APP_NAME="My Production App" \
+  -e REACT_APP_ENV=production \
+  react-app
 ```
 
-## Built With
+### Docker Compose example:
 
-* [Travis CI](https://travis-ci.org/) - Recommended CI/CD
+```yaml
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - REACT_APP_API_URL=https://api.example.com
+      - REACT_APP_APP_NAME=Production App
+      - REACT_APP_ENV=production
+      - REACT_APP_VERSION=1.0.0
+```
 
-## Contributing
+## 📁 Project Structure
 
-Please read [CONTRIBUTING.md](https://github.com/buildlyio/docs/blob/master/CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+```
+├── src/
+│   ├── components/          # Reusable UI components
+│   │   └── Button/          # Example component with tests & stories
+│   ├── test/                # Test setup and utilities
+│   ├── utils/               # Utility functions (env, etc.)
+│   └── App.tsx              # Main app component
+├── e2e/                     # End-to-end tests
+├── .storybook/              # Storybook configuration
+├── public/                  # Static assets
+├── Dockerfile               # Docker configuration
+├── docker-entrypoint.sh     # Docker environment injection script
+├── nginx.conf               # Nginx configuration for Docker
+├── playwright.config.ts     # E2E test configuration
+└── vite.config.ts           # Vite configuration
+```
 
-## Versioning
+## 🧪 Testing
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/buildlyio/buildly-react-template/tags).
+### Unit Tests
+Unit tests use Vitest with React Testing Library:
+```bash
+npm run test                 # Run in watch mode
+npm run test:coverage        # Run with coverage
+```
 
-## Authors
+### Component Stories
+Storybook provides isolated component development and testing:
+```bash
+npm run storybook           # Start Storybook
+```
 
-* **Buildly** - *Initial work*
+### End-to-End Tests
+Playwright provides full browser testing:
+```bash
+npm run test:e2e            # Run E2E tests
+npm run test:e2e:ui         # Run with Playwright UI
+```
 
-See also the list of [contributors](https://github.com/buildlyio/buildly-react-template/graphs/contributors) who participated in this project.
+## 🔧 Configuration
 
-## License
+### TypeScript
+- Strict type checking enabled
+- Modern ES2022 target
+- React JSX transform
+- Path aliases support (can be configured in `tsconfig.json`)
 
-This project is licensed under the GPL v3 License - see the [LICENSE](LICENSE) file for details
+### ESLint
+- TypeScript and React rules
+- Automatic formatting
+- Storybook integration
+- Modern ES2022 syntax support
+
+### Vite
+- Fast HMR for development
+- Optimized production builds
+- Automatic code splitting
+- Environment variable handling
+
+## 🚀 Deployment
+
+### Static Hosting (Netlify, Vercel, etc.)
+1. Build the project: `npm run build`
+2. Deploy the `dist/` folder
+3. Configure environment variables in your hosting platform
+
+### Docker Deployment
+1. Build image: `docker build -t react-app .`
+2. Run with environment variables: `docker run -p 80:80 -e REACT_APP_API_URL=... react-app`
+3. Deploy to your container platform (AWS ECS, Google Cloud Run, etc.)
+
+## 📚 Learn More
+
+- [React Documentation](https://react.dev/)
+- [TypeScript Documentation](https://www.typescriptlang.org/)
+- [Vite Documentation](https://vite.dev/)
+- [Storybook Documentation](https://storybook.js.org/)
+- [Playwright Documentation](https://playwright.dev/)
+- [Vitest Documentation](https://vitest.dev/)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Make your changes and add tests
+4. Run linting and tests: `npm run lint && npm run test`
+5. Commit your changes: `git commit -m 'Add my feature'`
+6. Push to the branch: `git push origin feature/my-feature`
+7. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
