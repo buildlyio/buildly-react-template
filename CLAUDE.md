@@ -220,3 +220,92 @@ Always stop the development server (`npm run dev`) before making configuration c
 
 ### Docker Deployment
 The application uses multi-stage Docker builds with runtime environment injection, allowing the same image to be deployed across different environments without rebuilding.
+
+## Current Application Architecture
+
+### User Interface Components
+
+#### TopBar Component
+- **Location**: `src/components/TopBar/TopBar.tsx`
+- **Features**: 
+  - Gradient background matching login page design (`linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)`)
+  - Theme-aware logo switching (light logo for dark theme, dark logo for light theme)
+  - Sticky positioning for persistent navigation
+  - Responsive design with mobile breakpoints
+- **Contains**: ThemeToggle and UserMenu components
+
+#### ThemeToggle Component  
+- **Location**: `src/components/ThemeToggle/ThemeToggle.tsx`
+- **Features**: 
+  - Pill-shaped container with three theme options
+  - Icon-only design with hover tooltips
+  - Smooth animations and transitions
+  - Visual feedback with active state highlighting
+- **Theme Options**: Light, Dark, System (follows OS preference)
+
+#### UserMenu Component
+- **Location**: `src/components/UserMenu/UserMenu.tsx`
+- **Features**: 
+  - Circular profile icon trigger
+  - Dropdown menu with glass morphism effects
+  - User profile information display
+  - Two menu options: User Management and Logout
+  - Click-outside and escape key handling
+
+#### Authentication Pages
+- **Login**: `/login` - OAuth authentication with gradient background
+- **Register**: `/register` - User registration with grouped form fields (first/last name, username/email, password/confirm password on same lines)
+- **Forgot Password**: `/forgot-password` - Password reset interface
+
+#### Protected Pages
+- **Dashboard**: `/app` - Default authenticated landing page
+- **User Management**: `/app/user-management` - Clean interface ready for user management features (all previous cards/sections removed)
+
+### Recent Changes and Current State
+
+#### TopBar Styling
+- Uses gradient background matching login page design
+- All text and icons use theme-appropriate colors (standard CSS custom properties)
+- Removed custom glass morphism effects in favor of standard theme system
+
+#### User Management Page
+- **Cleaned State**: All user cards, roles/permissions, activity logs, security settings, and current user information sections have been removed
+- **Current State**: Clean layout with header and empty content area ready for new functionality
+- **Purpose**: Provides a clean slate for implementing specific user management features
+
+#### Theme System Integration
+- All components use CSS custom properties for consistent theming
+- Automatic light/dark theme support through media queries
+- Theme toggle provides visual feedback and smooth transitions
+
+### Code Quality and Documentation
+
+#### Comments and Documentation
+- **Added comprehensive comments** to key components for better understanding:
+  - `App.tsx`: Main application setup and routing
+  - `TopBar.tsx`: Navigation component features and structure
+  - `ThemeToggle.tsx`: Theme switching functionality and UI patterns
+  - `UserManagement.tsx`: Current clean state and future-ready structure
+
+#### File Structure Standards
+- Components follow co-location pattern with `.tsx`, `.css`, `.test.tsx`, and `.stories.tsx` files
+- Clear separation between pages, components, stores, and utilities
+- Consistent import organization and commenting
+
+### Important Implementation Notes
+
+#### TopBar Background
+- **Current**: Uses login page gradient (`linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%)`)
+- **Colors**: Buildly blue (#1B5FA3) to Buildly orange (#F9943B)
+- **Theme Integration**: Works with standard CSS custom property theme system
+
+#### User Management Interface
+- **Current State**: Minimal interface with just header
+- **Ready for**: Implementation of specific user management functionality
+- **Architecture**: Clean separation allows for easy feature addition without technical debt
+
+#### Component Patterns
+- All UI components use standard CSS custom properties for theming
+- Hover states and animations follow consistent patterns
+- Responsive design implemented across all components
+- Accessibility considerations with proper ARIA labels and keyboard navigation

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { AUTH_CONSTANTS } from '../utils/constants'
 
 interface User {
   id: string
@@ -10,10 +11,10 @@ interface User {
 }
 
 interface TokenData {
-  access_token: string
-  refresh_token: string
-  token_type: string
-  expires_in: number
+  access: string
+  refresh: string
+  token_type?: string
+  expires_in?: number
   user?: User
 }
 
@@ -42,13 +43,15 @@ export const useAuthStore = create<AuthState>()(
       expiresAt: null,
 
       setTokenData: (tokenData: TokenData) => {
-        const expiresAt = Date.now() + (tokenData.expires_in * 1000)
+        // Default to 1 hour if expires_in is not provided
+        const expiresIn = tokenData.expires_in || AUTH_CONSTANTS.DEFAULT_TOKEN_EXPIRY_SECONDS
+        const expiresAt = Date.now() + (expiresIn * 1000)
         
         set({
           isAuthenticated: true,
           user: tokenData.user || null,
-          accessToken: tokenData.access_token,
-          refreshToken: tokenData.refresh_token,
+          accessToken: tokenData.access,
+          refreshToken: tokenData.refresh,
           tokenType: tokenData.token_type || 'Bearer',
           expiresAt,
         })
@@ -73,7 +76,11 @@ export const useAuthStore = create<AuthState>()(
 
       checkAuth: (): boolean => {
         const state = get()
-        return state.isAuthenticated && !!state.accessToken && !state.isTokenExpired()
+        const hasToken = !!state.accessToken
+        const isNotExpired = !state.isTokenExpired()
+        const isValid = state.isAuthenticated && hasToken && isNotExpired
+        
+        return isValid
       },
 
       // Separate function for cleanup - call this in useEffect, not during render
@@ -100,7 +107,15 @@ export const useAuthStore = create<AuthState>()(
         refreshToken: state.refreshToken,
         tokenType: state.tokenType,
         expiresAt: state.expiresAt,
-      })
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // After rehydration, check if token is still valid
+          if (state.isAuthenticated && state.isTokenExpired()) {
+            state.logout()
+          }
+        }
+      }
     }
   )
 )

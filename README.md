@@ -1,18 +1,34 @@
-# React TypeScript App Template
+# Buildly React Template
 
-A modern React web application template built with the latest technologies and best practices. This template includes TypeScript, Vite, ESLint, Storybook, end-to-end testing, and Docker support with flexible environment variable handling.
+A modern React web application template built with the latest technologies and best practices. This production-ready template features OAuth authentication, comprehensive theme system, user management interface, and Docker support with flexible environment variable handling.
 
 ## 🚀 Features
 
-- **React 19** with TypeScript
-- **Vite** for fast development and building
+### Core Technologies
+- **React 19** with TypeScript and modern JSX transform
+- **Vite** for lightning-fast development and optimized builds
+- **TanStack Query v5** for server state management and caching
+- **React Router v6** for client-side routing
+- **Zustand** for lightweight global state management
+
+### Authentication & Security
+- **OAuth 2.0** authentication flow with token management
+- **Protected routes** with automatic redirects
+- **Persistent login state** with automatic token cleanup
+- **Secure form handling** with multipart/form-data support
+
+### Theme System
+- **Light/Dark/System themes** with automatic OS preference detection
+- **CSS custom properties** for dynamic theme switching
+- **Persistent theme preferences** with localStorage
+- **Responsive design** across all screen sizes
+
+### Development Tools
 - **ESLint** with TypeScript and React rules
-- **Storybook** for component development and documentation
+- **Storybook** for component development and documentation  
 - **Vitest** for unit testing with React Testing Library
 - **Playwright** for end-to-end testing
-- **Docker** support with multi-stage builds
-- **Environment variable handling** for both Docker and local development
-- **Modern CSS** with responsive design
+- **Docker** support with multi-stage builds and runtime environment injection
 - **Hot Module Replacement (HMR)** for fast development
 
 ## 📦 Quick Start
@@ -157,11 +173,34 @@ services:
 
 ```
 ├── src/
+│   ├── api/                 # API layer with TanStack Query
+│   │   └── auth.ts          # Authentication API calls
+│   ├── assets/              # Static assets (logos, images)
+│   │   ├── light-logo.png   # Logo for light theme
+│   │   └── dark-logo.png    # Logo for dark theme
 │   ├── components/          # Reusable UI components
-│   │   └── Button/          # Example component with tests & stories
+│   │   ├── Button/          # Button component with tests & stories
+│   │   ├── TopBar/          # Navigation bar with gradient background
+│   │   ├── ThemeToggle/     # Theme switcher component
+│   │   ├── UserMenu/        # User dropdown menu
+│   │   ├── ProtectedRoute/  # Route protection wrapper
+│   │   └── ui/              # Base UI components
+│   ├── pages/               # Route-level page components
+│   │   ├── Login/           # OAuth login page
+│   │   ├── Register/        # User registration page
+│   │   ├── ForgotPassword/  # Password reset page
+│   │   ├── Dashboard/       # Protected dashboard
+│   │   └── UserManagement/  # User management interface
+│   ├── stores/              # Zustand state stores
+│   │   ├── authStore.ts     # Authentication state management
+│   │   └── themeStore.ts    # Theme state management
+│   ├── styles/              # Global styles and theme definitions
+│   │   ├── theme.css        # CSS custom properties for themes
+│   │   └── auth-pages.css   # Shared authentication page styles
 │   ├── test/                # Test setup and utilities
-│   ├── utils/               # Utility functions (env, etc.)
-│   └── App.tsx              # Main app component
+│   ├── utils/               # Utility functions
+│   │   └── env.ts           # Environment variable handling
+│   └── App.tsx              # Main app component with routing
 ├── e2e/                     # End-to-end tests
 ├── .storybook/              # Storybook configuration
 ├── public/                  # Static assets
@@ -169,8 +208,39 @@ services:
 ├── docker-entrypoint.sh     # Docker environment injection script
 ├── nginx.conf               # Nginx configuration for Docker
 ├── playwright.config.ts     # E2E test configuration
-└── vite.config.ts           # Vite configuration
+├── CLAUDE.md                # Claude Code assistant instructions
+└── vite.config.ts           # Vite configuration with dual test setup
 ```
+
+## 🔐 Authentication & Routing
+
+### Authentication Flow
+The application implements OAuth 2.0 authentication with persistent state management:
+
+1. **Unauthenticated users** are redirected to `/login`
+2. **Login form** submits credentials to OAuth token endpoint
+3. **Successful authentication** stores tokens and redirects to `/app`
+4. **Protected routes** automatically check authentication status
+5. **Token expiration** triggers automatic cleanup and re-authentication
+
+### Route Architecture
+```
+/ (root)               → RootRedirect (checks auth status)
+├── /login             → Login page (public)
+├── /register          → Registration page (public)
+├── /forgot-password   → Password reset page (public)
+└── /app/*             → Protected routes (requires authentication)
+    ├── /app           → Dashboard (default protected page)
+    └── /app/user-management → User management interface
+```
+
+### Theme System
+The theme system provides three modes with automatic persistence:
+- **Light Theme**: Clean, bright interface
+- **Dark Theme**: Dark, high-contrast interface
+- **System Theme**: Automatically follows OS preference
+
+Theme state is managed globally and persists across sessions using localStorage.
 
 ## 🧪 Testing
 
