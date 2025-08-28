@@ -62,13 +62,30 @@ The app uses a dual environment system supporting both local development and Doc
 All environment variables must be prefixed with `VITE_` and defined in the `EnvConfig` interface in `src/utils/env.ts`.
 
 ### Authentication System
-OAuth-based authentication with persistent login state:
+Complete OAuth-based authentication system with full user lifecycle support:
 
-- **OAuth Flow**: Multipart/form-data POST to token endpoint with client credentials
-- **State Management**: Zustand store (`src/stores/authStore.ts`) with localStorage persistence
+#### **Core Authentication Features**:
+- **OAuth Login**: Multipart/form-data POST to token endpoint with client credentials
+- **User Registration**: Account creation with email verification requirement
+- **Password Reset**: Secure password reset via email links
+- **Email Verification**: Token-based email verification from registration emails
+- **Session Management**: Persistent login state with automatic cleanup
+
+#### **State Management**: 
+- **Zustand Store** (`src/stores/authStore.ts`) with localStorage persistence
 - **Token Management**: Automatic expiration handling and cleanup
-- **Protected Routes**: React Router integration with automatic redirects
-- **API Integration**: TanStack Query for authentication mutations
+- **Authentication Guards**: Prevents access to auth pages when logged in
+
+#### **API Integration**:
+- **TanStack Query Mutations**: All auth operations use React Query for state management
+- **Error Handling**: Comprehensive error handling with user-friendly messages
+- **Loading States**: Integrated loader system for all authentication operations
+
+#### **User Experience**:
+- **Global Notifications**: Success/error notifications that persist across page navigation
+- **Automatic Redirects**: Smart routing based on authentication state
+- **Form Validation**: Client-side validation for all authentication forms
+- **Immediate Feedback**: No artificial delays, immediate responses to user actions
 
 ### Theme System
 Comprehensive theme system with light/dark/system modes:
@@ -78,6 +95,34 @@ Comprehensive theme system with light/dark/system modes:
 - **CSS Custom Properties**: Dynamic theme switching via CSS variables
 - **System Integration**: Automatic detection and response to OS theme changes
 - **Default Mode**: System preference with automatic switching
+
+### Global UI System
+Unified system for user feedback and loading states:
+
+#### **Global Loader** (`src/components/GlobalLoader/`):
+- **Overlay System**: Full-screen loading overlay during API operations
+- **Contextual Messages**: Custom loading messages for different operations
+- **State Management**: Zustand-based global loader state
+- **Non-blocking**: Prevents user interaction during critical operations
+
+#### **Global Notifications** (`src/components/GlobalNotification/`):
+- **Toast System**: Non-intrusive notifications for user feedback
+- **Multiple Types**: Success, error, warning, and info notifications
+- **Persistent Options**: Notifications can persist across page navigation
+- **Auto-dismiss**: Configurable auto-dismiss timing with manual close option
+- **Animation**: Smooth slide-in/out animations with progress indicators
+
+#### **Integration Pattern**:
+```typescript
+// Global loader usage
+const { showLoader, hideLoader } = useLoader()
+showLoader(LOADER_MESSAGES.SIGNING_IN)
+
+// Global notifications usage  
+const { showSuccess, showError } = useNotification()
+showSuccess(NOTIFICATION_MESSAGES.LOGIN_SUCCESS)
+showError('Custom error message', { persistent: true })
+```
 
 ### Testing Architecture
 **Dual Testing Setup** via Vite configuration:
@@ -151,9 +196,16 @@ useEffect(() => {
 
 ### Routing Architecture
 - **Root Route (`/`)**: Authentication check and redirect logic
-- **Login Route (`/login`)**: OAuth login form for unauthenticated users
-- **Protected Route (`/app`)**: Dashboard and authenticated application content
-- **Automatic Redirects**: Based on authentication state
+- **Authentication Routes** (accessible to unauthenticated users):
+  - `/login` - OAuth login form with username/password
+  - `/register` - User registration with email verification
+  - `/forgot-password` - Password reset request form
+  - `/reset-password-confirm/:uid/:token` - Password reset confirmation from email
+  - `/verify-email` - Email verification from registration emails
+- **Protected Routes** (requires authentication):
+  - `/app` - Main dashboard page
+  - `/app/user-management` - User management interface
+- **Smart Redirects**: Automatic routing based on authentication state and user context
 
 ### Docker Environment Override
 When running in Docker, environment variables are injected at container startup and override any build-time values, enabling the same image to run in different environments.
@@ -182,22 +234,33 @@ Unit tests require `src/test/setup.ts` which provides Jest DOM matchers and mock
 ```
 src/
 ├── api/                 # API layer (TanStack Query)
-│   └── auth.ts         # Authentication API calls
+│   └── auth.ts         # Complete authentication API (login, register, reset, verify)
 ├── assets/             # Static assets (logos, images)
 ├── components/         # Reusable UI components
 │   ├── Button/        # Button component with stories/tests
 │   ├── ThemeToggle/   # Theme switching component
+│   ├── GlobalLoader/  # Global loading overlay
+│   ├── GlobalNotification/ # Global notification system
 │   └── ui/            # Base UI components
+├── hooks/             # Custom React hooks
+│   ├── useLoader.ts   # Global loader state management
+│   └── useNotification.ts # Global notification system
 ├── pages/             # Route-level components
 │   ├── Dashboard/     # Protected dashboard page
-│   └── Login/         # Authentication page
+│   ├── Login/         # OAuth login page
+│   ├── Register/      # User registration page
+│   ├── ForgotPassword/ # Password reset request page
+│   ├── ResetPasswordConfirm/ # Password reset confirmation page
+│   ├── VerifyEmail/   # Email verification page
+│   └── UserManagement/ # User management interface
 ├── stores/            # Zustand state stores
 │   ├── authStore.ts   # Authentication state
 │   └── themeStore.ts  # Theme state
 ├── styles/            # Global styles and theme definitions
 ├── test/              # Test setup and utilities
 ├── utils/             # Utility functions
-│   └── env.ts         # Environment variable handling
+│   ├── env.ts         # Environment variable handling
+│   └── constants.ts   # Application constants and messages
 └── App.tsx            # Main application component
 ```
 
@@ -212,14 +275,63 @@ Always stop the development server (`npm run dev`) before making configuration c
 - **System Default**: Follows OS preference with automatic switching
 
 ### Authentication Flow
+**Login Flow**:
 1. User visits `/` → checks authentication status
 2. If authenticated → redirects to `/app` (Dashboard)
 3. If not authenticated → redirects to `/login`
-4. After login → automatic redirect to `/app`
+4. After successful login → automatic redirect to `/app`
 5. Logout → clears state and redirects to `/login`
+
+**Registration Flow**:
+1. User visits `/register` → fills registration form
+2. After successful registration → shows success notification and redirects to `/login`
+3. User receives verification email → clicks link to `/verify-email?token=...`
+4. Email verification → automatic redirect to `/login` with success/error notification
+
+**Password Reset Flow**:
+1. User visits `/forgot-password` → enters email
+2. After request → shows confirmation and redirects to `/login`
+3. User receives reset email → clicks link to `/reset-password-confirm/:uid/:token`
+4. Password reset → automatic redirect to `/login` with success notification
+
+**Protected Route Access**:
+- All `/app/*` routes require authentication
+- Unauthenticated users automatically redirected to `/login`
+- Authenticated users cannot access auth pages (redirected to `/app`)
 
 ### Docker Deployment
 The application uses multi-stage Docker builds with runtime environment injection, allowing the same image to be deployed across different environments without rebuilding.
+
+## Current Implementation Status
+
+### ✅ Completed Features
+
+#### **Authentication System (Complete)**:
+- **OAuth Login** with username/password authentication
+- **User Registration** with email verification requirement
+- **Password Reset** via secure email links
+- **Email Verification** from registration emails
+- **Session Management** with persistent login state
+- **Protected Routes** with automatic redirects
+- **Form Validation** and error handling
+
+#### **Global UI System (Complete)**:
+- **Global Loader** with contextual messages
+- **Global Notifications** with multiple types and persistence
+- **Theme System** with light/dark/system modes
+- **Responsive Design** across all components
+
+#### **State Management (Complete)**:
+- **Authentication State** via Zustand with localStorage
+- **Theme State** via Zustand with localStorage
+- **Loader State** via Zustand for global loading
+- **Notification State** via Zustand for global notifications
+
+#### **API Layer (Complete)**:
+- **TanStack Query integration** for all authentication operations
+- **Error handling** with user-friendly messages
+- **Loading states** integrated with global loader
+- **Promise-based mutations** for reliable state management
 
 ## Current Application Architecture
 

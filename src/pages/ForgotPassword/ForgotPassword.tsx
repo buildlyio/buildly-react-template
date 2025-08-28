@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
+import { useResetPasswordMutation } from '../../api/auth'
+import { useNotification } from '../../hooks/useNotification'
 import { Button } from '../../components/Button/Button'
 import { Copyright } from '../../components/Copyright/Copyright'
 import { env } from '../../utils/env'
+import { NOTIFICATION_MESSAGES } from '../../utils/constants'
 import darkLogo from '../../assets/dark-logo.png'
 import '../../styles/forms.css'
 import '../../styles/auth-pages.css'
@@ -12,9 +15,10 @@ export const ForgotPassword = () => {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   
   const { checkAuth } = useAuthStore()
+  const { showSuccess, showError } = useNotification()
+  const resetPasswordMutation = useResetPasswordMutation()
 
   useEffect(() => {
     document.title = `Forgot Password - ${env.APP_NAME}`
@@ -41,12 +45,14 @@ export const ForgotPassword = () => {
       return
     }
 
-    setIsLoading(true)
-    // TODO: Implement forgot password API call
-    setTimeout(() => {
+    try {
+      await resetPasswordMutation.mutateAsync({ email: email.trim() })
       setSuccess('If an account with that email exists, we have sent you a password reset link.')
-      setIsLoading(false)
-    }, 1000)
+      showSuccess(NOTIFICATION_MESSAGES.EMAIL_SENT)
+    } catch {
+      setError('An error occurred while sending the reset link. Please try again.')
+      showError('Failed to send reset email. Please try again.')
+    }
   }
 
   return (
@@ -71,7 +77,7 @@ export const ForgotPassword = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="Enter your email address"
-                disabled={isLoading}
+                disabled={resetPasswordMutation.isPending}
               />
             </div>
 
@@ -80,9 +86,9 @@ export const ForgotPassword = () => {
 
             <Button
               primary
-              label={isLoading ? 'Sending...' : 'Send Reset Link'}
+              label={resetPasswordMutation.isPending ? 'Sending...' : 'Send Reset Link'}
               type="submit"
-              disabled={isLoading}
+              disabled={resetPasswordMutation.isPending}
               style={{ width: '100%' }}
             />
           </form>

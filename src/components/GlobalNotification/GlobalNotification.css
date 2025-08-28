@@ -1,0 +1,61 @@
+/* Global notification container positioned at top-right */
+
+.global-notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  pointer-events: none;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.global-notification-container > * {
+  pointer-events: all;
+}
+
+/* Mobile positioning */
+@media (max-width: 640px) {
+  .global-notification-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-height: calc(100vh - 20px);
+  }
+}
+
+/* Ensure notifications appear above everything */
+.global-notification-container {
+  z-index: 10001;
+}
+
+/* Scrollbar styling for notification container */
+.global-notification-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.global-notification-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.global-notification-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.global-notification-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark theme scrollbar */
+@media (prefers-color-scheme: dark) {
+  .global-notification-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .global-notification-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}

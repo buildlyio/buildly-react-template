@@ -1,6 +1,6 @@
 # Buildly React Template
 
-A modern React web application template built with the latest technologies and best practices. This production-ready template features OAuth authentication, comprehensive theme system, user management interface, and Docker support with flexible environment variable handling.
+A modern React web application template built with the latest technologies and best practices. This production-ready template features complete OAuth authentication system with user registration, email verification, password reset, comprehensive theme system, global notification system, and Docker support with flexible environment variable handling.
 
 ## 🚀 Features
 
@@ -12,16 +12,23 @@ A modern React web application template built with the latest technologies and b
 - **Zustand** for lightweight global state management
 
 ### Authentication & Security
-- **OAuth 2.0** authentication flow with token management
-- **Protected routes** with automatic redirects
-- **Persistent login state** with automatic token cleanup
-- **Secure form handling** with multipart/form-data support
+- **Complete OAuth 2.0** authentication system with token management
+- **User Registration** with email verification requirement
+- **Password Reset** via secure email links with token-based confirmation
+- **Email Verification** for new user accounts
+- **Protected routes** with automatic authentication-based redirects
+- **Persistent login state** with automatic token cleanup and expiration handling
+- **Form validation** with client-side validation and error handling
+- **Session management** with secure token storage and automatic cleanup
 
-### Theme System
+### UI & User Experience
 - **Light/Dark/System themes** with automatic OS preference detection
+- **Global notification system** with toast notifications for user feedback
+- **Global loading overlay** with contextual loading messages
+- **Responsive design** across all screen sizes and devices
 - **CSS custom properties** for dynamic theme switching
-- **Persistent theme preferences** with localStorage
-- **Responsive design** across all screen sizes
+- **Persistent preferences** with localStorage integration
+- **Smooth animations** and transitions throughout the interface
 
 ### Development Tools
 - **ESLint** with TypeScript and React rules
@@ -174,7 +181,7 @@ services:
 ```
 ├── src/
 │   ├── api/                 # API layer with TanStack Query
-│   │   └── auth.ts          # Authentication API calls
+│   │   └── auth.ts          # Complete authentication API (login, register, reset, verify)
 │   ├── assets/              # Static assets (logos, images)
 │   │   ├── light-logo.png   # Logo for light theme
 │   │   └── dark-logo.png    # Logo for dark theme
@@ -184,11 +191,18 @@ services:
 │   │   ├── ThemeToggle/     # Theme switcher component
 │   │   ├── UserMenu/        # User dropdown menu
 │   │   ├── ProtectedRoute/  # Route protection wrapper
+│   │   ├── GlobalLoader/    # Global loading overlay system
+│   │   ├── GlobalNotification/ # Global toast notification system
 │   │   └── ui/              # Base UI components
+│   ├── hooks/               # Custom React hooks
+│   │   ├── useLoader.ts     # Global loader state management
+│   │   └── useNotification.ts # Global notification system
 │   ├── pages/               # Route-level page components
 │   │   ├── Login/           # OAuth login page
-│   │   ├── Register/        # User registration page
-│   │   ├── ForgotPassword/  # Password reset page
+│   │   ├── Register/        # User registration with email verification
+│   │   ├── ForgotPassword/  # Password reset request page
+│   │   ├── ResetPasswordConfirm/ # Password reset confirmation page
+│   │   ├── VerifyEmail/     # Email verification page
 │   │   ├── Dashboard/       # Protected dashboard
 │   │   └── UserManagement/  # User management interface
 │   ├── stores/              # Zustand state stores
@@ -199,7 +213,8 @@ services:
 │   │   └── auth-pages.css   # Shared authentication page styles
 │   ├── test/                # Test setup and utilities
 │   ├── utils/               # Utility functions
-│   │   └── env.ts           # Environment variable handling
+│   │   ├── env.ts           # Environment variable handling
+│   │   └── constants.ts     # Application constants and messages
 │   └── App.tsx              # Main app component with routing
 ├── e2e/                     # End-to-end tests
 ├── .storybook/              # Storybook configuration
@@ -212,35 +227,72 @@ services:
 └── vite.config.ts           # Vite configuration with dual test setup
 ```
 
-## 🔐 Authentication & Routing
+## 🔐 Complete Authentication System
 
-### Authentication Flow
-The application implements OAuth 2.0 authentication with persistent state management:
+### Authentication Features
+The application provides a complete authentication system with full user lifecycle support:
 
-1. **Unauthenticated users** are redirected to `/login`
-2. **Login form** submits credentials to OAuth token endpoint
-3. **Successful authentication** stores tokens and redirects to `/app`
-4. **Protected routes** automatically check authentication status
-5. **Token expiration** triggers automatic cleanup and re-authentication
+- **OAuth 2.0 Login** - Secure username/password authentication with token management
+- **User Registration** - Account creation with comprehensive form validation
+- **Email Verification** - Token-based email verification for new accounts
+- **Password Reset** - Secure password reset via email links
+- **Session Management** - Persistent login state with automatic token cleanup
+- **Protected Routes** - Authentication-based access control with automatic redirects
+
+### Authentication Flows
+
+#### **Login Flow**:
+1. User visits root `/` → authentication check
+2. Unauthenticated users redirected to `/login`
+3. Login form submits credentials to OAuth endpoint
+4. Successful authentication stores tokens and redirects to `/app`
+5. Token expiration triggers automatic cleanup and re-authentication
+
+#### **Registration Flow**:
+1. User visits `/register` → fills out registration form
+2. Form validation ensures all required fields and password requirements
+3. Successful registration shows success notification and redirects to `/login`
+4. User receives verification email with token link
+5. Clicking email link goes to `/verify-email?token=...` → automatic verification and redirect
+
+#### **Password Reset Flow**:
+1. User visits `/forgot-password` → enters email address
+2. Password reset request sent, user redirected to `/login` with confirmation
+3. User receives email with reset link to `/reset-password-confirm/:uid/:token`
+4. User enters new password → successful reset redirects to `/login`
 
 ### Route Architecture
 ```
-/ (root)               → RootRedirect (checks auth status)
-├── /login             → Login page (public)
-├── /register          → Registration page (public)
-├── /forgot-password   → Password reset page (public)
-└── /app/*             → Protected routes (requires authentication)
-    ├── /app           → Dashboard (default protected page)
-    └── /app/user-management → User management interface
+/ (root)                           → RootRedirect (authentication check)
+├── Authentication Routes (public access)
+│   ├── /login                     → OAuth login form
+│   ├── /register                  → User registration with validation
+│   ├── /forgot-password           → Password reset request
+│   ├── /reset-password-confirm/:uid/:token → Password reset confirmation
+│   └── /verify-email              → Email verification from registration
+└── Protected Routes (requires authentication)
+    ├── /app                       → Main dashboard
+    └── /app/user-management       → User management interface
 ```
 
-### Theme System
-The theme system provides three modes with automatic persistence:
-- **Light Theme**: Clean, bright interface
-- **Dark Theme**: Dark, high-contrast interface
-- **System Theme**: Automatically follows OS preference
+### Global UI Systems
 
-Theme state is managed globally and persists across sessions using localStorage.
+#### **Notification System**
+- **Toast Notifications** - Non-intrusive user feedback
+- **Multiple Types** - Success, error, warning, and info notifications
+- **Persistent Options** - Notifications can survive page navigation
+- **Auto-dismiss** - Configurable timing with manual close options
+
+#### **Loading System**  
+- **Global Overlay** - Full-screen loading during API operations
+- **Contextual Messages** - Custom loading messages for different operations
+- **User Protection** - Prevents interaction during critical operations
+
+#### **Theme System**
+- **Light Theme** - Clean, bright interface
+- **Dark Theme** - Dark, high-contrast interface  
+- **System Theme** - Automatically follows OS preference
+- **Persistent State** - Theme preferences stored in localStorage
 
 ## 🧪 Testing
 

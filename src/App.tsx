@@ -11,11 +11,14 @@ import { useThemeStore } from './stores/themeStore'
 import { RootRedirect } from './components/RootRedirect/RootRedirect'
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute'
 import { GlobalLoader } from './components/GlobalLoader/GlobalLoader'
+import { GlobalNotification } from './components/GlobalNotification/GlobalNotification'
 
 // Page imports
 import { Login } from './pages/Login/Login'
 import { Register } from './pages/Register/Register'
 import { ForgotPassword } from './pages/ForgotPassword/ForgotPassword'
+import { ResetPasswordConfirm } from './pages/ResetPasswordConfirm/ResetPasswordConfirm'
+import { VerifyEmail } from './pages/VerifyEmail/VerifyEmail'
 import { Dashboard } from './pages/Dashboard/Dashboard'
 import { UserManagement } from './pages/UserManagement/UserManagement'
 
@@ -69,6 +72,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password-confirm/:uid/:token" element={<ResetPasswordConfirm />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
           
           {/* Protected app routes - requires authentication */}
           <Route 
@@ -94,6 +99,9 @@ function App() {
         
         {/* Global loader for API calls */}
         <GlobalLoader />
+        
+        {/* Global notifications */}
+        <GlobalNotification />
       </Router>
     </QueryClientProvider>
   )

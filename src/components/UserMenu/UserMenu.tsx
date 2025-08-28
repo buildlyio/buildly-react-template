@@ -1,12 +1,15 @@
 import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
+import { useNotification } from '../../hooks/useNotification'
+import { NOTIFICATION_MESSAGES } from '../../utils/constants'
 import './UserMenu.css'
 
 export const UserMenu = () => {
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const { user, logout } = useAuthStore()
+  const { showSuccess } = useNotification()
   const navigate = useNavigate()
 
   // Close menu when clicking outside
@@ -46,6 +49,7 @@ export const UserMenu = () => {
   const handleLogout = () => {
     logout()
     setIsOpen(false)
+    showSuccess(NOTIFICATION_MESSAGES.LOGOUT_SUCCESS)
     navigate('/login')
   }
 

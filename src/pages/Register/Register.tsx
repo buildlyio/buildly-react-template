@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
-import { Navigate, Link } from 'react-router-dom'
+import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
+import { useRegisterMutation } from '../../api/auth'
+import { useLoader } from '../../hooks/useLoader'
+import { useNotification } from '../../hooks/useNotification'
 import { Button } from '../../components/Button/Button'
 import { PasswordInput } from '../../components/PasswordInput/PasswordInput'
 import { Copyright } from '../../components/Copyright/Copyright'
 import { env } from '../../utils/env'
-import { AUTH_CONSTANTS } from '../../utils/constants'
+import { AUTH_CONSTANTS, LOADER_MESSAGES, NOTIFICATION_MESSAGES } from '../../utils/constants'
 import darkLogo from '../../assets/dark-logo.png'
 import '../../styles/forms.css'
 import '../../styles/auth-pages.css'
@@ -19,9 +22,12 @@ export const Register = () => {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
   
   const { checkAuth } = useAuthStore()
+  const { showLoader, hideLoader } = useLoader()
+  const { showSuccess, showError } = useNotification()
+  const registerMutation = useRegisterMutation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     document.title = `Register - ${env.APP_NAME}`
@@ -51,12 +57,37 @@ export const Register = () => {
       return
     }
 
-    setIsLoading(true)
-    // TODO: Implement registration API call
-    setTimeout(() => {
-      setError('Registration functionality not yet implemented')
-      setIsLoading(false)
-    }, 1000)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      setError('Please enter a valid email address')
+      return
+    }
+
+    showLoader(LOADER_MESSAGES.REGISTERING_USER)
+
+    registerMutation.mutate(
+      {
+        username: username.trim(),
+        email: email.trim(),
+        password,
+        organization_name: organization.trim(),
+        first_name: firstName.trim(),
+        last_name: lastName.trim(),
+      },
+      {
+        onSuccess: () => {
+          hideLoader()
+          showSuccess(NOTIFICATION_MESSAGES.ACCOUNT_CREATED, { persistent: true })
+          navigate('/login', { replace: true })
+        },
+        onError: (error) => {
+          console.error('Registration failed:', error)
+          hideLoader()
+          setError('Registration failed. Please try again or contact support.')
+          showError('Registration failed. Please try again.')
+        },
+      }
+    )
   }
 
   return (
@@ -79,7 +110,7 @@ export const Register = () => {
                   onChange={(e) => setFirstName(e.target.value)}
                   required
                   placeholder="Enter your first name"
-                  disabled={isLoading}
+                  disabled={registerMutation.isPending}
                 />
               </div>
 
@@ -92,7 +123,7 @@ export const Register = () => {
                   onChange={(e) => setLastName(e.target.value)}
                   required
                   placeholder="Enter your last name"
-                  disabled={isLoading}
+                  disabled={registerMutation.isPending}
                 />
               </div>
             </div>
@@ -107,7 +138,7 @@ export const Register = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   placeholder="Enter your username"
-                  disabled={isLoading}
+                  disabled={registerMutation.isPending}
                 />
               </div>
 
@@ -120,7 +151,7 @@ export const Register = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   placeholder="Enter your email"
-                  disabled={isLoading}
+                  disabled={registerMutation.isPending}
                 />
               </div>
             </div>
@@ -134,7 +165,7 @@ export const Register = () => {
                 onChange={(e) => setOrganization(e.target.value)}
                 required
                 placeholder="Enter your organization"
-                disabled={isLoading}
+                disabled={registerMutation.isPending}
               />
             </div>
 
@@ -147,7 +178,7 @@ export const Register = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   required
-                  disabled={isLoading}
+                  disabled={registerMutation.isPending}
                 />
               </div>
 
@@ -159,7 +190,7 @@ export const Register = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm your password"
                   required
-                  disabled={isLoading}
+                  disabled={registerMutation.isPending}
                 />
               </div>
             </div>
@@ -168,9 +199,9 @@ export const Register = () => {
 
             <Button
               primary
-              label={isLoading ? 'Creating Account...' : 'Create Account'}
+              label={registerMutation.isPending ? 'Creating Account...' : 'Create Account'}
               type="submit"
-              disabled={isLoading}
+              disabled={registerMutation.isPending}
               style={{ width: '100%' }}
             />
           </form>

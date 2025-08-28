@@ -3,11 +3,12 @@ import { Navigate, Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
 import { useLoginMutation } from '../../api/auth'
 import { useLoader } from '../../hooks/useLoader'
+import { useNotification } from '../../hooks/useNotification'
 import { Button } from '../../components/Button/Button'
 import { PasswordInput } from '../../components/PasswordInput/PasswordInput'
 import { Copyright } from '../../components/Copyright/Copyright'
 import { env } from '../../utils/env'
-import { LOADER_MESSAGES } from '../../utils/constants'
+import { LOADER_MESSAGES, NOTIFICATION_MESSAGES } from '../../utils/constants'
 import darkLogo from '../../assets/dark-logo.png'
 import '../../styles/forms.css'
 import '../../styles/auth-pages.css'
@@ -19,11 +20,15 @@ export const Login = () => {
   
   const { setTokenData, checkAuth } = useAuthStore()
   const { showLoader, hideLoader } = useLoader()
+  const { showSuccess } = useNotification()
   const loginMutation = useLoginMutation()
   const navigate = useNavigate()
 
   useEffect(() => {
-    document.title = `Login - ${env.APP_NAME}`
+    // Defensive check to avoid browser extension conflicts
+    if (typeof document !== 'undefined' && document.title !== undefined) {
+      document.title = `Login - ${env.APP_NAME}`
+    }
   }, [])
 
   // Redirect if already authenticated
@@ -48,6 +53,7 @@ export const Login = () => {
         onSuccess: (tokenData) => {
           setTokenData(tokenData)
           hideLoader()
+          showSuccess(NOTIFICATION_MESSAGES.LOGIN_SUCCESS)
           navigate('/app', { replace: true })
         },
         onError: (error) => {
