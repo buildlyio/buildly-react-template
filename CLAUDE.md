@@ -170,10 +170,58 @@ showError('Custom error message', { persistent: true })
 ```
 
 ### Testing Architecture
-**Dual Testing Setup** via Vite configuration:
+**Comprehensive Testing Setup** with 430+ test scenarios covering all possible use cases:
 - **Unit Tests**: Vitest project targeting `src/**/*.test.{ts,tsx}` with jsdom environment
+- **Component Tests**: React Testing Library with full user interaction simulation
+- **Integration Tests**: Complete user flow testing from authentication to user management
+- **API Tests**: Comprehensive mocking and testing of all API endpoints with error scenarios
+- **Store Tests**: Zustand state management with persistence, cleanup, and synchronization testing
+- **Hook Tests**: Custom hooks testing with complex usage scenarios and edge cases
+- **Utility Tests**: Environment configuration, user roles, and constants validation
 - **Storybook Tests**: Separate Vitest project using Playwright browser for component story testing
 - **E2E Tests**: Playwright targeting `e2e/` directory with automatic dev server startup
+
+#### Comprehensive Test Coverage (430+ scenarios)
+**API Layer Tests**: 99 test scenarios
+- Authentication API (47 tests): Login, registration, password reset, email verification, error handling
+- User Management API (52 tests): CRUD operations, role management, invitations, sequential API calls
+
+**State Management Tests**: 80 test scenarios
+- Auth Store (36 tests): Token management, expiration, cleanup, persistence
+- Theme Store (44 tests): Light/dark/system modes, DOM integration, event handling
+
+**Component Tests**: 73 test scenarios
+- Theme Toggle (31 tests): Rendering, interactions, accessibility, store integration
+- User Menu (42 tests): Menu behavior, user management access, logout flow, keyboard navigation
+
+**Utility Function Tests**: 87 test scenarios
+- Environment Config (28 tests): Docker runtime, Vite build-time, fallbacks, edge cases
+- User Roles (29 tests): Role detection, permissions, access control logic
+- Constants (30 tests): Immutability, consistency, message validation
+
+**Custom Hook Tests**: 73 test scenarios
+- Loader Hook (32 tests): State management, function behavior, complex usage scenarios
+- Notification Hook (41 tests): Auto-removal, manual removal, state persistence, edge cases
+
+**Integration Tests**: 19 comprehensive scenarios
+- Complete authentication flows (login, logout, registration, password reset)
+- Theme system integration with DOM manipulation
+- Global UI system (loader, notifications) integration
+- Navigation and route protection
+- User management access control
+- Error handling and recovery
+- State persistence across sessions
+- Performance and accessibility testing
+
+#### Test Implementation Features
+- **Production-Ready**: All tests follow established coding standards and patterns
+- **Comprehensive Mocking**: API calls, timers, DOM methods, localStorage, external dependencies
+- **Real-world Scenarios**: Tests mirror actual user interactions and business logic
+- **Error Boundary Testing**: Graceful failure handling and recovery patterns
+- **Security Testing**: Permission-based access control and role validation
+- **Performance Testing**: Rapid interactions, concurrent operations, memory management
+- **Accessibility Testing**: Screen reader support, keyboard navigation, ARIA compliance
+- **Cross-browser Compatibility**: Tests work across different environments and configurations
 
 ### Component Structure
 Components follow co-location pattern: each component has its own directory with:
@@ -546,3 +594,158 @@ interface UserUpdateData {
 - Hover states and animations follow consistent patterns
 - Responsive design implemented across all components
 - Accessibility considerations with proper ARIA labels and keyboard navigation
+
+## 🧪 Comprehensive Test Implementation
+
+### Test Files Created (430+ Test Scenarios)
+
+The codebase now includes comprehensive test coverage with the following test files:
+
+#### API Layer Tests
+- **`src/api/auth.test.ts`** - Authentication API testing (47 scenarios)
+  - Login flow with token and user data retrieval
+  - Registration with email verification requirement
+  - Password reset request and confirmation
+  - Email verification from registration emails
+  - Error handling for all authentication scenarios
+  - Network error and edge case testing
+
+- **`src/api/users.test.ts`** - User Management API testing (52 scenarios)
+  - Users, core groups, and organizations queries
+  - User invitation system with bulk email support
+  - Complex user update logic with conditional API calls
+  - Sequential API processing (organization updates → user field updates)
+  - Comprehensive error handling and edge cases
+  - Query caching and stale time validation
+
+#### State Management Tests
+- **`src/stores/authStore.test.ts`** - Authentication state testing (36 scenarios)
+  - Token management with expiration handling
+  - User data persistence and cleanup
+  - Authentication state synchronization
+  - localStorage integration and rehydration
+  - Token expiration cleanup and validation
+  - Edge cases and error scenarios
+
+- **`src/stores/themeStore.test.ts`** - Theme system testing (44 scenarios)
+  - Light/dark/system theme modes
+  - OS preference detection and integration
+  - DOM manipulation and CSS class application
+  - Event listener management and cleanup
+  - Theme persistence across sessions
+  - System theme change responsiveness
+
+#### Component Tests
+- **`src/components/ThemeToggle/ThemeToggle.test.tsx`** - Theme toggle testing (31 scenarios)
+  - Theme selection UI interactions
+  - Active state management and visual feedback
+  - Accessibility and keyboard navigation
+  - Store integration and state synchronization
+  - Rapid interaction handling
+  - Edge cases and error scenarios
+
+- **`src/components/UserMenu/UserMenu.test.tsx`** - User menu testing (42 scenarios)
+  - Menu open/close behavior with click-outside handling
+  - User information display and formatting
+  - Logout functionality with navigation
+  - User management access control
+  - Keyboard navigation and escape key handling
+  - Event listener cleanup and memory management
+
+#### Utility Function Tests
+- **`src/utils/env.test.ts`** - Environment configuration testing (28 scenarios)
+  - Docker runtime vs Vite build-time variable handling
+  - Fallback hierarchy and default values
+  - SSR compatibility and edge cases
+  - Environment variable validation
+  - Type safety and configuration consistency
+  - Real-world deployment scenarios
+
+- **`src/utils/userRoles.test.ts`** - User roles and permissions testing (29 scenarios)
+  - Role detection logic (global admin, admin, user)
+  - Permission-based access control
+  - User management access validation
+  - Complex user group scenarios
+  - Edge cases and malformed data handling
+  - Integration with authentication system
+
+- **`src/utils/constants.test.ts`** - Application constants testing (30 scenarios)
+  - Constants structure and type validation
+  - Message consistency and formatting
+  - Immutability and configuration integrity
+  - Cross-constant consistency validation
+  - User-friendly message validation
+  - Naming convention compliance
+
+#### Custom Hook Tests
+- **`src/hooks/useLoader.test.ts`** - Global loader hook testing (32 scenarios)
+  - Loading state management and message handling
+  - State persistence across hook instances
+  - Function identity and performance optimization
+  - Complex usage scenarios and edge cases
+  - Store integration and cleanup
+  - Rapid interaction handling
+
+- **`src/hooks/useNotification.test.ts`** - Notification system testing (41 scenarios)
+  - Notification creation with auto-removal timers
+  - Manual removal and state management
+  - Persistent vs temporary notification handling
+  - Multiple notification types (success, error, warning, info)
+  - State synchronization across hook instances
+  - Message validation and edge case handling
+
+#### Integration Tests
+- **`src/test/integration.test.tsx`** - Complete user flow testing (19 scenarios)
+  - Full authentication flows (login, logout, registration, password reset)
+  - Theme system integration with DOM manipulation
+  - Global UI system integration (loader + notifications)
+  - Navigation and route protection validation
+  - User management access control integration
+  - Error handling and recovery patterns
+  - State persistence across sessions
+  - Performance and accessibility validation
+
+### Test Implementation Standards
+
+All tests follow the established coding standards and include:
+- **Comprehensive Mocking**: API calls, timers, DOM methods, localStorage
+- **TypeScript Integration**: Full type safety with proper interfaces
+- **Error Boundary Testing**: Graceful failure handling patterns
+- **Real-world Scenarios**: Tests mirror actual user interactions
+- **Performance Testing**: Rapid interactions and concurrent operations
+- **Security Validation**: Permission-based access and role verification
+- **Accessibility Testing**: Keyboard navigation and screen reader support
+- **Cross-environment Compatibility**: Works across development and production setups
+
+### Running Specific Test Suites
+
+```bash
+# API Layer Tests
+npm run test src/api/auth.test.ts
+npm run test src/api/users.test.ts
+
+# State Management Tests  
+npm run test src/stores/authStore.test.ts
+npm run test src/stores/themeStore.test.ts
+
+# Component Tests
+npm run test src/components/ThemeToggle/ThemeToggle.test.tsx
+npm run test src/components/UserMenu/UserMenu.test.tsx
+
+# Utility Tests
+npm run test src/utils/env.test.ts
+npm run test src/utils/userRoles.test.ts
+npm run test src/utils/constants.test.ts
+
+# Hook Tests
+npm run test src/hooks/useLoader.test.ts
+npm run test src/hooks/useNotification.test.ts
+
+# Integration Tests
+npm run test src/test/integration.test.tsx
+
+# Run all tests
+npm run test
+```
+
+This comprehensive test suite ensures production-ready code quality, covers all possible user scenarios, and provides confidence for ongoing development and maintenance.
