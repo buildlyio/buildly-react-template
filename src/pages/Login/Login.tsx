@@ -57,7 +57,6 @@ export const Login = () => {
           navigate('/app', { replace: true })
         },
         onError: (error) => {
-          console.error('Login failed:', error)
           hideLoader()
           setError('Invalid username or password. Please try again.')
         },

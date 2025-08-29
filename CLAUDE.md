@@ -2,6 +2,51 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+# 🚨 MANDATORY CODING STANDARDS AND WORKFLOW
+
+## CRITICAL: Read CODING_STYLE.md First
+Before making ANY changes to this codebase, you MUST:
+1. **Read and understand** `CODING_STYLE.md` completely
+2. **Follow ALL patterns and conventions** documented in that file
+3. **Complete the pre-commit checklist** before finishing any task
+
+## 🔄 MANDATORY DEVELOPMENT WORKFLOW
+
+### For EVERY code change, you MUST:
+
+1. **Plan Implementation**
+   - Follow established patterns in `CODING_STYLE.md`
+   - Use existing component structures and TypeScript conventions
+   - Maintain consistency with state management and API patterns
+
+2. **Write Clean Code**
+   - No console.log or console.error statements
+   - Proper TypeScript typing for all code
+   - JSDoc documentation for components
+   - Follow naming conventions exactly
+
+3. **Test Functionality**
+   - Ensure all features work correctly
+   - Verify error handling and user feedback
+   - Check loading states and notifications
+
+4. **Update Documentation (MANDATORY)**
+   - Update `README.md` if adding new features/components
+   - Update `CLAUDE.md` with implementation details  
+   - Keep documentation accurate and current
+   - Update `CODING_STYLE.md` if introducing new patterns
+
+5. **Pre-Commit Checklist**
+   - Code follows all established patterns
+   - No debug statements or console logs
+   - All TypeScript errors resolved
+   - Documentation is updated
+   - Code is production-ready
+
+**FAILURE TO FOLLOW THIS WORKFLOW IS UNACCEPTABLE**
+
+---
+
 ## Project Overview
 
 A modern React 19 template built with TypeScript, Vite, and comprehensive tooling. This is a production-ready template featuring OAuth authentication, light/dark/system theme support, dual environment variable support for both local development and Docker containerization, with integrated testing, linting, and component development workflows.
@@ -234,13 +279,21 @@ Unit tests require `src/test/setup.ts` which provides Jest DOM matchers and mock
 ```
 src/
 ├── api/                 # API layer (TanStack Query)
-│   └── auth.ts         # Complete authentication API (login, register, reset, verify)
+│   ├── auth.ts         # Complete authentication API (login, register, reset, verify)
+│   └── users.ts        # User management API (CRUD, invites, roles, organizations)
 ├── assets/             # Static assets (logos, images)
 ├── components/         # Reusable UI components
 │   ├── Button/        # Button component with stories/tests
+│   ├── TopBar/        # Navigation with gradient background and user menu
 │   ├── ThemeToggle/   # Theme switching component
+│   ├── UserMenu/      # User dropdown menu with profile and logout
 │   ├── GlobalLoader/  # Global loading overlay
 │   ├── GlobalNotification/ # Global notification system
+│   ├── UserManagement/ # User management components
+│   │   ├── UsersTab.tsx # Users table with editing capabilities
+│   │   └── UserRolesTab.tsx # User roles table (read-only, no edit/delete)
+│   ├── EditUserModal/ # User editing modal with organization and role assignment
+│   ├── InviteUsersModal/ # Multi-user invitation modal
 │   └── ui/            # Base UI components
 ├── hooks/             # Custom React hooks
 │   ├── useLoader.ts   # Global loader state management
@@ -252,7 +305,7 @@ src/
 │   ├── ForgotPassword/ # Password reset request page
 │   ├── ResetPasswordConfirm/ # Password reset confirmation page
 │   ├── VerifyEmail/   # Email verification page
-│   └── UserManagement/ # User management interface
+│   └── UserManagement/ # Complete user management system with tabbed interface
 ├── stores/            # Zustand state stores
 │   ├── authStore.ts   # Authentication state
 │   └── themeStore.ts  # Theme state
@@ -260,7 +313,8 @@ src/
 ├── test/              # Test setup and utilities
 ├── utils/             # Utility functions
 │   ├── env.ts         # Environment variable handling
-│   └── constants.ts   # Application constants and messages
+│   ├── constants.ts   # Application constants and messages
+│   └── userRoles.ts   # User role utilities and helpers
 └── App.tsx            # Main application component
 ```
 
@@ -315,6 +369,17 @@ The application uses multi-stage Docker builds with runtime environment injectio
 - **Protected Routes** with automatic redirects
 - **Form Validation** and error handling
 
+#### **User Management System (Complete)**:
+- **Complete CRUD Operations** for user management
+- **Tabbed Interface** with Users and User Roles tabs
+- **User Invitations** with bulk email invite functionality
+- **User Editing** with modal interface for status, organization, and role changes
+- **Conditional API Updates** with sequential organization and user field updates
+- **Role-based Permissions** display with read-only user roles table
+- **Real-time Data Refresh** after all operations
+- **Advanced Filtering** by status, organization, and role
+- **Clean Console** - removed all debug logging for production readiness
+
 #### **Global UI System (Complete)**:
 - **Global Loader** with contextual messages
 - **Global Notifications** with multiple types and persistence
@@ -328,10 +393,56 @@ The application uses multi-stage Docker builds with runtime environment injectio
 - **Notification State** via Zustand for global notifications
 
 #### **API Layer (Complete)**:
-- **TanStack Query integration** for all authentication operations
+- **TanStack Query integration** for all authentication and user management operations
 - **Error handling** with user-friendly messages
 - **Loading states** integrated with global loader
 - **Promise-based mutations** for reliable state management
+- **Intelligent API routing** based on data changes (organization vs user field updates)
+
+## User Management API Implementation
+
+### Conditional API Update System
+The user update functionality implements intelligent API routing based on the fields being modified:
+
+#### **API Endpoints**:
+- **Organization Updates**: `PATCH /coreuser/update_org/{userId}/` - Handles organization_name changes
+- **User Field Updates**: `PATCH /coreuser/{userId}/` - Handles is_active and core_groups changes
+
+#### **Update Logic Flow**:
+```typescript
+// Sequential API calls based on data changes
+1. If organization_name is being updated:
+   → Call updateUserOrganization() first
+   → If this fails, stop and show error notification
+   
+2. If is_active or core_groups are being updated:
+   → Call updateUserFields() second
+   → Return result from this call as the final user object
+
+3. If only organization was updated:
+   → Fetch updated user data via GET /coreuser/{userId}/
+```
+
+#### **UserUpdateData Interface**:
+```typescript
+interface UserUpdateData {
+  is_active?: boolean
+  organization_name?: string  
+  core_groups?: number[]
+}
+```
+
+#### **Error Handling**:
+- **Sequential Processing**: Organization update must succeed before user fields update
+- **Fail-Fast Approach**: If first API call fails, operation stops immediately
+- **User Notifications**: Clear error messages displayed via global notification system
+- **No Console Logging**: All debug console statements removed for production readiness
+
+### Data Management
+- **TanStack Query Integration**: Efficient caching and automatic refetching
+- **Real-time Updates**: Data automatically refreshes after successful operations
+- **Optimistic Updates**: UI updates immediately with rollback on API failure
+- **Type Safety**: Full TypeScript interfaces for all API data structures
 
 ## Current Application Architecture
 
@@ -411,10 +522,24 @@ The application uses multi-stage Docker builds with runtime environment injectio
 - **Colors**: Buildly blue (#1B5FA3) to Buildly orange (#F9943B)
 - **Theme Integration**: Works with standard CSS custom property theme system
 
-#### User Management Interface
-- **Current State**: Minimal interface with just header
-- **Ready for**: Implementation of specific user management functionality
-- **Architecture**: Clean separation allows for easy feature addition without technical debt
+#### User Management System (Complete Implementation)
+- **Full-Featured Interface**: Complete user management with tabbed navigation
+- **Users Tab**: 
+  - User table with comprehensive user information display
+  - Edit functionality via modal interface
+  - User filtering and search capabilities
+  - User invitation system with bulk email support
+- **User Roles Tab**:
+  - Read-only permissions matrix showing CRUD permissions per role
+  - Organization-specific and global roles display
+  - Clean table layout without edit/delete functionality (removed per requirements)
+- **Modal System**:
+  - EditUserModal for user status, organization, and role management
+  - InviteUsersModal for sending bulk email invitations
+- **API Integration**: 
+  - Conditional API calls based on data changes (organization vs user fields)
+  - Sequential processing for organization updates followed by user field updates
+  - Comprehensive error handling with user notifications
 
 #### Component Patterns
 - All UI components use standard CSS custom properties for theming

@@ -2,6 +2,7 @@
 import { useThemeStore } from '../../stores/themeStore'
 import { ThemeToggle } from '../ThemeToggle/ThemeToggle'
 import { UserMenu } from '../UserMenu/UserMenu'
+import { useNavigate } from 'react-router-dom'
 
 // Utilities and assets
 import { env } from '../../utils/env'
@@ -21,12 +22,13 @@ import './TopBar.css'
  */
 export const TopBar = () => {
   const { resolvedTheme } = useThemeStore()
+  const navigate = useNavigate()
 
   return (
     <header className="topbar">
       <div className="topbar-content">
         {/* Logo section - shows appropriate logo based on current theme */}
-        <div className="topbar-logo">
+        <div className="topbar-logo" onClick={() => navigate('/app')} style={{ cursor: 'pointer' }}>
           <img 
             src={resolvedTheme === 'dark' ? lightLogo : darkLogo} 
             alt={env.APP_NAME} 

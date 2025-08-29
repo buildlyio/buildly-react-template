@@ -81,7 +81,6 @@ export const Register = () => {
           navigate('/login', { replace: true })
         },
         onError: (error) => {
-          console.error('Registration failed:', error)
           hideLoader()
           setError('Registration failed. Please try again or contact support.')
           showError('Registration failed. Please try again.')

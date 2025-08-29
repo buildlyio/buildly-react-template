@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
 import { useNotification } from '../../hooks/useNotification'
 import { NOTIFICATION_MESSAGES } from '../../utils/constants'
+import { canAccessUserManagement } from '../../utils/userRoles'
 import './UserMenu.css'
 
 export const UserMenu = () => {
@@ -60,6 +61,8 @@ export const UserMenu = () => {
     return `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase()
   }
 
+  const canShowUserManagement = canAccessUserManagement(user)
+
   return (
     <div className="user-menu" ref={menuRef}>
       <button
@@ -101,24 +104,26 @@ export const UserMenu = () => {
         <div className="user-menu-divider"></div>
 
         <div className="user-menu-items">
-          <Link 
-            to="/app/user-management" 
-            className="user-menu-item"
-            onClick={closeMenu}
-          >
-            <div className="menu-item-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-            </div>
-            <div className="menu-item-content">
-              <span className="menu-item-title">User Management</span>
-              <span className="menu-item-subtitle">Manage users and roles</span>
-            </div>
-          </Link>
+          {canShowUserManagement && (
+            <Link 
+              to="/app/user-management" 
+              className="user-menu-item"
+              onClick={closeMenu}
+            >
+              <div className="menu-item-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div className="menu-item-content">
+                <span className="menu-item-title">User Management</span>
+                <span className="menu-item-subtitle">Manage users and roles</span>
+              </div>
+            </Link>
+          )}
 
           <button 
             className="user-menu-item logout"

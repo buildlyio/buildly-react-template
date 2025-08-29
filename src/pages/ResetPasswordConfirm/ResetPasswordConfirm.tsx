@@ -83,7 +83,6 @@ export const ResetPasswordConfirm = () => {
           navigate('/login')
         },
         onError: (error) => {
-          console.error('Reset password confirm failed:', error)
           hideLoader()
           setError('Failed to reset password. The link may be invalid or expired.')
         },

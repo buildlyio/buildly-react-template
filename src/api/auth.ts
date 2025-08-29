@@ -63,8 +63,25 @@ const loginUser = async (credentials: LoginCredentials): Promise<TokenResponse> 
     throw new Error(errorData || `HTTP error! status: ${response.status}`)
   }
 
-  const data = await response.json()
-  return data
+  const user = await response.json()
+
+  const baseUrl = env.API_URL.endsWith('/') ? env.API_URL.slice(0, -1) : env.API_URL
+  const userResponse = await fetch(baseUrl + '/coreuser/me/', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${user.access}`,
+      'User-Agent': 'buildly-react-template/1.0.0',
+    },
+  })
+
+  if (!userResponse.ok) {
+    const errorData = await userResponse.text()
+    throw new Error(errorData || `HTTP error! status: ${userResponse.status}`)
+  }
+
+  const userData = await userResponse.json()
+
+  return { ...user, user: userData }
 }
 
 const resetPassword = async (request: ResetPasswordRequest): Promise<void> => {
@@ -138,44 +155,29 @@ const verifyEmail = async (request: VerifyEmailRequest): Promise<void> => {
 export const useLoginMutation = () => {
   return useMutation({
     mutationFn: loginUser,
-    onError: (error) => {
-      console.error('Login error:', error)
-    },
   })
 }
 
 export const useResetPasswordMutation = () => {
   return useMutation({
     mutationFn: resetPassword,
-    onError: (error) => {
-      console.error('Reset password error:', error)
-    },
   })
 }
 
 export const useResetPasswordConfirmMutation = () => {
   return useMutation({
     mutationFn: resetPasswordConfirm,
-    onError: (error) => {
-      console.error('Reset password confirm error:', error)
-    },
   })
 }
 
 export const useRegisterMutation = () => {
   return useMutation({
     mutationFn: registerUser,
-    onError: (error) => {
-      console.error('Registration error:', error)
-    },
   })
 }
 
 export const useVerifyEmailMutation = () => {
   return useMutation({
     mutationFn: verifyEmail,
-    onError: (error) => {
-      console.error('Email verification error:', error)
-    },
   })
 }

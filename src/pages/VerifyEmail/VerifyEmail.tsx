@@ -69,7 +69,6 @@ export const VerifyEmail = () => {
         navigate('/login', { replace: true })
       })
       .catch((error) => {
-        console.error('Email verification failed:', error)
         if (timeoutRef.current) {
           clearTimeout(timeoutRef.current)
           timeoutRef.current = null

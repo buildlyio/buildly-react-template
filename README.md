@@ -181,7 +181,8 @@ services:
 ```
 ├── src/
 │   ├── api/                 # API layer with TanStack Query
-│   │   └── auth.ts          # Complete authentication API (login, register, reset, verify)
+│   │   ├── auth.ts          # Complete authentication API (login, register, reset, verify)
+│   │   └── users.ts         # User management API (CRUD operations, roles, organizations)
 │   ├── assets/              # Static assets (logos, images)
 │   │   ├── light-logo.png   # Logo for light theme
 │   │   └── dark-logo.png    # Logo for dark theme
@@ -193,6 +194,11 @@ services:
 │   │   ├── ProtectedRoute/  # Route protection wrapper
 │   │   ├── GlobalLoader/    # Global loading overlay system
 │   │   ├── GlobalNotification/ # Global toast notification system
+│   │   ├── UserManagement/  # User management components
+│   │   │   ├── UsersTab.tsx # Users table with editing capabilities
+│   │   │   └── UserRolesTab.tsx # User roles and permissions table (read-only)
+│   │   ├── EditUserModal/   # User editing modal with organization and role assignment
+│   │   ├── InviteUsersModal/# Multi-user invitation modal
 │   │   └── ui/              # Base UI components
 │   ├── hooks/               # Custom React hooks
 │   │   ├── useLoader.ts     # Global loader state management
@@ -204,7 +210,7 @@ services:
 │   │   ├── ResetPasswordConfirm/ # Password reset confirmation page
 │   │   ├── VerifyEmail/     # Email verification page
 │   │   ├── Dashboard/       # Protected dashboard
-│   │   └── UserManagement/  # User management interface
+│   │   └── UserManagement/  # Complete user management system with tabbed interface
 │   ├── stores/              # Zustand state stores
 │   │   ├── authStore.ts     # Authentication state management
 │   │   └── themeStore.ts    # Theme state management
@@ -214,7 +220,8 @@ services:
 │   ├── test/                # Test setup and utilities
 │   ├── utils/               # Utility functions
 │   │   ├── env.ts           # Environment variable handling
-│   │   └── constants.ts     # Application constants and messages
+│   │   ├── constants.ts     # Application constants and messages
+│   │   └── userRoles.ts     # User role utilities and helpers
 │   └── App.tsx              # Main app component with routing
 ├── e2e/                     # End-to-end tests
 ├── .storybook/              # Storybook configuration
@@ -293,6 +300,86 @@ The application provides a complete authentication system with full user lifecyc
 - **Dark Theme** - Dark, high-contrast interface  
 - **System Theme** - Automatically follows OS preference
 - **Persistent State** - Theme preferences stored in localStorage
+
+## 👥 User Management System
+
+### Complete User Administration
+The application provides a comprehensive user management system with full CRUD operations and role-based permissions:
+
+- **User List Management** - View, edit, and manage all system users
+- **User Invitations** - Send email invitations to new users with bulk invite support
+- **User Editing** - Modify user status, organization assignment, and role permissions
+- **Role Management** - View user roles and permissions (read-only display)
+- **Organization Management** - Assign users to different organizations
+- **Real-time Updates** - Automatic data refresh after operations
+
+### User Management Features
+
+#### **Users Tab**
+- **User Table** - Displays all users with key information:
+  - Full name, username, email
+  - Organization assignment
+  - User role (derived from core groups)
+  - Active/inactive status
+  - Join date
+- **Search & Filter** - Filter users by status, organization, or role
+- **Edit Functionality** - In-line editing with modal interface
+- **Bulk Actions** - Mass user operations and invitations
+
+#### **User Roles Tab** 
+- **Permissions Matrix** - Visual display of role permissions:
+  - Create, Read, Update, Delete permissions per role
+  - Organization-specific and global roles
+  - Role hierarchy and inheritance
+- **Read-Only Display** - Permissions viewing without editing capabilities
+
+#### **User Invitations**
+- **Email Invitations** - Send invites to multiple email addresses
+- **Bulk Invite Support** - Add multiple emails simultaneously
+- **Invitation Tracking** - Monitor invitation status and responses
+- **Automatic User Creation** - Users created upon invitation acceptance
+
+#### **User Editing**
+- **Modal Interface** - Clean, focused editing experience
+- **Organization Assignment** - Move users between organizations
+- **Role Management** - Assign appropriate roles and permissions
+- **Status Management** - Activate/deactivate user accounts
+- **Real-time Validation** - Client-side form validation with error handling
+
+### API Integration
+
+#### **Conditional Update Logic**
+The user update system uses intelligent API calls based on data changes:
+
+- **Organization Updates** - Uses `/coreuser/update_org/{id}/` endpoint for organization changes
+- **User Field Updates** - Uses `/coreuser/{id}/` endpoint for status and role changes  
+- **Sequential Processing** - Organization updates processed first, then user fields
+- **Error Handling** - Comprehensive error handling with user-friendly notifications
+- **Optimistic Updates** - UI updates immediately with rollback on failure
+
+#### **Data Management**
+- **TanStack Query Integration** - Efficient data fetching with caching
+- **Automatic Refresh** - Data automatically refreshes after operations
+- **Loading States** - Global loading indicators during operations
+- **Error Recovery** - Graceful error handling with retry mechanisms
+
+### User Interface Design
+
+#### **Tabbed Interface** 
+- **Clean Navigation** - Easy switching between users and roles
+- **Visual Indicators** - Tab badges show counts for users and roles
+- **Responsive Design** - Mobile-friendly interface across all screen sizes
+
+#### **Modern Table Design**
+- **Sortable Columns** - Click to sort by any column
+- **Responsive Layout** - Tables adapt to different screen sizes
+- **Action Buttons** - Intuitive edit and action controls
+- **Status Indicators** - Visual status indicators for user states
+
+#### **Modal System**
+- **Focused Editing** - Distraction-free editing environment
+- **Form Validation** - Real-time validation with helpful error messages
+- **Save/Cancel Actions** - Clear action buttons with confirmation
 
 ## 🧪 Testing
 

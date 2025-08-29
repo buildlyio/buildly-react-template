@@ -2,12 +2,67 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { AUTH_CONSTANTS } from '../utils/constants'
 
-interface User {
+interface CoreGroup {
+  id: number
+  uuid: string
+  name: string
+  is_global: boolean
+  is_org_level: boolean
+  permissions: {
+    create: boolean
+    read: boolean
+    update: boolean
+    delete: boolean
+  }
+  organization: any | null
+}
+
+interface Organization {
+  organization_uuid: string
   id: string
+  name: string
+  description: string | null
+  organization_url: string | null
+  create_date: string
+  edit_date: string
+  oauth_domains: any | null
+  date_format: string
+  phone: string | null
+  allow_import_export: boolean
+  radius: number
+  stripe_subscription_details: any | null
+  unlimited_free_plan: boolean
+  coupon: any | null
+  industries: any[]
+  subscriptions: any[]
+  subscription_active: boolean
+  referral_link: string | null
+  organization_type: string | null
+}
+
+interface User {
+  id: number
+  core_user_uuid: string
   username: string
   email: string
   first_name: string
   last_name: string
+  is_active: boolean
+  title: string | null
+  contact_info: string | null
+  privacy_disclaimer_accepted: boolean
+  tos_disclaimer_accepted: boolean
+  organization: Organization
+  core_groups: CoreGroup[]
+  user_type: string
+  survey_status: boolean
+  subscription_active: boolean
+  social_profiles: Record<string, any>
+  primary_social_platform: string | null
+  primary_social_username: string | null
+  primary_social_avatar_url: string | null
+  github_username: string | null
+  has_github_profile: boolean
 }
 
 interface TokenData {
