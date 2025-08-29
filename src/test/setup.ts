@@ -1,0 +1,14 @@
+import '@testing-library/jest-dom';
+
+// Mock environment variables for testing
+Object.defineProperty(window, '_env_', {
+  value: {
+    REACT_APP_API_URL: 'http://localhost:3001/api',
+    REACT_APP_APP_NAME: 'Test App',
+    REACT_APP_ENV: 'test',
+    REACT_APP_VERSION: '1.0.0',
+    REACT_APP_OAUTH_TOKEN_URL: 'http://localhost:3001/oauth/token/',
+    REACT_APP_OAUTH_CLIENT_ID: 'test-client-id',
+  },
+  writable: true,
+});

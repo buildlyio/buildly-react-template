@@ -1,25 +1,43 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# dependencies
-/node_modules
-/src/clients/
+node_modules
+dist
+dist-ssr
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment files (all env files)
+.env*
+!.env.example
+
+# Lock files (use npm ci for consistent installs)
 package-lock.json
 yarn.lock
+pnpm-lock.yaml
 
-# production
-/dist
+# Testing
+coverage
+.coverage
+.nyc_output
+test-results/
+playwright-report/
 
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-
-.npmrc
-
-#IDE
-.idea/
-.vscode/
+# Storybook
+*storybook.log
+storybook-static

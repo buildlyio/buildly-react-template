@@ -1,0 +1,139 @@
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--color-surface-hover);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-lg);
+  padding: 2px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.theme-toggle-btn-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-primary);
+  transform: scale(1.05);
+}
+
+.theme-toggle-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  box-shadow: 0 0 12px var(--color-primary-light);
+  transform: scale(1.02);
+}
+
+.theme-toggle-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.theme-toggle-btn:active {
+  transform: translateY(0);
+}
+
+.theme-toggle-btn svg {
+  transition: all 0.2s ease;
+  stroke-width: 2.5;
+}
+
+.theme-toggle-btn:hover:not(.active) svg {
+  transform: scale(1.05);
+}
+
+.theme-toggle-btn.active svg {
+  transform: scale(1.1);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+}
+
+/* Add subtle glow effect for active state */
+.theme-toggle-btn.active::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: var(--radius-lg);
+  padding: 2px;
+  background: linear-gradient(45deg, var(--color-primary), var(--color-primary-light));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0.6;
+}
+
+/* Tooltip styles */
+.theme-tooltip {
+  position: absolute;
+  bottom: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  z-index: 1000;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
+}
+
+/* Tooltip arrow */
+.theme-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Show tooltip on hover */
+.theme-toggle-btn-wrapper:hover .theme-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+/* Delay tooltip appearance slightly */
+.theme-toggle-btn-wrapper .theme-tooltip {
+  transition-delay: 0.3s;
+}
+
+.theme-toggle-btn-wrapper:hover .theme-tooltip {
+  transition-delay: 0s;
+}
+
