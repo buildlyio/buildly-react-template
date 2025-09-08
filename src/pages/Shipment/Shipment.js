@@ -593,7 +593,7 @@ const Shipment = ({ history }) => {
         {user && user.organization && user.organization.enable_tilt && (
           <Typography>
             {`${t('shipment.sensor.tilt')}: `}
-            {_.isEmpty(marker.tilt) ? 'N/A' : `${marker.tilt.pitch}° around Y-axis / ${marker.tilt.roll}° around X-axis`}
+            {_.isEmpty(marker.tilt) ? 'N/A' : `${marker.tilt.roll}° X-axis / ${marker.tilt.pitch}° Y-axis`}
           </Typography>
         )}
         <Typography>{`${t('shipment.sensor.battery')}: ${marker.battery}`}</Typography>

@@ -70,8 +70,8 @@
   },
   "navbar": {
     "shipment": "الشحنات",
-    "items": "العناصر",
-    "custodians": "الأمناء",
+    "items": "المنتجات",
+    "custodians": "أمناء الحفظ",
     "trackers": "أجهزة التتبع",
     "reporting": "التقارير"
   },
@@ -1095,7 +1095,7 @@
     "filters": {
       "active": "نشطة",
       "completed": "مكتملة",
-      "batteryDepleted": "البطارية فارغة",
+      "batteryDepleted": "البطارية مستنزفة",
       "damaged": "تالف"
     },
     "table": {
@@ -1179,8 +1179,8 @@
     "Damaged": "تضررت",
     "Battery Depleted": "البطارية فارغة",
     "shipmentDetails": "تفاصيل الشحنة",
-    "originCustodian": "الجهة المسؤولة عن الشحن",
-    "destinationCustodian": "الجهة المستلمة",
+    "originCustodian": "الوصي المستلم",
+    "destinationCustodian": "الوصي الأصلي",
     "abbv": "اختصار",
     "startingAddress": "عنوان البداية",
     "endingAddress": "عنوان النهاية",
@@ -1189,7 +1189,7 @@
     "actualStart": "تاريخ بدء الشحنة الفعلي",
     "actualArrival": "تاريخ وصول الشحنة الفعلي",
     "shipmentStatus": "حالة الشحنة",
-    "itemsToBeShipped": "العناصر المراد شحنها",
+    "itemsToBeShipped": "الأصناف المراد شحنها",
     "temperature": "درجة الحرارة",
     "safeTemperature": "درجة حرارة آمنة",
     "humidity": "الرطوبة",

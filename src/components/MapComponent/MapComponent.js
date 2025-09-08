@@ -353,7 +353,7 @@ export const MapComponent = (props) => {
                                 : 'inherit',
                             }}
                           >
-                            {_.isEmpty(mark.tilt) ? ' N/A' : ` ${mark.tilt.pitch}° around Y-axis / ${mark.tilt.roll}° around X-axis`}
+                            {_.isEmpty(mark.tilt) ? ' N/A' : ` ${mark.tilt.roll}° X-axis / ${mark.tilt.pitch}° Y-axis`}
                           </div>
                         </Grid>
                       )}

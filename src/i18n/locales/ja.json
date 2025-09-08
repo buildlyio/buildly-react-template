@@ -70,8 +70,8 @@
   },
   "navbar": {
     "shipment": "出荷",
-    "items": "アイテム",
-    "custodians": "管理者",
+    "items": "品目",
+    "custodians": "保管者",
     "trackers": "トラッカー",
     "reporting": "報告"
   },
@@ -1092,7 +1092,7 @@
       "all": "すべての出荷"
     },
     "filters": {
-      "active": "アクティブ",
+      "active": "稼働中",
       "completed": "完了",
       "batteryDepleted": "バッテリー切れ",
       "damaged": "破損"
@@ -1178,8 +1178,8 @@
     "Damaged": "破損",
     "Battery Depleted": "バッテリー切れ",
     "shipmentDetails": "出荷詳細",
-    "originCustodian": "出発元管理者",
-    "destinationCustodian": "到着先管理者",
+    "originCustodian": "出荷元保管者",
+    "destinationCustodian": "引取先保管者",
     "abbv": "略",
     "startingAddress": "出発住所",
     "endingAddress": "到着住所",
@@ -1193,7 +1193,7 @@
     "safeTemperature": "安全温度",
     "humidity": "湿度",
     "safeHumidity": "安全湿度",
-    "shockLight": "衝撃と光",
+    "shockLight": "ショックと光",
     "shock": "衝撃",
     "light": "光",
     "highest": "最高",
@@ -1209,7 +1209,7 @@
     "purchaseOrderNumber": "発注番号",
     "billOfLading": "船荷証券",
     "attachedFilesTitle": "添付ファイル",
-    "attachedFilesLimit": " - 各画像、PDF、Microsoft Officeファイルは<{{docLimit}}>まで、各動画ファイルは<{{videoLimit}}>までに制限",
+    "attachedFilesLimit": " - 各画像、PDF、Microsoft Officeファイルは5MBまで、動画ファイルは10MBまで",
     "addNoteBtn": "+ メモを追加",
     "noteLabel": "メモ",
     "custodianN": "管理者{{n}}",

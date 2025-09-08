@@ -95,10 +95,10 @@
     "maxExcursion": "Maximum {{parameter}} Excursion",
     "minExcursion": "Minimum {{parameter}} Excursion",
     "columns": {
-      "condition": "Condition",
-      "value": "Value",
-      "dateTimeStamp": "Date/Time Stamp",
-      "location": "Location"
+      "condition": "CONDITION",
+      "value": "VALUE",
+      "dateTimeStamp": "DATE/TIME STAMP",
+      "location": "LOCATION"
     }
   },
   "adminMenu": {
@@ -133,12 +133,12 @@
     "tableHeader": "Items"
   },
   "itemColumns": {
-    "itemName": "Item Name",
-    "numberOfUnits": "# of Units",
-    "itemType": "Item Type",
-    "value": "Value",
-    "grossWeight": "Gross Weight",
-    "unitOfMeasure": "Unit of Measure"
+    "itemName": "ITEM NAME",
+    "numberOfUnits": "# OF UNITS",
+    "itemType": "ITEM TYPE",
+    "value": "VALUE",
+    "grossWeight": "GROSS WEIGHT",
+    "unitOfMeasure": "UNIT OF MEASURE"
   },
   "addItems": {
     "addItem": "Add Item",
@@ -172,10 +172,10 @@
     "uploadDataHeading": "Bulk Custodian Data"
   },
   "custodianColumns": {
-    "name": "Name",
-    "abbrevation": "Abbrevation",
-    "type": "Custodian Type",
-    "location": "Location",
+    "name": "NAME",
+    "abbrevation": "ABBREVIATION",
+    "type": "CUSTODIAN TYPE",
+    "location": "LOCATION",
     "gln": "GLN"
   },
   "addCustodians": {
@@ -214,18 +214,18 @@
     "unavailable": "Unavailable",
     "unassigned": "UNASSIGNED",
     "columns": {
-      "power": "Power",
+      "power": "POWER",
       "on": "ON",
       "off": "OFF",
-      "tracker_identifier": "Tracker Identifier",
-      "type": "Type",
-      "battery": "Battery (%)",
-      "status": "Status",
-      "shipments": "Shipments",
-      "shipper": "Shipper",
-      "activation": "Activation",
-      "calibration_certificate": "Certificate of Calibration",
-      "download_certificate": "Download Certificate"
+      "tracker_identifier": "TRACKER IDENTIFIER",
+      "type": "TYPE",
+      "battery": "BATTERY (%)",
+      "status": "STATUS",
+      "shipments": "SHIPMENTS",
+      "shipper": "SHIPPER",
+      "activation": "ACTIVATION",
+      "calibration_certificate": "CERTIFICATE OF CALIBRATION",
+      "download_certificate": "DOWNLOAD CERTIFICATE"
     },
     "status": {
       "available": "Available",
@@ -398,10 +398,10 @@
     "product": "Product",
     "filename": "Products",
     "deleteModalTitle": "Are you sure you want to Delete this Product?",
-    "description": "Description",
-    "value": "Value",
-    "grossWeight": "Gross Weight",
-    "unitOfMeasure": "Unit of Measure"
+    "description": "DESCRIPTION",
+    "value": "VALUE",
+    "grossWeight": "GROSS WEIGHT",
+    "unitOfMeasure": "UNIT OF MEASURE"
   },
   "addProduct": {
     "addProduct": "Add Product",
@@ -429,7 +429,7 @@
     "filename": "RecipientAddress",
     "addAddress": "Add Address",
     "deleteModalTitle": "Are you sure you want to Delete this Recipient Address?",
-    "address": "Address"
+    "address": "ADDRESS"
   },
   "addRecipientAddress": {
     "addRecipientAddress": "Add Recipient Address",
@@ -449,9 +449,9 @@
     "tableTitle": "Consortiums",
     "addButton": "Consortium",
     "deleteModalTitle": "Are you sure you want to Delete this Consortium?",
-    "name": "Name",
-    "createdAt": "Created At",
-    "lastEditedAt": "Last Edited At"
+    "name": "NAME",
+    "createdAt": "CREATED AT",
+    "lastEditedAt": "LAST EDITED AT"
   },
   "addConsortium": {
     "save": "Save",
@@ -464,8 +464,8 @@
   },
   "mappingOrg": {
     "tableTitle": "Mapping Custodian to Organization",
-    "custodianName": "Custodian Name",
-    "mappedOrganization": "Mapped Organization"
+    "custodianName": "CUSTODIAN NAME",
+    "mappedOrganization": "MAPPED ORGANIZATION"
   },
   "editMapping": {
     "save": "Save",
@@ -482,28 +482,28 @@
     "availableDevices": "Available/Unavailable Devices",
     "assignedDevices": "Assigned Devices",
     "removeDevices": "Remove Devices",
-    "trackerIdentifier": "Tracker Identifier",
-    "organization": "Organization",
+    "trackerIdentifier": "TRACKER IDENTIFIER",
+    "organization": "ORGANIZATION",
     "trackerStatus": "Tracker Status",
-    "battery": "Battery",
-    "trackerType": "Tracker Type"
+    "battery": "BATTERY",
+    "trackerType": "TRACKER TYPE"
   },
   "trackerOrder": {
-    "repeatOrder": "Repeat Order",
+    "repeatOrder": "REPEAT ORDER",
     "reorderAlt": "Re-order",
-    "orderSummaryCol": "Order Summary",
+    "orderSummaryCol": "ORDER SUMMARY",
     "summaryAlt": "Summary",
     "newOrder": "New Order",
     "orderSummary": "ORDER SUMMARY",
     "date": "Date:",
     "orderNumber": "Order Number:",
     "numberOfDevices": "Number of Devices:",
-    "type": "Type:",
-    "recipient": "Recipient:",
+    "type": "TYPE:",
+    "recipient": "RECIPIENT:",
     "customer": "Customer:",
     "recipientAddress": "Recipient Address:",
-    "orderDate": "Order Date:",
-    "quantity": "Quantity:",
+    "orderDate": "ORDER DATE:",
+    "quantity": "QUANTITY:",
     "tracker": "TRACKER",
     "trackerType": "Tracker Type",
     "trackerQuantity": "Tracker Quantity",
@@ -556,26 +556,26 @@
     "user": "User",
     "filename": "Users",
     "tableHeader": "Users",
-    "permissions": "Permissions",
-    "activateDeactivateUser": "Activate/Deactivate User",
     "activate": "Activate",
     "deactivate": "Deactivate",
-    "deleteUser": "Delete User",
     "delete": "Delete",
-    "fullName": "Full Name",
-    "userName": "User Name",
-    "email": "Email",
-    "lastActivity": "Last Activity",
-    "organization": "Organization"
+    "permissions": "PERMISSIONS",
+    "activateDeactivateUser": "ACTIVATE/DEACTIVATE USER",
+    "deleteUser": "DELETE USER",
+    "fullName": "FULL NAME",
+    "userName": "USER NAME",
+    "email": "EMAIL",
+    "lastActivity": "LAST ACTIVITY",
+    "organization": "ORGANIZATION"
   },
   "userGroups": {
     "filename": "User Groups",
     "tableHeader": "User Groups",
-    "groupType": "Group Type",
-    "create": "Create",
-    "read": "Read",
-    "update": "Update",
-    "delete": "Delete"
+    "groupType": "GROUP TYPE",
+    "create": "CREATE",
+    "read": "READ",
+    "update": "UPDATE",
+    "delete": "DELETE"
   },
   "reseller": {
     "label": "Reseller",
@@ -859,9 +859,9 @@
     "yes": "Yes"
   },
   "generic": {
-    "name": "Name",
-    "createdAt": "Created At",
-    "lastEditedAt": "Last Edited At"
+    "name": "NAME",
+    "createdAt": "CREATED AT",
+    "lastEditedAt": "LAST EDITED AT"
   },
   "validation": {
     "required": "This field is required",
@@ -1074,15 +1074,15 @@
     }
   },
   "shipment": {
-    "status": "Status",
-    "depart": "Depart",
-    "origin": "Origin",
-    "arrive": "Arrive",
-    "destination": "Destination",
-    "alerts": "Alerts",
-    "items": "Items",
-    "tracker": "Tracker",
-    "delayed": "Delayed",
+    "status": "STATUS",
+    "depart": "DEPART",
+    "origin": "ORIGIN",
+    "arrive": "ARRIVE",
+    "destination": "DESTINATION",
+    "alerts": "ALERTS",
+    "items": "ITEMS",
+    "tracker": "TRACKER",
+    "delayed": "DELAYED",
     "alertDelayed": "Shipment: {{name}} has not yet departed.",
     "cta": {
       "create": "+ Create Shipment",
@@ -1098,8 +1098,8 @@
       "damaged": "Damaged"
     },
     "table": {
-      "shipmentName": "Shipment Name",
-      "batteryWithIntervals": "Battery (%) with Intervals"
+      "shipmentName": "SHIPMENT NAME",
+      "batteryWithIntervals": "BATTERY (%) WITH INTERVALS"
     },
     "step": {
       "created": "Shipment created",
