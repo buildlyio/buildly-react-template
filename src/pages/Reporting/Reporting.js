@@ -1236,7 +1236,6 @@ const Reporting = () => {
             <Autocomplete
               id="shipment-name"
               fullWidth
-              freeSolo
               options={_.filter(shipmentOverview, { type: shipmentFilter })}
               getOptionLabel={(option) => option && option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1244,9 +1243,18 @@ const Reporting = () => {
               onChange={(event, newValue) => {
                 handleShipmentSelection(newValue);
               }}
+              filterOptions={(options, { inputValue }) => {
+                const trimmedInput = inputValue.trim().toLowerCase();
+                if (!trimmedInput) return options;
+                // Create regex with word boundaries for exact word matching
+                const regex = new RegExp(trimmedInput, 'i');
+
+                return _.filter(options, (option) => regex.test(option.name.toLowerCase()));
+              }}
               renderOption={(props, option) => (
                 <li
                   {...props}
+                  key={option.id}
                   className={`${props.className}`}
                 >
                   {option.name}
