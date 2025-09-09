@@ -3,9 +3,13 @@
 /* eslint-disable no-alert */
 /* eslint-disable no-console */
 import i18n from './i18n/index';
-import useCustomAlert from '@hooks/useCustomAlert';
+import { useCustomAlertStore } from '@zustand/customAlert/customAlertStore';
 
-const { showAlert } = useCustomAlert();
+// Get the alert function directly from the store (not using React hook)
+const showAlert = (message, title, buttonText) => {
+  const { alert } = useCustomAlertStore.getState();
+  return alert(message, title, buttonText);
+};
 
 /**
  * Displays a UI alert to the user indicating a new version of the application is available.
@@ -16,12 +20,11 @@ const { showAlert } = useCustomAlert();
 
 const showRefreshUI = async (registration) => {
   // Show an alert notifying the user about the new version
-  // alert(i18n.t('alerts.newVersionAlert'));
   // Show custom alert and wait for user acknowledgment
   await showAlert(
-    i18n.t('alerts.sessionExpiredAlert'),
-    i18n.t('alerts.sessionExpiredTitle'),
-    i18n.t('alerts.sessionExpiredButton'),
+    i18n.t('alerts.newVersionAlert'),
+    i18n.t('alerts.newVersionTitle'),
+    i18n.t('alerts.newVersionButton'),
   );
   // Force the page to reload and fetch the updated service worker
   window.location.reload(true);
