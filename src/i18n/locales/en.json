@@ -835,7 +835,9 @@
     "sessionExpiredTitle": "Session ended for security",
     "sessionExpiredAlert": "To keep your shipment data safe, you've been signed out. Please log in to continue.",
     "sessionExpiredButton": "Log In",
-    "newVersionAlert": "New version available for the application. It will automatically reload the page to move to the latest version of the application."
+    "newVersionTitle": "New version ready",
+    "newVersionAlert": "We've updated Transparent Path! The page will reload so you're on the latest version.",
+    "newVersionButton": "Reload"
   },
   "cookieConsent": {
     "header": "We value your privacy",
@@ -1370,8 +1372,8 @@
       "light": "Light",
       "max_light": "Max Light",
       "battery": "Battery",
-      "tilt": "Tilt around Y-axis",
-      "roll": "Tilt around X-axis",
+      "tilt": "Tilt X-axis",
+      "pitch": "Tilt Y-axis",
       "max_battery": "Max Battery"
     }
   },

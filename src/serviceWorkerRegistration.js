@@ -3,6 +3,9 @@
 /* eslint-disable no-alert */
 /* eslint-disable no-console */
 import i18n from './i18n/index';
+import useCustomAlert from '@hooks/useCustomAlert';
+
+const { showAlert } = useCustomAlert();
 
 /**
  * Displays a UI alert to the user indicating a new version of the application is available.
@@ -11,9 +14,15 @@ import i18n from './i18n/index';
  * @param {ServiceWorkerRegistration} registration - The current service worker registration.
  */
 
-const showRefreshUI = (registration) => {
+const showRefreshUI = async (registration) => {
   // Show an alert notifying the user about the new version
-  alert(i18n.t('alerts.newVersionAlert'));
+  // alert(i18n.t('alerts.newVersionAlert'));
+  // Show custom alert and wait for user acknowledgment
+  await showAlert(
+    i18n.t('alerts.sessionExpiredAlert'),
+    i18n.t('alerts.sessionExpiredTitle'),
+    i18n.t('alerts.sessionExpiredButton'),
+  );
   // Force the page to reload and fetch the updated service worker
   window.location.reload(true);
 };

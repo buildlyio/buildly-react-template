@@ -1367,8 +1367,8 @@ export const processReportsAndMarkers = (
             ...tiltData,
             {
               x: dateTime,
-              y: (report_entry.report_tilt && report_entry.report_tilt.pitch) || null,
-              roll: (report_entry.report_tilt && report_entry.report_tilt.roll) || null,
+              y: (report_entry.report_tilt && report_entry.report_tilt.roll) || null,
+              pitch: (report_entry.report_tilt && report_entry.report_tilt.pitch) || null,
             },
           ];
           humidityData = [
@@ -1675,12 +1675,12 @@ export const SENSOR_REPORT_COLUMNS = (unitOfMeasure, selectedShipment, enabled_t
               ? (
                 <div>
                   <div>
-                    Around Y-axis:
-                    {_.round(_.toNumber(value.pitch), 2)}
+                    X-axis:
+                    {_.round(_.toNumber(value.roll), 2)}
                   </div>
                   <div>
-                    Around X-axis:
-                    {_.round(_.toNumber(value.roll), 2)}
+                    Y-axis:
+                    {_.round(_.toNumber(value.pitch), 2)}
                   </div>
                 </div>
               )

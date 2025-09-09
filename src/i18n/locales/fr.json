@@ -835,7 +835,9 @@
     "sessionExpiredTitle": "Session terminée pour des raisons de sécurité",
     "sessionExpiredAlert": "Pour protéger vos données d'expédition, vous avez été déconnecté. Veuillez vous connecter pour continuer.",
     "sessionExpiredButton": "Se connecter",
-    "newVersionAlert": "Nouvelle version de l'application disponible. La page va se recharger automatiquement pour activer la dernière version."
+    "newVersionTitle": "Nouvelle version prête",
+    "newVersionAlert": "Nous avons mis à jour Transparent Path ! La page va se recharger afin que vous ayez la dernière version.",
+    "newVersionButton": "Recharger"
   },
   "cookieConsent": {
     "header": "Nous attachons de l'importance à votre vie privée",
@@ -1369,8 +1371,8 @@
       "max_shock": "Choc maximal",
       "light": "Lumière",
       "max_light": "Lumière maximale",
-      "tilt": "Inclinaison autour de l'axe Y",
-      "roll": "Inclinaison autour de l'axe X",
+      "tilt": "Incliner l’axe X",
+      "pitch": "Incliner l’axe Y",
       "battery": "Batterie",
       "max_battery": "Batterie maximale"
     }

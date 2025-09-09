@@ -835,7 +835,9 @@
     "sessionExpiredTitle": "セキュリティ上の理由によりセッションが終了しました",
     "sessionExpiredAlert": "発送データを安全に保つため、ログアウトしています。続行するにはログインしてください。",
     "sessionExpiredButton": "ログイン",
-    "newVersionAlert": "アプリケーションの新しいバージョンが利用可能です。最新バージョンに移行するため、ページが自動的にリロードされます。"
+    "newVersionTitle": "新しいバージョンの準備ができました",
+    "newVersionAlert": "Transparent Path を更新しました！ 最新バージョンをご利用いただくために、ページが再読み込みされます。",
+    "newVersionButton": "再読み込み"
   },
   "cookieConsent": {
     "header": "私たちはあなたのプライバシーを大切にします",
@@ -1369,8 +1371,8 @@
       "max_shock": "最大衝撃",
       "light": "光",
       "max_light": "最大光量",
-      "tilt": "Y軸を中心に傾ける",
-      "roll": "X軸を中心に傾ける",
+      "tilt": "X軸を傾ける",
+      "pitch": "Y軸を傾ける",
       "battery": "バッテリー",
       "max_battery": "最大バッテリー"
     }

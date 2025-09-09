@@ -62,10 +62,10 @@ const GraphComponent = ({
                 <Typography variant="body1">{t(`graph.metrics.min_${selectedGraph}`)}</Typography>
               </div>
             )}
-            {_.includes(_.keysIn(data[0]), 'roll') && (
+            {_.includes(_.keysIn(data[0]), 'pitch') && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <div className="graphRollColor" />
-                <Typography variant="body1">{t('graph.metrics.roll')}</Typography>
+                <div className="graphPitchColor" />
+                <Typography variant="body1">{t('graph.metrics.pitch')}</Typography>
               </div>
             )}
           </div>
@@ -128,14 +128,14 @@ const GraphComponent = ({
                   isAnimationActive={false}
                 />
               )}
-              {/* Roll value line (conditionally shown only if "roll" exists in data) */}
-              {_.includes(_.keysIn(data[0]), 'roll') && (
+              {/* Pitch value line (conditionally shown only if "pitch" exists in data) */}
+              {_.includes(_.keysIn(data[0]), 'pitch') && (
                 <Line
                   connectNulls
                   dot={false}
                   type="monotone"
-                  dataKey="roll"
-                  stroke={theme.palette.cluster.main} // Info color for roll (usually blue)
+                  dataKey="pitch"
+                  stroke={theme.palette.cluster.main} // Info color for pitch (usually blue)
                   fill={theme.palette.cluster.main}
                   strokeWidth={3}
                   isAnimationActive={false}

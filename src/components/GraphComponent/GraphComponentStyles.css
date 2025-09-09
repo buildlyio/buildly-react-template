@@ -27,7 +27,7 @@
   margin-left: 16px;
 }
 
-.graphRollColor {
+.graphPitchColor {
   width: 30px;
   height: 15px;
   background-color: var(--color-palette-cluster-main);

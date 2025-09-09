@@ -1236,6 +1236,7 @@ const Reporting = () => {
             <Autocomplete
               id="shipment-name"
               fullWidth
+              freeSolo
               options={_.filter(shipmentOverview, { type: shipmentFilter })}
               getOptionLabel={(option) => option && option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -1243,7 +1244,6 @@ const Reporting = () => {
               onChange={(event, newValue) => {
                 handleShipmentSelection(newValue);
               }}
-              // filterOptions={(options, { inputValue }) => options.filter((option) => option.name.toLowerCase().includes(inputValue.toLowerCase()))}
               renderOption={(props, option) => (
                 <li
                   {...props}
