@@ -88,7 +88,7 @@ const AddCustodians = ({ history, location }) => {
   // Contact person fields
   const firstName = useInput(contactData.first_name || '', { required: true });
   const lastName = useInput(contactData.last_name || '', { required: true });
-  const email = useInput(contactData.email_address || '');
+  const email = useInput(contactData.email_address || '', { required: true });
 
   // Phone number with special handling
   const [number, setNumber] = useState(contactData.phone || '');
