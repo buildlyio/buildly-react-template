@@ -849,7 +849,8 @@
     "decline": "Recusar"
   },
   "common": {
-    "copyright": "Direitos autorais",
+    "copyrightPre": "Direitos autorais © 2020-",
+    "copyrightSuf": ". Todos os direitos reservados em todo o mundo.",
     "ok": "OK",
     "on": "LIGADO",
     "off": "DESLIGADO",

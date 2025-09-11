@@ -849,7 +849,8 @@
     "decline": "Decline"
   },
   "common": {
-    "copyright": "Copyright",
+    "copyrightPre": "Copyright © 2020-",
+    "copyrightSuf": ". All rights reserved worldwide.",
     "ok": "OK",
     "on": "ON",
     "off": "OFF",
@@ -875,8 +876,8 @@
     "duplicateOrgAbb": "Duplicate organization abbreviation!"
   },
   "dataTable": {
-    "edit": "Edit",
-    "delete": "Delete",
+    "edit": "EDIT",
+    "delete": "DELETE",
     "add": "Add",
     "goToPage": "Go To Page",
     "search": "Search",

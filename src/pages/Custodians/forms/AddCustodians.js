@@ -298,6 +298,7 @@ const AddCustodians = ({ history, location }) => {
       || !custodianType.value
       || !firstName.value
       || !lastName.value
+      || !email.value
       || (!_.isEmpty(number) && number.length < 11)
       || _.isEqual(address1, '')
       || !state.value
@@ -534,6 +535,7 @@ const AddCustodians = ({ history, location }) => {
                     <TextField
                       variant="outlined"
                       margin="normal"
+                      required
                       fullWidth
                       id="email"
                       label={t('addCustodians.email')}

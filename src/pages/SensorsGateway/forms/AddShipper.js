@@ -398,6 +398,7 @@ const AddShipper = ({
                   <TextField
                     variant="outlined"
                     margin="normal"
+                    required
                     fullWidth
                     id="email"
                     label={t('addShipper.email')}

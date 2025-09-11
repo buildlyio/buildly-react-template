@@ -849,7 +849,8 @@
     "decline": "拒否する"
   },
   "common": {
-    "copyright": "著作権",
+    "copyrightPre": "著作権 © 2020-",
+    "copyrightSuf": "。全世界での権利を保有します。",
     "ok": "OK",
     "on": "オン",
     "off": "オフ",

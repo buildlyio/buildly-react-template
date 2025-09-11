@@ -4,7 +4,7 @@ import React from 'react';
 // Define a constant object `app` that holds global application configuration or metadata.
 // In this case, it only contains a `title` key with the name of the application.
 export const app = {
-  title: 'Transparent Path', // Application title, can be used throughout the app (e.g., in the header or document title).
+  title: 'Transparent Path spc', // Application title, can be used throughout the app (e.g., in the header or document title).
 };
 
 // Create a React Context named `AppContext` with a default value of the `app` object.

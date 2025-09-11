@@ -12,8 +12,9 @@ const Copyright = () => {
     // Typography component used to render styled text
     <Typography variant="body2" align="center" mt={8} mb={1}>
       {/* Static text prefix */}
-      {t('common.copyright')}
-      {' © '}
+      {t('common.copyrightPre')}
+      {/* Displays the current year dynamically */}
+      {` ${new Date().getFullYear()}, `}
       {/* Link to the application website (opens in a new tab) */}
       <Link
         color="primary" // Uses theme's primary color
@@ -29,8 +30,8 @@ const Copyright = () => {
         {/* Dynamically shows the app's title (e.g., company name) */}
         {title}
       </Link>
-      {/* Displays the current year dynamically */}
-      {` ${new Date().getFullYear()}.`}
+      {/* Static text suffix */}
+      {t('common.copyrightSuf')}
     </Typography>
   );
 };
